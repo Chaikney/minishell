@@ -2,6 +2,12 @@
 #+author:    Chris Haikney
 #+email:     chaikney@student.42urduliz.com
 * Make a plan for minishell.
+** Video call on Monday
+SCHEDULED: <2024-06-10 Mon>
+* My minishell tasks
+** TODO Get pipex bonus parts working
+I need the heredoc and the output to work. (The second is easier, basically done)
+** TODO Find out about what the readline library does.
 * Basic requirements
 - display a prompt
 - working history
@@ -41,6 +47,15 @@ src_sh{stty -a}
 CTRL-c = SIGINT
 CTRL-d = EOF (which amounts to quitting the shell; useful for the command parsing?)
 CTRL-\ = SIGQUIT (is that a real one?)
+** Parsing is a thing we need to do.
+People suggest splitting parsing and execution of tasks. I think that with pipex the execution is partly there.
+"abstract syntax trees" versus a simple split.
+What are the parts of what we would receive as input?
+- commands
+- special characters for control -- pipes, redirects and that
+- command options.
+...how would we tell the difference between a command and its options.
+The first thing that we read would be a command - NO, it might be input redirection. Or here_doc, etc.
 ** Things involving ENV
 working  directory is always in ENV -- constantly manipulated, changed.
 pwd must therefore amount to "print this thing from my ENV"
