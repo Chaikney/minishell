@@ -1,0 +1,48 @@
+#+title:     Minishell
+#+author:    Chris Haikney
+#+email:     chaikney@student.42urduliz.com
+* Make a plan for minishell.
+* Basic requirements
+- display a prompt
+- working history
+  (I assume that means record and scrollback)
+- search for and launch an executable with PATH
+  (I have this from pipex)
+- "avoid using more than one global variable to indicate a received signal"
+  was  this part of minitalk?
+- Not interpret unclosed quotes or special characters which are not required by the subject such as \ (backslash) or ; (semicolon).
+- handle single quote ''
+  stops interpretation of metacharacters
+- handle double quote ""
+  stops interpretation of metacharacters *except* $
+- Implement redirections - I have code for all these except <<
+  - < redirect input
+  - > redirect output
+  - << read input until demlimiter
+  - >> redirect output in append mode
+- Implement pipes |
+  This is pipex, just need to interpret the commands correctly.
+- handle env vars
+  - expand $WHATEVER to its values (before interpreting a command?)
+- Handle $? - expand to the last exit status ("most recently executed foreground pipeline")
+- Handle ctrl-C, ctrl-D and ctrl-\
+  What are the signals that these each send?
+- builtins to code:
+  - echo with -n (newline or not)
+  - cd with only a relative or absolute path
+  - pwd (no options)
+  - unset (no options)
+  - env, no options or args
+  - exit no options.
+* General notes
+** Signals and ctrl sequences
+You can use stty to check or change the characters that generate signals
+src_sh{stty -a}
+CTRL-c = SIGINT
+CTRL-d = EOF (which amounts to quitting the shell; useful for the command parsing?)
+CTRL-\ = SIGQUIT (is that a real one?)
+** Things involving ENV
+working  directory is always in ENV -- constantly manipulated, changed.
+pwd must therefore amount to "print this thing from my ENV"
+cd  = change value in env
+note  that the prompt line is probably reading from this as well.
