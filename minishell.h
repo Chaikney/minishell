@@ -1,16 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/10 14:30:35 by chaikney          #+#    #+#             */
-/*   Updated: 2024/05/10 14:30:37 by chaikney         ###   ########.fr       */
+/*   Created: 2024/06/06 13:48:26 by chaikney          #+#    #+#             */
+/*   Updated: 2024/06/06 13:48:36 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// TODO Correct 42 header
 // TODO Remove un-needed includes, check against minishell forbidden functions.
 // TODO Add libft, or the needed functions.
 

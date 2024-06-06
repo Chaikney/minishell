@@ -32,9 +32,6 @@ char	**get_path(char **envp)
 // - test the parts of path:
 // -- does path + cmd = an executable?
 // -- if YES we have our command: keep that and discard the rest.
-// FIXED Free one last part from ft_split.
-// Now things is still reachable, so valgrind is happy.
-// returns a fully-qualified path for execve to use, or NULL
 char	*find_command(char *cmd, char **envp)
 {
 	char	**pathparts;
@@ -61,4 +58,4 @@ char	*find_command(char *cmd, char **envp)
 		free(pathparts[i]);
 	free(pathparts);
 	return (goodpath);
-k
+}
