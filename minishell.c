@@ -14,7 +14,7 @@
 
 // TODO Implement a shell.
 
-int	main(void)
+int	main(int argc, char **argv, char **envp)
 {
     return (0);
 }

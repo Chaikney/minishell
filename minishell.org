@@ -7,9 +7,23 @@ SCHEDULED: <2024-06-10 Mon>
 * My minishell tasks
 ** TODO Get pipex bonus parts working
 I need the heredoc and the output to work. (The second is easier, basically done)
-** TODO Find out about what the readline library does.
+** DONE Find out about what the readline library does.
+man readline is a good start: get a line of input from the user with editing.
+...so we just have to call that and parse what it gives us?
+#+begin_src c
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+
+char	*readline(const char *prompt);
+#+end_src
+returns the line from the user, or an empty string. (Some nuance around EOF characters)
+Does this also handle history for us?
+*** Are we allowed to use the history parts?
+src_shell{man 3 history}
 * Basic requirements
 - display a prompt
+  This is handled by an input to readline.
 - working history
   (I assume that means record and scrollback)
 - search for and launch an executable with PATH
@@ -56,8 +70,17 @@ What are the parts of what we would receive as input?
 - command options.
 ...how would we tell the difference between a command and its options.
 The first thing that we read would be a command - NO, it might be input redirection. Or here_doc, etc.
+Remember escaping! \  to include a  space.
 ** Things involving ENV
 working  directory is always in ENV -- constantly manipulated, changed.
 pwd must therefore amount to "print this thing from my ENV"
 cd  = change value in env
 note  that the prompt line is probably reading from this as well.
+** making a prompt
+- what should it show?
+  current directory.
+- username
+- fancy things in a prompt what are there?
+** history
+How do other shells do it?
+add to  a file.
