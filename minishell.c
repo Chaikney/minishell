@@ -150,12 +150,17 @@ void eval(char *cmdline, char **envp)
 }
 
 // FIXME I think fgets is forbidden - we are supposed to use readline
-int main(int argc, char **argv, char **envp) {
-    char cmdline [MAXLINE];
+// FIXME I think feof is forbidden - what does it even do?
+// TODO Define a more interesting prompt
+int main(int argc, char **argv, char **envp)
+{
+    char cmdline [MAXARGS];
+    char	*prompt;
+
     while (1) 
     {
         printf("%s", prompt);
-        if ((fgets(cmdline, MAXLINE, stdin) == NULL) && ferror(stdin))
+        if ((fgets(cmdline, MAXARGS, stdin) == NULL) && ferror(stdin))
         error("fgets error");
         if (feof (stdin)) 
         {
