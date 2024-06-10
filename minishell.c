@@ -14,7 +14,7 @@
 
 // TODO Implement a shell :-)
 
-// Clear the pathparts and close fds before exit.
+// Clear the pathparts and close fds created by piping before exit.
 // TODO This probably needs to be expanded and / or replaced for minishell use.
 void	exit_and_free(char **args, int fd_in, int fd_out)
 {
@@ -39,6 +39,7 @@ void	exit_and_free(char **args, int fd_in, int fd_out)
 // Run the command
 // NOTE Any fork-ing needed should have been handled before calling this.
 // TODO Adapt this to work with the minishell command struct
+// TODO We need a clear_command_struct function to free mem allocated to cmd
 void	run_command(struct command *cmd, char **envp)
 {
 	char	*prog;
@@ -65,13 +66,14 @@ void	run_command(struct command *cmd, char **envp)
 	free (prog);
 }
 
-// Make a child process to execute the commnand:
+// Make a child process to execute the command:
 // - fork
 // - run command
 // - wait for it to come back
 // NOTE child == 0 means we are in the child process!
-// TODO Adapt this to work with the minishell command struct
+// DONE Adapt this to work with the minishell command struct
 // TODO We can make this work with & / background
+// FIXME Some of this is only needed if we are pipe-ing, logic may be wrong.
 void	make_child(struct command *cmd, int bg, char **envp)
 {
 	pid_t	child;
@@ -104,7 +106,8 @@ void	make_child(struct command *cmd, int bg, char **envp)
 }
 
 
-// TODO Calls top this to be replaced by calls to make_child / run_command above
+// DONE Calls to this to be replaced by calls to make_child / run_command above
+// TODO Delete this later, for reference only.
 void runSystemCommand(struct command *cmd, int bg) 
 {
     pid_t childPid;
@@ -127,14 +130,15 @@ void runSystemCommand(struct command *cmd, int bg)
     }
 }
 
-// TODO Implement runBuiltinCOmmand
+// TODO Implement runBuiltinCommand
 void eval(char *cmdline, char **envp) 
 {
     int bg;
     struct command cmd;
-    printf("Evaluating '%s'\n", cmdline);
+
+    printf("Evaluating '%s'\n", cmdline);	// HACK For debugging, remove later
     bg = parse(cmdline, &cmd);
-    printf("Found command %s\n", cmd.argv[0]);
+    printf("Found command %s\n", cmd.argv[0]);	// HACK For debugging, remove later
     if (bg == -1) 
         return;
     if (cmd.argv[0] == NULL) 
