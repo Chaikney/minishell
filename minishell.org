@@ -7,6 +7,22 @@ SCHEDULED: <2024-06-10 Mon>
 * My minishell tasks
 ** TODO Get pipex bonus parts working
 I need the heredoc and the output to work. (The second is easier, basically done)
+** DONE watch shell in 10 min video
+https://www.youtube.com/watch?v=k6TTj4C0LF0
+Some brief pieces on parsing but the majority of fork exec etc. That I have done.
+Parse the input looking for tokens.(NULL-termed). Outputs into a command struct like this:
+#+begin_src c
+#define MAXARGS 128	// apparently needs to be a define not a variable.
+
+struct command {
+	int argc;	// number of args}
+	char *argv[MAXARGS];	// the arguments (inc command as 0)
+    enum builtin_t {
+	NONE, QUIT, JOBS, BG, FG} builtin;	// is argv[0] a builtin command?
+};
+#+end_src
+some kind of flagging out for builtins
+With backgrounding, you do a conditional thing before the waitpid
 ** DONE Find out about what the readline library does.
 man readline is a good start: get a line of input from the user with editing.
 ...so we just have to call that and parse what it gives us?
@@ -38,7 +54,7 @@ src_shell{man 3 history}
 - Implement redirections - I have code for all these except <<
   - < redirect input
   - > redirect output
-  - << read input until demlimiter
+  - << read input until delimiter
   - >> redirect output in append mode
 - Implement pipes |
   This is pipex, just need to interpret the commands correctly.
