@@ -1,17 +1,24 @@
 #include "minishell.h"
 
+// TODO Add 42 header to parse.c
+
 // TODO Change strcspn calls to another function
-int parse(const char *cmdline, struct command *cmd) 
+// TODO Implement parseBuiltIn - simple match against the list of builtins?
+// Parse input from cmdline into a command struct
+// Return values:
+// 1 - ?
+int	parse(const char *cmdline, struct command *cmd)
 {
-    static char array[MAXLINE];
-    const char delims [10] = "\t\r\n";
+    static char 	array[MAXARGS];
+    const char 	delims [10] = "\t\r\n";
     //char line = array;
-    char **token;
+    char 	**token;
     //char *endline;
-    int is_bg;
+    int 	is_bg;
+
     if (cmdline == NULL)
-        error("command line is NULL\n");
-    //(void) ft_strncpy(line, cmdline, MAXLINE);
+        perror("command line is NULL\n");
+    //(void) ft_strncpy(line, cmdline, MAXARGS);
     //endline = line + ft_strlen(line);
     token = ft_split(cmdline, ' ');
     cmd->argc = 0;
@@ -43,7 +50,7 @@ int parse(const char *cmdline, struct command *cmd)
     } */
     cmd->argv[cmd->argc] = NULL;
     free(token);
-    if (cmd->argc = 0)
+    if (cmd->argc == 0)
         return (1);
     cmd->builtin = parseBuiltin (cmd);
 
