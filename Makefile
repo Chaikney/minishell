@@ -12,7 +12,7 @@
 
 NAME	= minishell
 
-SRC		= minishell.c paths.c
+SRC		= minishell.c paths.c parse.c
 
 OBJ		= $(SRC:.c=.o)
 
