@@ -2,8 +2,15 @@
 
 // TODO Add 42 header to parse.c
 
-// TODO Change strcspn calls to another function
+// TODO parse has to recognise redirection tokens: | < > << >>
+// DONE Change strcspn calls to another function
 // TODO Implement parseBuiltIn - simple match against the list of builtins?
+//  - echo with -n (newline or not)
+//  - cd with only a relative or absolute path
+//  - pwd (no options)
+//  - unset (no options)
+//  - env, no options or args
+//  - exit no options.
 // Parse input from cmdline into a command struct
 // Return values:
 // 1 - ?

@@ -143,7 +143,9 @@ void eval(char *cmdline, char **envp)
 }
 
 // FIXED I think fgets is forbidden - we are supposed to use readline
-// FIXME I think feof is forbidden - what does it even do?
+// FIXME I think feof is forbidden - find another way to catch EOF signal.
+// TODO Implement an exit routine that frees allocated memory.
+// TODO cmdline must be freed after use.
 // TODO Define a more interesting prompt
 int main(int argc, char **argv, char **envp)
 {
