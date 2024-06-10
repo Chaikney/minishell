@@ -15,7 +15,7 @@
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
-
+#define MAXARGS 128
 # include "libft/libft.h"
 # include <stdlib.h>	// malloc and free
 # include <stdio.h>	// perror
@@ -25,7 +25,17 @@
 # include <errno.h>	// error codes
 # include <string.h>	// strerror
 
-// paths.c
+
+struct command 
+{
+    int argc;
+    char *argv[MAXARGS];
+    enum builtin_t 
+    {
+        NONE, QUIT, JOBS, BG, FG 
+    } builtin;
+};
+
 char	**get_path(char **envp);
 char	*find_command(char *cmd, char **envp);
 #endif
