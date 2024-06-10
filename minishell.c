@@ -43,27 +43,22 @@ void	exit_and_free(char **args, int fd_in, int fd_out)
 void	run_command(struct command *cmd, char **envp)
 {
 	char	*prog;
-	char	**args;
 	int		i;
 
-	args = ft_split(cmd, ' ');  // TODO Change/remove this, as we have already parsed the command
 	i = 0;
-	prog = find_command(args[0], envp);
+	prog = find_command(cmd->argv[0], envp);
 	if (!prog)
 	{
 		perror("Program not found in PATH");
 		free(prog);
-		exit_and_free(args, -1, -1);
+//		exit_and_free(cmd, -1, -1);
 	}
-	if (execve(prog, args, envp) == -1)
+	if (execve(prog, cmd->argv, envp) == -1)
 	{
 		perror("Failed to execute program");
-		exit_and_free(args, -1, -1);
+        free (prog);
+//		exit_and_free(args, -1, -1);
 	}
-	if (args)   // NOTE If the execve succeeds, this will not run.
-		while (args[i])
-			free(args[i++]);
-	free (prog);
 }
 
 // Make a child process to execute the command:
@@ -94,13 +89,11 @@ void	make_child(struct command *cmd, int bg, char **envp)
 	else
 	{
 		close(tube[1]);
-        if (bg)
-            printf("Child in background [%d]\n", child);
-        else    // TODO Not sure about this - does the pipe work with bg? If we put a process in BG would we still redirect it?
-        {
-		    dup2(tube[0], STDIN_FILENO);
-		    waitpid(child, 0, 0);
-        }
+		dup2(tube[0], STDIN_FILENO);
+		if (bg)
+			printf("Child in background [%d]\n", child);
+		else    // TODO Not sure about this - does the pipe work with bg? If we put a process in BG would we still redirect it?
+			waitpid(child, 0, 0);
 		close(tube[0]);
 	}
 }
