@@ -40,7 +40,7 @@ void	exit_and_free(char **args, int fd_in, int fd_out)
 // NOTE Any fork-ing needed should have been handled before calling this.
 // TODO Adapt this to work with the minishell command struct
 // TODO We need a clear_command_struct function to free mem allocated to cmd
-void	run_command(struct command *cmd, char **envp)
+void	run_command(t_command *cmd, char **envp)
 {
 	char	*prog;
 	int		i;
@@ -69,7 +69,7 @@ void	run_command(struct command *cmd, char **envp)
 // DONE Adapt this to work with the minishell command struct
 // TODO We can make this work with & / background
 // FIXME Some of this is only needed if we are pipe-ing, logic may be wrong.
-void	make_child(struct command *cmd, int bg, char **envp)
+void	make_child(t_command *cmd, int bg, char **envp)
 {
 	pid_t	child;
 	int		tube[2];
@@ -101,7 +101,7 @@ void	make_child(struct command *cmd, int bg, char **envp)
 
 // DONE Calls to this to be replaced by calls to make_child / run_command above
 // TODO Delete this later, for reference only.
-void runSystemCommand(struct command *cmd, int bg) 
+void runSystemCommand(t_command *cmd, int bg)
 {
     pid_t childPid;
     if ((childPid = fork()) < 0) = shell
@@ -127,7 +127,7 @@ void runSystemCommand(struct command *cmd, int bg)
 void eval(char *cmdline, char **envp) 
 {
     int bg;
-    struct command cmd;
+    t_command cmd;
 
     printf("Evaluating '%s'\n", cmdline);	// HACK For debugging, remove later
     bg = parse(cmdline, &cmd);

@@ -7,7 +7,7 @@
 // Parse input from cmdline into a command struct
 // Return values:
 // 1 - ?
-int	parse(const char *cmdline, struct command *cmd)
+int	parse(const char *cmdline, t_command *cmd)
 {
     static char 	array[MAXARGS];
     const char 	delims [10] = "\t\r\n";

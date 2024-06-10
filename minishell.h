@@ -13,7 +13,7 @@
 // TODO Remove un-needed includes, check against minishell forbidden functions.
 // TODO Add libft, or the needed functions.
 // TODO Separate the builtin_t definition
-// TODO Give struct command a typedef name (and fit Norm).
+// DONE Give struct command a typedef name (and fit Norm).
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
@@ -31,19 +31,18 @@
 # include <errno.h>	// error codes
 # include <string.h>	// strerror
 
-
-struct command 
+typedef struct s_command
 {
-    int argc;
-    char *argv[MAXARGS];
-    enum builtin_t 
-    {
-        NONE, QUIT, JOBS, BG, FG 
-    } builtin;
-};
+	int	argc;
+	char	*argv[MAXARGS];
+	enum builtin_t
+	{
+		NONE, QUIT, JOBS, BG, FG
+	} builtin;
+}	t_command;
 
 // parse.c - functions to read and interpret user input
-int parse(const char *cmdline, struct command *cmd);
+int	parse(const char *cmdline, t_command *cmd);
 
 // paths.c - find programs in PATH
 char	**get_path(char **envp);
