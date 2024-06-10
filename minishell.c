@@ -142,19 +142,19 @@ void eval(char *cmdline, char **envp)
         runBuiltinCommand( &cmd, bg);
 }
 
-// FIXME I think fgets is forbidden - we are supposed to use readline
+// FIXED I think fgets is forbidden - we are supposed to use readline
 // FIXME I think feof is forbidden - what does it even do?
 // TODO Define a more interesting prompt
 int main(int argc, char **argv, char **envp)
 {
-    char cmdline [MAXARGS];
+    char	*cmdline;
     char	*prompt;
 
     while (1) 
     {
-        printf("%s", prompt);
-        if ((fgets(cmdline, MAXARGS, stdin) == NULL) && ferror(stdin))
-        error("fgets error");
+        cmdline = readline(prompt);
+        if (cmdline == NULL)
+            perror("readline error");
         if (feof (stdin)) 
         {
             printf("\n");

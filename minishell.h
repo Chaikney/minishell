@@ -22,14 +22,17 @@
 #  define MAXARGS 128
 # endif
 
-# include "libft/libft.h"
-# include <stdlib.h>	// malloc and free
 # include <stdio.h>	// perror
+# include <stdlib.h>
+# include <readline/readline.h>	// readline input
+# include <readline/history.h>	// readline history
+# include <stdlib.h>	// malloc and free
 # include <fcntl.h>	// open
 # include <unistd.h>	// access, pipe
 # include <sys/wait.h>	// waitpid
 # include <errno.h>	// error codes
 # include <string.h>	// strerror
+# include "libft/libft.h"
 
 typedef struct s_command
 {
