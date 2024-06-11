@@ -44,17 +44,13 @@ typedef struct s_command
 	} builtin;
 }	t_command;
 
-<<<<<<< HEAD
 // builtins.c
-char	*get_wd(char **envp);
-int ms_pwd(char **envp);
+int	ms_pwd(void);
 
-=======
 // parse.c - functions to read and interpret user input
 int	parse(const char *cmdline, t_command *cmd);
 
 // paths.c - find programs in PATH
->>>>>>> 83aa1aa3cd5c8481bb7d132aad01299e1092d5ef
 char	**get_path(char **envp);
 char	*find_command(char *cmd, char **envp);
 #endif

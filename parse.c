@@ -1,7 +1,6 @@
 #include "minishell.h"
 
-<<<<<<< HEAD
-int parseBuiltin(struct command *cmd) 
+int parseBuiltin(t_command *cmd)
 {
     if (cmd->argc == 0) 
         return (0);
@@ -27,8 +26,8 @@ int parseBuiltin(struct command *cmd)
 
 // falta por añadir que hace cada 
 // TODO? Need to pass envp here for some of the commands, or maybe not if we 
-// cmd builtin == 1 I think its wrong
-void executeBuiltin(struct command *cmd, char **envp) 
+// FIXME cmd builtin == 1 I think its wrong
+void executeBuiltin(t_command *cmd, char **envp)
 {
     while (1) 
     {
@@ -73,8 +72,6 @@ void executeBuiltin(struct command *cmd, char **envp)
 
 
 // TODO Change strcspn calls to another function
-int parse(const char *cmdline, struct command *cmd) 
-=======
 // TODO Add 42 header to parse.c
 
 // TODO parse has to recognise redirection tokens: | < > << >>
@@ -90,7 +87,6 @@ int parse(const char *cmdline, struct command *cmd)
 // Return values:
 // 1 - ?
 int	parse(const char *cmdline, t_command *cmd)
->>>>>>> 83aa1aa3cd5c8481bb7d132aad01299e1092d5ef
 {
     static char 	array[MAXARGS];
     const char 	delims [10] = "\t\r\n";
