@@ -29,6 +29,7 @@ int parseBuiltin(t_command *cmd)
 // FIXME cmd builtin == 1 I think its wrong
 void executeBuiltin(t_command *cmd, char **envp)
 {
+    (void) envp;	// HACK for compilation, remove this or parameter later.
     while (1) 
     {
         if (cmd->builtin == 1) 
@@ -88,13 +89,15 @@ void executeBuiltin(t_command *cmd, char **envp)
 // 1 - ?
 int	parse(const char *cmdline, t_command *cmd)
 {
-    static char 	array[MAXARGS];
-    const char 	delims [10] = "\t\r\n";
+    // NOTE Don't need both array and **token, they do the same,
+//    static char 	array[MAXARGS];
+//    const char 	delims [10] = "\t\r\n";
     //char line = array;
     char 	**token;
     //char *endline;
     int 	is_bg;
 
+    is_bg = 0;	// HACK for compilation, remove later.
     if (cmdline == NULL)
         perror("command line is NULL\n");
     //(void) ft_strncpy(line, cmdline, MAXARGS);
@@ -132,8 +135,8 @@ int	parse(const char *cmdline, t_command *cmd)
     if (cmd->argc == 0)
         return (1);
     cmd->builtin = parseBuiltin (cmd);
-
-    if (is_bg (*cmd->argv[cmd->argc-1])) //== '6')) != 0
-        cmd->argv[--cmd->argc] = NULL;
+	// FIXME What does this try to do, the if statement?
+    /* if (is_bg (*cmd->argv[cmd->argc-1])) //== '6')) != 0 */
+    /*     cmd->argv[--cmd->argc] = NULL; */
     return (is_bg);
 }

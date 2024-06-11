@@ -10,15 +10,18 @@
 #                                                                              #
 # **************************************************************************** #
 
+# FIXED add a -L call to include readline
 NAME	= minishell
 
-SRC		= minishell.c paths.c parse.c
+SRC		= minishell.c paths.c parse.c builtins.c
 
 OBJ		= $(SRC:.c=.o)
 
 #	libft variables
 FTDIR	= ./libft
 FTLIB	= -L $(FTDIR) -lft
+
+LIBS	= $(FTLIB) -lreadline
 
 CFLAGS = -Werror -Wall -Wextra
 CC		= cc
@@ -29,7 +32,7 @@ all: $(NAME)
 
 $(NAME): libft $(OBJ)
 #	$(CC) $(OBJ) -o $(NAME)
-	$(CC) $(OBJ) $(HEADERS) $(FTLIB) -o $(NAME)
+	$(CC) $(OBJ) $(HEADERS) $(LIBS) -o $(NAME)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@

@@ -43,9 +43,7 @@ void	exit_and_free(char **args, int fd_in, int fd_out)
 void	run_command(t_command *cmd, char **envp)
 {
 	char	*prog;
-	int		i;
 
-	i = 0;
 	prog = find_command(cmd->argv[0], envp);
 	if (!prog)
 	{
@@ -99,31 +97,31 @@ void	make_child(t_command *cmd, int bg, char **envp)
 }
 
 
-// DONE Calls to this to be replaced by calls to make_child / run_command above
-// TODO Delete this later, for reference only.
-void runSystemCommand(t_command *cmd, int bg)
-{
-    pid_t childPid;
-    if ((childPid = fork()) < 0) = shell
-        error("fork() error");
-    else if (childPid == 0) 
-    {
-        if (execvp (cmd->argv[0], cmd->argv) < 0) 
-        {
-            printf("%s: Command not found\n", cmd->argv[0]);
-            exit(0);
-        }  
-    }
-    else 
-    {
-        if (bg)
-            printf("Child in background [%d]\n", childPid);
-        else
-            wait(&childPid);
-    }
-}
+/* // DONE Calls to this to be replaced by calls to make_child / run_command above */
+/* // TODO Delete this later, for reference only. */
+/* void runSystemCommand(t_command *cmd, int bg) */
+/* { */
+/*     pid_t childPid; */
+/*     if ((childPid = fork()) < 0) = shell */
+/*         error("fork() error"); */
+/*     else if (childPid == 0)  */
+/*     { */
+/*         if (execvp (cmd->argv[0], cmd->argv) < 0)  */
+/*         { */
+/*             printf("%s: Command not found\n", cmd->argv[0]); */
+/*             exit(0); */
+/*         }   */
+/*     } */
+/*     else  */
+/*     { */
+/*         if (bg) */
+/*             printf("Child in background [%d]\n", childPid); */
+/*         else */
+/*             wait(&childPid); */
+/*     } */
+/* } */
 
-// TODO Implement runBuiltinCommand
+// DONE Implement runBuiltinCommand
 void eval(char *cmdline, char **envp) 
 {
     int bg;
@@ -139,18 +137,34 @@ void eval(char *cmdline, char **envp)
     if (cmd.builtin == NONE)
         make_child ( &cmd, bg, envp);
     else
-        runBuiltinCommand( &cmd, bg);
+        executeBuiltin(&cmd, envp);
+}
+
+/* void	add_history(char *line) */
+/* { */
+/*     (void) line; */
+/*     printf("add_history not implmented yet"); */
+/* } */
+
+// TODO Define a more interesting prompt
+char	*get_prompt(void)
+{
+    return("what should i do? > ");
 }
 
 // FIXME I think feof is forbidden - find another way to catch EOF signal.
 // TODO Implement an exit routine that frees allocated memory.
 // TODO cmdline must be freed after use.
-// TODO Define a more interesting prompt
-int main(int argc, char **argv, char **envp) 
+int main(int argc, char **argv, char **envp)
 {
-    char *cmdline;
-    while (1) 
+    char	*cmdline;
+    char	*prompt;
+
+    (void) argv;
+    (void) argc;	// HACK for compilation, remove later
+    while (1)
 	{
+        prompt = get_prompt();
         cmdline = readline(prompt);
         if (cmdline == NULL) 
 		{

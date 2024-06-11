@@ -49,6 +49,7 @@ int	ms_pwd(void);
 
 // parse.c - functions to read and interpret user input
 int	parse(const char *cmdline, t_command *cmd);
+void executeBuiltin(t_command *cmd, char **envp);
 
 // paths.c - find programs in PATH
 char	**get_path(char **envp);
