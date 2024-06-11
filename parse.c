@@ -1,5 +1,6 @@
 #include "minishell.h"
 
+<<<<<<< HEAD
 int parseBuiltin(struct command *cmd) 
 {
     if (cmd->argc == 0) 
@@ -73,16 +74,34 @@ void executeBuiltin(struct command *cmd, char **envp)
 
 // TODO Change strcspn calls to another function
 int parse(const char *cmdline, struct command *cmd) 
+=======
+// TODO Add 42 header to parse.c
+
+// TODO parse has to recognise redirection tokens: | < > << >>
+// DONE Change strcspn calls to another function
+// TODO Implement parseBuiltIn - simple match against the list of builtins?
+//  - echo with -n (newline or not)
+//  - cd with only a relative or absolute path
+//  - pwd (no options)
+//  - unset (no options)
+//  - env, no options or args
+//  - exit no options.
+// Parse input from cmdline into a command struct
+// Return values:
+// 1 - ?
+int	parse(const char *cmdline, t_command *cmd)
+>>>>>>> 83aa1aa3cd5c8481bb7d132aad01299e1092d5ef
 {
-    static char array[MAXLINE];
-    const char delims [10] = "\t\r\n";
+    static char 	array[MAXARGS];
+    const char 	delims [10] = "\t\r\n";
     //char line = array;
-    char **token;
+    char 	**token;
     //char *endline;
-    int is_bg;
+    int 	is_bg;
+
     if (cmdline == NULL)
-        error("command line is NULL\n");
-    //(void) ft_strncpy(line, cmdline, MAXLINE);
+        perror("command line is NULL\n");
+    //(void) ft_strncpy(line, cmdline, MAXARGS);
     //endline = line + ft_strlen(line);
     token = ft_split(cmdline, ' ');
     cmd->argc = 0;
@@ -114,7 +133,7 @@ int parse(const char *cmdline, struct command *cmd)
     } */
     cmd->argv[cmd->argc] = NULL;
     free(token);
-    if (cmd->argc = 0)
+    if (cmd->argc == 0)
         return (1);
     cmd->builtin = parseBuiltin (cmd);
 

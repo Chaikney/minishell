@@ -14,7 +14,7 @@
 
 // TODO Implement a shell :-)
 
-// Clear the pathparts and close fds before exit.
+// Clear the pathparts and close fds created by piping before exit.
 // TODO This probably needs to be expanded and / or replaced for minishell use.
 void	exit_and_free(char **args, int fd_in, int fd_out)
 {
@@ -39,40 +39,37 @@ void	exit_and_free(char **args, int fd_in, int fd_out)
 // Run the command
 // NOTE Any fork-ing needed should have been handled before calling this.
 // TODO Adapt this to work with the minishell command struct
-void	run_command(struct command *cmd, char **envp)
+// TODO We need a clear_command_struct function to free mem allocated to cmd
+void	run_command(t_command *cmd, char **envp)
 {
 	char	*prog;
-	char	**args;
 	int		i;
 
-	args = ft_split(cmd, ' ');  // TODO Change/remove this, as we have already parsed the command
 	i = 0;
-	prog = find_command(args[0], envp);
+	prog = find_command(cmd->argv[0], envp);
 	if (!prog)
 	{
 		perror("Program not found in PATH");
 		free(prog);
-		exit_and_free(args, -1, -1);
+//		exit_and_free(cmd, -1, -1);
 	}
-	if (execve(prog, args, envp) == -1)
+	if (execve(prog, cmd->argv, envp) == -1)
 	{
 		perror("Failed to execute program");
-		exit_and_free(args, -1, -1);
+        free (prog);
+//		exit_and_free(args, -1, -1);
 	}
-	if (args)   // NOTE If the execve succeeds, this will not run.
-		while (args[i])
-			free(args[i++]);
-	free (prog);
 }
 
-// Make a child process to execute the commnand:
+// Make a child process to execute the command:
 // - fork
 // - run command
 // - wait for it to come back
 // NOTE child == 0 means we are in the child process!
-// TODO Adapt this to work with the minishell command struct
+// DONE Adapt this to work with the minishell command struct
 // TODO We can make this work with & / background
-void	make_child(struct command *cmd, int bg, char **envp)
+// FIXME Some of this is only needed if we are pipe-ing, logic may be wrong.
+void	make_child(t_command *cmd, int bg, char **envp)
 {
 	pid_t	child;
 	int		tube[2];
@@ -92,20 +89,19 @@ void	make_child(struct command *cmd, int bg, char **envp)
 	else
 	{
 		close(tube[1]);
-        if (bg)
-            printf("Child in background [%d]\n", child);
-        else    // TODO Not sure about this - does the pipe work with bg? If we put a process in BG would we still redirect it?
-        {
-		    dup2(tube[0], STDIN_FILENO);
-		    waitpid(child, 0, 0);
-        }
+		dup2(tube[0], STDIN_FILENO);
+		if (bg)
+			printf("Child in background [%d]\n", child);
+		else    // TODO Not sure about this - does the pipe work with bg? If we put a process in BG would we still redirect it?
+			waitpid(child, 0, 0);
 		close(tube[0]);
 	}
 }
 
 
-// TODO Calls top this to be replaced by calls to make_child / run_command above
-void runSystemCommand(struct command *cmd, int bg) 
+// DONE Calls to this to be replaced by calls to make_child / run_command above
+// TODO Delete this later, for reference only.
+void runSystemCommand(t_command *cmd, int bg)
 {
     pid_t childPid;
     if ((childPid = fork()) < 0) = shell
@@ -127,14 +123,15 @@ void runSystemCommand(struct command *cmd, int bg)
     }
 }
 
-// TODO Implement runBuiltinCOmmand
+// TODO Implement runBuiltinCommand
 void eval(char *cmdline, char **envp) 
 {
     int bg;
-    struct command cmd;
-    printf("Evaluating '%s'\n", cmdline);
+    t_command cmd;
+
+    printf("Evaluating '%s'\n", cmdline);	// HACK For debugging, remove later
     bg = parse(cmdline, &cmd);
-    printf("Found command %s\n", cmd.argv[0]);
+    printf("Found command %s\n", cmd.argv[0]);	// HACK For debugging, remove later
     if (bg == -1) 
         return;
     if (cmd.argv[0] == NULL) 
@@ -145,14 +142,27 @@ void eval(char *cmdline, char **envp)
         runBuiltinCommand( &cmd, bg);
 }
 
+<<<<<<< HEAD
 // FIXME I think fgets is forbidden - we are supposed to use readline
 /* int main(int argc, char **argv, char **envp) {
     char cmdline [MAXLINE];
+=======
+// FIXED I think fgets is forbidden - we are supposed to use readline
+// FIXME I think feof is forbidden - find another way to catch EOF signal.
+// TODO Implement an exit routine that frees allocated memory.
+// TODO cmdline must be freed after use.
+// TODO Define a more interesting prompt
+int main(int argc, char **argv, char **envp)
+{
+    char	*cmdline;
+    char	*prompt;
+
+>>>>>>> 83aa1aa3cd5c8481bb7d132aad01299e1092d5ef
     while (1) 
     {
-        printf("%s", prompt);
-        if ((fgets(cmdline, MAXLINE, stdin) == NULL) && ferror(stdin))
-        error("fgets error");
+        cmdline = readline(prompt);
+        if (cmdline == NULL)
+            perror("readline error");
         if (feof (stdin)) 
         {
             printf("\n");
