@@ -146,7 +146,7 @@ void eval(char *cmdline, char **envp)
 }
 
 // FIXME I think fgets is forbidden - we are supposed to use readline
-int main(int argc, char **argv, char **envp) {
+/* int main(int argc, char **argv, char **envp) {
     char cmdline [MAXLINE];
     while (1) 
     {
@@ -162,4 +162,25 @@ int main(int argc, char **argv, char **envp) {
         eval (cmdline, envp);
         return (0);
     }
+} */
+
+int main(int argc, char **argv, char **envp) 
+{
+    char *cmdline;
+    while (1) 
+	{
+        cmdline = readline(prompt);
+        if (cmdline == NULL) 
+		{
+            printf("\n");
+            exit(0);
+        }
+        if (cmdline[0] != '\0') 
+		{
+            add_history(cmdline);
+            eval(cmdline, envp);
+        }
+        free(cmdline);
+    }
+    return (0);
 }

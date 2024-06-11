@@ -36,6 +36,10 @@ struct command
     } builtin;
 };
 
+// builtins.c
+char	*get_wd(char **envp);
+int ms_pwd(char **envp);
+
 char	**get_path(char **envp);
 char	*find_command(char *cmd, char **envp);
 #endif
