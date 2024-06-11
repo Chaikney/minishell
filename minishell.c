@@ -161,22 +161,26 @@ int main(int argc, char **argv, char **envp)
     char	*prompt;
 
     (void) argv;
-    (void) argc;	// HACK for compilation, remove later
-    while (1)
+    if (argc == 1)	// HACK for compilation, remove later
 	{
-        prompt = get_prompt();
-        cmdline = readline(prompt);
-        if (cmdline == NULL) 
+    	while (1)
 		{
-            printf("\n");
-            exit(0);
-        }
-        if (cmdline[0] != '\0') 
-		{
-            add_history(cmdline);
-            eval(cmdline, envp);
-        }
-        free(cmdline);
-    }
+        	prompt = get_prompt();
+        	cmdline = readline(prompt);
+        	if (cmdline == NULL) 
+			{
+         		printf("\n");
+            	exit(0);
+        	}
+        	if (cmdline[0] != '\0') 
+			{
+            	add_history(cmdline);
+            	eval(cmdline, envp);
+        	}
+        	free(cmdline);
+    	}
+	}
+	else
+		printf("no args needed to minishell\n");
     return (0);
 }

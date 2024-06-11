@@ -11,6 +11,37 @@
 # **************************************************************************** #
 
 # FIXED add a -L call to include readline
+NAME = minishell
+LIBFT_DIR = ./libft
+LIBFT = $(LIBFT_DIR)/libft.a
+
+SRCS = minishell.o paths.o parse.o builtins.o
+OBJS = $(SRCS:.c=.o)
+INCLUDES = -I $(LIBFT_DIR)
+LIBS = -L $(LIBFT_DIR) -lft -lreadline
+
+CC = cc
+CFLAGS = -Wall -Wextra -Werror
+
+all: $(NAME)
+
+$(NAME): $(OBJS) $(LIBFT)
+	$(CC) $(CFLAGS) $(OBJS) $(INCLUDES) $(LIBS) -o $(NAME)
+
+$(LIBFT):
+	$(MAKE) -C $(LIBFT_DIR)
+
+clean:
+	rm -f $(OBJS)
+	$(MAKE) -C $(LIBFT_DIR) clean
+
+fclean: clean
+	rm -f $(NAME)
+	$(MAKE) -C $(LIBFT_DIR) fclean
+
+re: fclean all
+
+.PHONY: all clean fclean re
 NAME	= minishell
 
 SRC		= minishell.c paths.c parse.c builtins.c
