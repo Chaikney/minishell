@@ -12,24 +12,8 @@
 
 #include "minishell.h"
 
-// Find the line in env that has PWD and return it.
-// Works similar to get_path
-// Returns a pointer to the location where the var begins. We would have to read
-// onwards to a new line when pwd is called.
-// ...would an allocated var be better?
-// TODO Implement a function that prints this to the output
-char	*get_pwd(char **envp)
-{
-	while (*envp != NULL)
-	{
-		if (ft_strncmp(*envp, "PWD=", 4) == 0)
-			break ;
-		envp++;
-	}
-	return (*envp + 4);
-}
-
 // Find the line in env that has PATH and return it split.
+// TODO Replace with a call to getenv?
 char	**get_path(char **envp)
 {
 	while (*envp != NULL)
