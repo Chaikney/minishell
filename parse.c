@@ -1,5 +1,80 @@
 #include "minishell.h"
 
+<<<<<<< HEAD
+int parseBuiltin(struct command *cmd) 
+{
+    if (cmd->argc == 0) 
+        return (0);
+    if (ft_strncmp(cmd->argv[0], "cd", 2) == 0) 
+        return (1);
+    else if (ft_strncmp(cmd->argv[0], "exit", 4) == 0) 
+        return (2);
+    else if (ft_strncmp(cmd->argv[0], "echo", 4) == 0)
+        return (3);
+    else if (ft_strncmp(cmd->argv[0], "echo -n", 7) == 0)
+        return (4);
+    else if (ft_strncmp(cmd->argv[0], "pwd", 3) == 0)
+        return (5);
+    else if (ft_strncmp(cmd->argv[0], "export", 6) == 0)
+        return (6);
+    else if (ft_strncmp(cmd->argv[0], "unset", 5) == 0)
+        return (7);
+    else if (ft_strncmp(cmd->argv[0], "env", 3) == 0)
+        return (8);
+    
+    return (0);
+}
+
+// falta por añadir que hace cada 
+// TODO? Need to pass envp here for some of the commands, or maybe not if we 
+// cmd builtin == 1 I think its wrong
+void executeBuiltin(struct command *cmd, char **envp) 
+{
+    while (1) 
+    {
+        if (cmd->builtin == 1) 
+        {
+            if (cmd->argc < 2) 
+                fprintf(stderr, "cd: missing argument\n");
+            else 
+            {
+                if (chdir(cmd->argv[1]) != 0) 
+                    perror("cd");
+            }
+            return;
+        } 
+        else if (cmd->builtin == 2) 
+            exit(0);
+        else if (cmd->builtin == 3) 
+        {
+            
+        }
+        else if (cmd->builtin == 4) 
+        {
+        }
+        else if (cmd->builtin == 5)  
+            ms_pwd();
+        else if (cmd->builtin == 6) 
+        {
+        }
+        else if (cmd->builtin == 7) 
+        {
+        }
+        else if (cmd->builtin == 8) 
+        {
+        }
+        else 
+        {
+            fprintf(stderr, "Unknown builtin command\n");
+            return;
+        }
+    }
+}
+
+
+// TODO Change strcspn calls to another function
+int parse(const char *cmdline, struct command *cmd) 
+=======
 // TODO Add 42 header to parse.c
 
 // TODO parse has to recognise redirection tokens: | < > << >>
@@ -15,6 +90,7 @@
 // Return values:
 // 1 - ?
 int	parse(const char *cmdline, t_command *cmd)
+>>>>>>> 83aa1aa3cd5c8481bb7d132aad01299e1092d5ef
 {
     static char 	array[MAXARGS];
     const char 	delims [10] = "\t\r\n";

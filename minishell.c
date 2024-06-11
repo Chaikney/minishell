@@ -142,6 +142,11 @@ void eval(char *cmdline, char **envp)
         runBuiltinCommand( &cmd, bg);
 }
 
+<<<<<<< HEAD
+// FIXME I think fgets is forbidden - we are supposed to use readline
+/* int main(int argc, char **argv, char **envp) {
+    char cmdline [MAXLINE];
+=======
 // FIXED I think fgets is forbidden - we are supposed to use readline
 // FIXME I think feof is forbidden - find another way to catch EOF signal.
 // TODO Implement an exit routine that frees allocated memory.
@@ -152,6 +157,7 @@ int main(int argc, char **argv, char **envp)
     char	*cmdline;
     char	*prompt;
 
+>>>>>>> 83aa1aa3cd5c8481bb7d132aad01299e1092d5ef
     while (1) 
     {
         cmdline = readline(prompt);
@@ -166,4 +172,25 @@ int main(int argc, char **argv, char **envp)
         eval (cmdline, envp);
         return (0);
     }
+} */
+
+int main(int argc, char **argv, char **envp) 
+{
+    char *cmdline;
+    while (1) 
+	{
+        cmdline = readline(prompt);
+        if (cmdline == NULL) 
+		{
+            printf("\n");
+            exit(0);
+        }
+        if (cmdline[0] != '\0') 
+		{
+            add_history(cmdline);
+            eval(cmdline, envp);
+        }
+        free(cmdline);
+    }
+    return (0);
 }
