@@ -127,9 +127,9 @@ void eval(char *cmdline, char **envp)
     int bg;
     t_command cmd;
 
-    printf("Evaluating '%s'\n", cmdline);	// HACK For debugging, remove later
+    /* printf("Evaluating '%s'\n", cmdline); */	// HACK For debugging, remove later
     bg = parse(cmdline, &cmd);
-    printf("Found command %s\n", cmd.argv[0]);	// HACK For debugging, remove later
+   /*  printf("Found command %s\n", cmd.argv[0]); */	// HACK For debugging, remove later
     if (bg == -1) 
         return;
     if (cmd.argv[0] == NULL) 
