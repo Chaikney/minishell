@@ -6,7 +6,7 @@ int parseBuiltin(t_command *cmd)
         return (0);
     if (ft_strncmp(cmd->argv[0], "cd", 2) == 0 && (ft_strlen(cmd->argv[0]) == 2)) 
         return (1);
-    else if (ft_strncmp(cmd->argv[0], "exit", 4) == 0 && (ft_strlen(cmd->argv[0]) == 4)) 
+    else if (ft_strncmp(cmd->argv[0], "exit", 4) == 0 && (ft_strlen(cmd->argv[0]) == 4) && cmd->argv[1] == NULL) 
         return (2);
     else if (ft_strncmp(cmd->argv[0], "echo", 4) == 0 && (ft_strlen(cmd->argv[0]) == 4))
     {
@@ -15,7 +15,7 @@ int parseBuiltin(t_command *cmd)
         else
             return (3);
     }
-    else if (ft_strncmp(cmd->argv[0], "pwd", 3) == 0 && (ft_strlen(cmd->argv[0]) == 3))
+    else if (ft_strncmp(cmd->argv[0], "pwd", 3) == 0 && (ft_strlen(cmd->argv[0]) == 3) && cmd->argv[1] == NULL)
         return (5);
     else if (ft_strncmp(cmd->argv[0], "export", 6) == 0 && (ft_strlen(cmd->argv[0]) == 6))
         return (6);
@@ -43,7 +43,7 @@ void executeBuiltin(t_command *cmd, char **envp)
             else 
             {
                 if (chdir(cmd->argv[1]) != 0) 
-                    perror("cd");
+                    printf("wrong address\n");
             }
             return;
         } 
