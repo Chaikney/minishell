@@ -9,9 +9,13 @@ int parseBuiltin(t_command *cmd)
     else if (ft_strncmp(cmd->argv[0], "exit", 4) == 0) 
         return (2);
     else if (ft_strncmp(cmd->argv[0], "echo", 4) == 0)
-        return (3);
-    else if (ft_strncmp(cmd->argv[0], "echo -n", 7) == 0)
-        return (4);
+    {
+        if (ft_strncmp(cmd->argv[1], "-n", 2) == 0)
+            return (4);
+        else
+            return (3);
+    
+    }
     else if (ft_strncmp(cmd->argv[0], "pwd", 3) == 0)
         return (5);
     else if (ft_strncmp(cmd->argv[0], "export", 6) == 0)
@@ -30,6 +34,8 @@ int parseBuiltin(t_command *cmd)
 void executeBuiltin(t_command *cmd, char **envp)
 {
     (void) envp;	// HACK for compilation, remove this or parameter later.
+    int i;
+
     while (1) 
     {
         if (cmd->builtin == 1) 
@@ -47,10 +53,28 @@ void executeBuiltin(t_command *cmd, char **envp)
             exit(0);
         else if (cmd->builtin == 3) 
         {
-            
+            i = 1;
+            while (i < cmd->argc) 
+            {
+                printf("%s", cmd->argv[i]);
+            if (i < cmd->argc - 1)
+                printf(" ");
+            i++;
+            }
+            printf("\n");
+            return;
         }
         else if (cmd->builtin == 4) 
         {
+            i = 2;
+            while (i < cmd->argc) 
+            {
+                printf("%s", cmd->argv[i]);
+            if (i < cmd->argc - 1)
+                printf(" ");
+            i++;
+            }
+            return;
         }
         else if (cmd->builtin == 5)
         {
