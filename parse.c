@@ -14,7 +14,6 @@ int parseBuiltin(t_command *cmd)
             return (4);
         else
             return (3);
-    
     }
     else if (ft_strncmp(cmd->argv[0], "pwd", 3) == 0 && (ft_strlen(cmd->argv[0]) == 3))
         return (5);
@@ -24,7 +23,6 @@ int parseBuiltin(t_command *cmd)
         return (7);
     else if (ft_strncmp(cmd->argv[0], "env", 3) == 0 && (ft_strlen(cmd->argv[0]) == 3))
         return (8);
-    
     return (0);
 }
 
@@ -91,9 +89,9 @@ void executeBuiltin(t_command *cmd, char **envp)
         else if (cmd->builtin == 8) 
         {
         }
-        else 
+        else
         {
-            fprintf(stderr, "Unknown builtin command\n");
+            printf("Unknown builtin command\n");
             return;
         }
     }

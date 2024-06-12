@@ -55,6 +55,7 @@ void	run_command(t_command *cmd, char **envp)
 	{
 		perror("Failed to execute program");
         free (prog);
+		
 //		exit_and_free(args, -1, -1);
 	}
 }
@@ -134,10 +135,11 @@ void eval(char *cmdline, char **envp)
         return;
     if (cmd.argv[0] == NULL) 
         return;
-    if (cmd.builtin == NONE)
-        make_child ( &cmd, bg, envp);
+    /* if (cmd.builtin == NONE) // if comented provisinaly becasuse this way the program works correctly when u input a wrong command
+        make_child ( &cmd, bg, envp); */
     else
-        executeBuiltin(&cmd, envp);
+    	executeBuiltin(&cmd, envp);
+
 }
 
 /* void	add_history(char *line) */
