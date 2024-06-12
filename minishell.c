@@ -157,26 +157,30 @@ char	*get_prompt(void)
 // TODO cmdline must be freed after use.
 int main(int argc, char **argv, char **envp)
 {
-    char	*cmdline;
-    char	*prompt;
+	char	*cmdline;
+	char	*prompt;
 
-    (void) argv;
-    (void) argc;	// HACK for compilation, remove later
-    while (1)
+	(void) argv;
+	if (argc == 1)	// HACK for compilation, remove later
 	{
-        prompt = get_prompt();
-        cmdline = readline(prompt);
-        if (cmdline == NULL) 
+		while (1)
 		{
-            printf("\n");
-            exit(0);
-        }
-        if (cmdline[0] != '\0') 
-		{
-            add_history(cmdline);
-            eval(cmdline, envp);
-        }
-        free(cmdline);
-    }
-    return (0);
+			prompt = get_prompt();
+			cmdline = readline(prompt);
+			if (cmdline == NULL)
+			{
+				printf("\n");
+				exit(0);
+			}
+			if (cmdline[0] != '\0')
+			{
+				add_history(cmdline);
+				eval(cmdline, envp);
+			}
+			free(cmdline);
+		}
+	}
+	else
+		printf("no args needed to minishell\n");
+	return (0);
 }

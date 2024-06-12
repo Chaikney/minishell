@@ -52,8 +52,11 @@ void executeBuiltin(t_command *cmd, char **envp)
         else if (cmd->builtin == 4) 
         {
         }
-        else if (cmd->builtin == 5)  
+        else if (cmd->builtin == 5)
+        {
             ms_pwd();
+            return ;
+        }
         else if (cmd->builtin == 6) 
         {
         }
