@@ -4,24 +4,24 @@ int parseBuiltin(t_command *cmd)
 {
     if (cmd->argc == 0) 
         return (0);
-    if (ft_strncmp(cmd->argv[0], "cd", 2) == 0) 
+    if ((ft_strncmp(cmd->argv[0], "cd", 2) == 0) && (ft_strlen(cmd->argv[0]) == 2))
         return (1);
-    else if (ft_strncmp(cmd->argv[0], "exit", 4) == 0) 
+    else if ((ft_strncmp(cmd->argv[0], "exit", 4) == 0) && (ft_strlen(cmd->argv[0]) == 4))
         return (2);
-    else if (ft_strncmp(cmd->argv[0], "echo", 4) == 0)
+    else if ((ft_strncmp(cmd->argv[0], "echo", 4) == 0)&& (ft_strlen(cmd->argv[0]) == 4))
     {
-        if (ft_strncmp(cmd->argv[1], "-n", 2) == 0)
+        if ((ft_strncmp(cmd->argv[1], "-n", 2) == 0)&& (ft_strlen(cmd->argv[0]) == 2))
             return (4);
         else
             return (3);
     }
-    else if (ft_strncmp(cmd->argv[0], "pwd", 3) == 0)
+    else if ((ft_strncmp(cmd->argv[0], "pwd", 3) == 0)&& (ft_strlen(cmd->argv[0]) == 3))
         return (5);
-    else if (ft_strncmp(cmd->argv[0], "export", 6) == 0)
+    else if ((ft_strncmp(cmd->argv[0], "export", 6) == 0)&& (ft_strlen(cmd->argv[0]) == 6))
         return (6);
-    else if (ft_strncmp(cmd->argv[0], "unset", 5) == 0)
+    else if ((ft_strncmp(cmd->argv[0], "unset", 5) == 0)&& (ft_strlen(cmd->argv[0]) == 5))
         return (7);
-    else if (ft_strncmp(cmd->argv[0], "env", 3) == 0)
+    else if ((ft_strncmp(cmd->argv[0], "env", 3) == 0)&& (ft_strlen(cmd->argv[0]) == 3))
         return (8);
     
     return (0);
