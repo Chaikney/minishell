@@ -12,28 +12,14 @@
 
 #include "minishell.h"
 
-// Find the line in env that has PATH and return it split.
-// TODO Replace with a call to getenv?
-char	**get_path(char **envp)
-{
-	while (*envp != NULL)
-	{
-		if (ft_strncmp(*envp, "PATH=", 5) == 0)
-			break ;
-		envp++;
-	}
-	return (ft_split(*envp + 5, ':'));
-}
-
-// Locate PATH and go through entries for cmd is locatable.
-// cmd must be the name only, not any of its arguments.
-// - Find the PATH= line in env (this could be split out)
+// Return an executable path for cmd.
+// NOTE cmd must be the name only, not any of its arguments.
 // - split the pieces of PATH and add a trailing slash.
-// - (this also requires the first 5 chars of the line to be removed.)
 // - test the parts of path:
 // -- does path + cmd = an executable?
 // -- if YES we have our command: keep that and discard the rest.
-char	*find_command(char *cmd, char **envp)
+// NOTE The return value of getenv("PATH") does not need to be freed
+char	*find_command(char *cmd)
 {
 	char	**pathparts;
 	char	*candidate;
@@ -43,7 +29,7 @@ char	*find_command(char *cmd, char **envp)
 
 	i = 0;
 	goodpath = NULL;
-	pathparts = get_path(envp);
+	pathparts = ft_split(getenv("PATH"), ':');
 	while ((pathparts[i] != NULL) && (!goodpath))
 	{
 		slashed = ft_strjoin(pathparts[i], "/");

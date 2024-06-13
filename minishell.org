@@ -14,6 +14,7 @@ SCHEDULED: <2024-06-10 Mon>
 * My minishell tasks
 ** TODO Get pipex bonus parts working
 I need the heredoc and the output to work. (The second is easier, basically done)
+** TODO I don't think any commands work ATM (path problem)
 ** DONE watch shell in 10 min video
 https://www.youtube.com/watch?v=k6TTj4C0LF0
 Some brief pieces on parsing but the majority of fork exec etc. That I have done.
@@ -97,11 +98,18 @@ What are the parts of what we would receive as input?
 ...how would we tell the difference between a command and its options.
 The first thing that we read would be a command - NO, it might be input redirection. Or here_doc, etc.
 Remember escaping! \  to include a  space.
+*** What is the structure of input?
+- command
+- arguments - the two simple, one-at-a-time parts.
+- variables - to be expanded
+- quote marks - affect parsing and variable expansion
+- pipe - there will be more than one command here
 ** Things involving ENV
 working  directory is always in ENV -- constantly manipulated, changed.
 pwd must therefore amount to "print this thing from my ENV"
 cd  = change value in env
 note  that the prompt line is probably reading from this as well.
+Also note: there are permitted functions that do some of these things without having to directly manipulate PATH (which is not a file, remember),
 ** making a prompt
 - what should it show?
   current directory.
