@@ -43,9 +43,7 @@ void	exit_and_free(char **args, int fd_in, int fd_out)
 void	run_command(t_command *cmd, char **envp)
 {
 	char	*prog;
-	int		i;
 
-	i = 0;
 	prog = find_command(cmd->argv[0], envp);
 	if (!prog)
 	{
@@ -57,6 +55,7 @@ void	run_command(t_command *cmd, char **envp)
 	{
 		perror("Failed to execute program");
         free (prog);
+		
 //		exit_and_free(args, -1, -1);
 	}
 }
@@ -99,98 +98,90 @@ void	make_child(t_command *cmd, int bg, char **envp)
 }
 
 
-// DONE Calls to this to be replaced by calls to make_child / run_command above
-// TODO Delete this later, for reference only.
-void runSystemCommand(t_command *cmd, int bg)
-{
-    pid_t childPid;
-    if ((childPid = fork()) < 0) = shell
-        error("fork() error");
-    else if (childPid == 0) 
-    {
-        if (execvp (cmd->argv[0], cmd->argv) < 0) 
-        {
-            printf("%s: Command not found\n", cmd->argv[0]);
-            exit(0);
-        }  
-    }
-    else 
-    {
-        if (bg)
-            printf("Child in background [%d]\n", childPid);
-        else
-            wait(&childPid);
-    }
-}
+/* // DONE Calls to this to be replaced by calls to make_child / run_command above */
+/* // TODO Delete this later, for reference only. */
+/* void runSystemCommand(t_command *cmd, int bg) */
+/* { */
+/*     pid_t childPid; */
+/*     if ((childPid = fork()) < 0) = shell */
+/*         error("fork() error"); */
+/*     else if (childPid == 0)  */
+/*     { */
+/*         if (execvp (cmd->argv[0], cmd->argv) < 0)  */
+/*         { */
+/*             printf("%s: Command not found\n", cmd->argv[0]); */
+/*             exit(0); */
+/*         }   */
+/*     } */
+/*     else  */
+/*     { */
+/*         if (bg) */
+/*             printf("Child in background [%d]\n", childPid); */
+/*         else */
+/*             wait(&childPid); */
+/*     } */
+/* } */
 
-// TODO Implement runBuiltinCommand
+// DONE Implement runBuiltinCommand
 void eval(char *cmdline, char **envp) 
 {
     int bg;
     t_command cmd;
 
-    printf("Evaluating '%s'\n", cmdline);	// HACK For debugging, remove later
+//    printf("Evaluating '%s'\n", cmdline);	// HACK For debugging, remove later
     bg = parse(cmdline, &cmd);
-    printf("Found command %s\n", cmd.argv[0]);	// HACK For debugging, remove later
-    if (bg == -1) 
+//    printf("Found command %s\n", cmd.argv[0]);	// HACK For debugging, remove later
+    if (bg == -1)
         return;
     if (cmd.argv[0] == NULL) 
         return;
-    if (cmd.builtin == NONE)
-        make_child ( &cmd, bg, envp);
+    /* if (cmd.builtin == NONE) // if comented provisinaly becasuse this way the program works correctly when u input a wrong command
+        make_child ( &cmd, bg, envp); */
     else
-        runBuiltinCommand( &cmd, bg);
+    	executeBuiltin(&cmd, envp);
 }
 
-<<<<<<< HEAD
-// FIXME I think fgets is forbidden - we are supposed to use readline
-/* int main(int argc, char **argv, char **envp) {
-    char cmdline [MAXLINE];
-=======
-// FIXED I think fgets is forbidden - we are supposed to use readline
+/* void	add_history(char *line) */
+/* { */
+/*     (void) line; */
+/*     printf("add_history not implmented yet"); */
+/* } */
+
+// TODO Define a more interesting prompt
+char	*get_prompt(void)
+{
+    return("what should i do? > ");
+}
+
 // FIXME I think feof is forbidden - find another way to catch EOF signal.
 // TODO Implement an exit routine that frees allocated memory.
 // TODO cmdline must be freed after use.
-// TODO Define a more interesting prompt
 int main(int argc, char **argv, char **envp)
 {
-    char	*cmdline;
-    char	*prompt;
+	char	*cmdline;
+	char	*prompt;
 
->>>>>>> 83aa1aa3cd5c8481bb7d132aad01299e1092d5ef
-    while (1) 
-    {
-        cmdline = readline(prompt);
-        if (cmdline == NULL)
-            perror("readline error");
-        if (feof (stdin)) 
-        {
-            printf("\n");
-            exit(0);
-        }
-        cmdline [ft_strlen(cmdline)-1] = '\0';
-        eval (cmdline, envp);
-        return (0);
-    }
-} */
-
-int main(int argc, char **argv, char **envp) 
-{
-    char *cmdline;
-    while (1) 
+	(void) argv;
+	if (argc == 1)	// HACK for compilation, remove later
 	{
-        cmdline = readline(prompt);
-        if (cmdline == NULL) 
+		while (1)
 		{
-            printf("\n");
-            exit(0);
-        }
-        if (cmdline[0] != '\0') 
-		{
-            add_history(cmdline);
-            eval(cmdline, envp);
-        }
-        free(cmdline);
-    }
-    return (0);
+			prompt = get_prompt();
+			cmdline = readline(prompt);
+			if (cmdline == NULL)
+			{
+				printf("\n");
+				exit(0);
+			}
+			if (cmdline[0] != '\0')
+			{
+				add_history(cmdline);
+				eval(cmdline, envp);
+			}
+			free(cmdline);
+		}
+	}
+	else
+		printf("no args needed to minishell\n");
+	return (0);
 }

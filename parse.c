@@ -1,35 +1,39 @@
 #include "minishell.h"
 
-<<<<<<< HEAD
-int parseBuiltin(struct command *cmd) 
+int parseBuiltin(t_command *cmd)
 {
     if (cmd->argc == 0) 
         return (0);
-    if (ft_strncmp(cmd->argv[0], "cd", 2) == 0) 
+    if ((ft_strncmp(cmd->argv[0], "cd", 2) == 0) && (ft_strlen(cmd->argv[0]) == 2))
         return (1);
-    else if (ft_strncmp(cmd->argv[0], "exit", 4) == 0) 
+    else if ((ft_strncmp(cmd->argv[0], "exit", 4) == 0) && (ft_strlen(cmd->argv[0]) == 4) && (cmd->argv[1] == NULL))
         return (2);
-    else if (ft_strncmp(cmd->argv[0], "echo", 4) == 0)
-        return (3);
-    else if (ft_strncmp(cmd->argv[0], "echo -n", 7) == 0)
-        return (4);
-    else if (ft_strncmp(cmd->argv[0], "pwd", 3) == 0)
+    else if ((ft_strncmp(cmd->argv[0], "echo", 4) == 0)&& (ft_strlen(cmd->argv[0]) == 4))
+    {
+        if ((ft_strncmp(cmd->argv[1], "-n", 2) == 0)&& (ft_strlen(cmd->argv[0]) == 2))
+            return (4);
+        else
+            return (3);
+    }
+    else if ((ft_strncmp(cmd->argv[0], "pwd", 3) == 0) && (ft_strlen(cmd->argv[0]) == 3) && (cmd->argv[1] == NULL))
         return (5);
-    else if (ft_strncmp(cmd->argv[0], "export", 6) == 0)
+    else if ((ft_strncmp(cmd->argv[0], "export", 6) == 0)&& (ft_strlen(cmd->argv[0]) == 6))
         return (6);
-    else if (ft_strncmp(cmd->argv[0], "unset", 5) == 0)
+    else if ((ft_strncmp(cmd->argv[0], "unset", 5) == 0)&& (ft_strlen(cmd->argv[0]) == 5))
         return (7);
-    else if (ft_strncmp(cmd->argv[0], "env", 3) == 0)
+    else if ((ft_strncmp(cmd->argv[0], "env", 3) == 0)&& (ft_strlen(cmd->argv[0]) == 3))
         return (8);
-    
     return (0);
 }
 
 // falta por añadir que hace cada 
 // TODO? Need to pass envp here for some of the commands, or maybe not if we 
-// cmd builtin == 1 I think its wrong
-void executeBuiltin(struct command *cmd, char **envp) 
+// FIXME cmd builtin == 1 I think its wrong
+void executeBuiltin(t_command *cmd, char **envp)
 {
+    (void) envp;	// HACK for compilation, remove this or parameter later.
+    int	i;
+
     while (1) 
     {
         if (cmd->builtin == 1) 
@@ -39,7 +43,7 @@ void executeBuiltin(struct command *cmd, char **envp)
             else 
             {
                 if (chdir(cmd->argv[1]) != 0) 
-                    perror("cd");
+                    printf("wrong address\n");
             }
             return;
         } 
@@ -47,14 +51,35 @@ void executeBuiltin(struct command *cmd, char **envp)
             exit(0);
         else if (cmd->builtin == 3) 
         {
-            
+            i = 1;
+            while (i < cmd->argc)
+            {
+                printf("%s", cmd->argv[i]);
+                if (i < cmd->argc - 1)
+                    printf(" ");
+                i++;
+            }
+            printf("\n");
+            return;
         }
         else if (cmd->builtin == 4) 
         {
+            i = 2;
+            while (i < cmd->argc)
+            {
+                printf("%s", cmd->argv[i]);
+                if (i < cmd->argc - 1)
+                    printf(" ");
+                i++;
+            }
+            return;
         }
-        else if (cmd->builtin == 5)  
+        else if (cmd->builtin == 5)
+        {
             ms_pwd();
-        else if (cmd->builtin == 6) 
+            return ;
+        }
+        else if (cmd->builtin == 6)
         {
         }
         else if (cmd->builtin == 7) 
@@ -63,9 +88,9 @@ void executeBuiltin(struct command *cmd, char **envp)
         else if (cmd->builtin == 8) 
         {
         }
-        else 
+        else
         {
-            fprintf(stderr, "Unknown builtin command\n");
+            printf("Unknown builtin command\n");
             return;
         }
     }
@@ -73,8 +98,6 @@ void executeBuiltin(struct command *cmd, char **envp)
 
 
 // TODO Change strcspn calls to another function
-int parse(const char *cmdline, struct command *cmd) 
-=======
 // TODO Add 42 header to parse.c
 
 // TODO parse has to recognise redirection tokens: | < > << >>
@@ -90,15 +113,16 @@ int parse(const char *cmdline, struct command *cmd)
 // Return values:
 // 1 - ?
 int	parse(const char *cmdline, t_command *cmd)
->>>>>>> 83aa1aa3cd5c8481bb7d132aad01299e1092d5ef
 {
-    static char 	array[MAXARGS];
-    const char 	delims [10] = "\t\r\n";
+    // NOTE Don't need both array and **token, they do the same,
+//    static char 	array[MAXARGS];
+//    const char 	delims [10] = "\t\r\n";
     //char line = array;
     char 	**token;
     //char *endline;
     int 	is_bg;
 
+    is_bg = 0;	// HACK for compilation, remove later.
     if (cmdline == NULL)
         perror("command line is NULL\n");
     //(void) ft_strncpy(line, cmdline, MAXARGS);
@@ -136,8 +160,8 @@ int	parse(const char *cmdline, t_command *cmd)
     if (cmd->argc == 0)
         return (1);
     cmd->builtin = parseBuiltin (cmd);
-
-    if (is_bg (*cmd->argv[cmd->argc-1])) //== '6')) != 0
-        cmd->argv[--cmd->argc] = NULL;
+	// FIXME What does this try to do, the if statement?
+    /* if (is_bg (*cmd->argv[cmd->argc-1])) //== '6')) != 0 */
+    /*     cmd->argv[--cmd->argc] = NULL; */
     return (is_bg);
 }
