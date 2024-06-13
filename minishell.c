@@ -38,13 +38,13 @@ void	exit_and_free(char **args, int fd_in, int fd_out)
 // Find it in PATH
 // Run the command
 // NOTE Any fork-ing needed should have been handled before calling this.
-// TODO Adapt this to work with the minishell command struct
+// DONE in the basic Adapt this to work with the minishell command struct
 // TODO We need a clear_command_struct function to free mem allocated to cmd
 void	run_command(t_command *cmd, char **envp)
 {
 	char	*prog;
 
-	prog = find_command(cmd->argv[0], envp);
+	prog = find_command(cmd->argv[0]);
 	if (!prog)
 	{
 		perror("Program not found in PATH");
