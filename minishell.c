@@ -38,13 +38,13 @@ void	exit_and_free(char **args, int fd_in, int fd_out)
 // Find it in PATH
 // Run the command
 // NOTE Any fork-ing needed should have been handled before calling this.
-// TODO Adapt this to work with the minishell command struct
+// DONE in the basic Adapt this to work with the minishell command struct
 // TODO We need a clear_command_struct function to free mem allocated to cmd
 void	run_command(t_command *cmd, char **envp)
 {
 	char	*prog;
 
-	prog = find_command(cmd->argv[0], envp);
+	prog = find_command(cmd->argv[0]);
 	if (!prog)
 	{
 		perror("Program not found in PATH");
@@ -60,85 +60,34 @@ void	run_command(t_command *cmd, char **envp)
 	}
 }
 
-// Make a child process to execute the command:
-// - fork
-// - run command
-// - wait for it to come back
-// NOTE child == 0 means we are in the child process!
-// DONE Adapt this to work with the minishell command struct
-// TODO We can make this work with & / background
-// FIXME Some of this is only needed if we are pipe-ing, logic may be wrong.
-void	make_child(t_command *cmd, int bg, char **envp)
-{
-	pid_t	child;
-	int		tube[2];
-
-	if (pipe(tube) == -1)
-		exit_and_free(NULL, tube[0], tube[1]);
-	child = fork();
-	if (child == -1)
-		exit_and_free(NULL, tube[0], tube[1]);
-	if (child == 0)
-	{
-		close(tube[0]);
-		dup2(tube[1], STDOUT_FILENO);
-		run_command(cmd, envp);
-		close(tube[1]);
-	}
-	else
-	{
-		close(tube[1]);
-		dup2(tube[0], STDIN_FILENO);
-		if (bg)
-			printf("Child in background [%d]\n", child);
-		else    // TODO Not sure about this - does the pipe work with bg? If we put a process in BG would we still redirect it?
-			waitpid(child, 0, 0);
-		close(tube[0]);
-	}
-}
-
-
-/* // DONE Calls to this to be replaced by calls to make_child / run_command above */
-/* // TODO Delete this later, for reference only. */
-/* void runSystemCommand(t_command *cmd, int bg) */
-/* { */
-/*     pid_t childPid; */
-/*     if ((childPid = fork()) < 0) = shell */
-/*         error("fork() error"); */
-/*     else if (childPid == 0)  */
-/*     { */
-/*         if (execvp (cmd->argv[0], cmd->argv) < 0)  */
-/*         { */
-/*             printf("%s: Command not found\n", cmd->argv[0]); */
-/*             exit(0); */
-/*         }   */
-/*     } */
-/*     else  */
-/*     { */
-/*         if (bg) */
-/*             printf("Child in background [%d]\n", childPid); */
-/*         else */
-/*             wait(&childPid); */
-/*     } */
-/* } */
-
-// DONE Implement runBuiltinCommand
+// Sends cmdline to parse functtion to get a t_command
+// If cmd is BUILTIN, run there
+// Otherwise, try and run system command
+// DONE Only execute builtins if the command is a builtin, else try and reun command
+// TODO We also need to catch if running in a pipe or not.
+// TODO Determine if there is input or output redirection.
+// TODO Decide if run_command / cmd should be a pointer
+// FIXED Commands need to be run through a child process.
 void eval(char *cmdline, char **envp) 
 {
-    int bg;
-    t_command cmd;
+    int			bg;
+    t_command	cmd;
 
-//    printf("Evaluating '%s'\n", cmdline);	// HACK For debugging, remove later
+    printf("Evaluating '%s'\n", cmdline);	// HACK For debugging, remove later
     bg = parse(cmdline, &cmd);
-//    printf("Found command %s\n", cmd.argv[0]);	// HACK For debugging, remove later
-    if (bg == -1)
+    printf("Found command %s\n", cmd.argv[0]);	// HACK For debugging, remove later
+    if (bg == -1) 
         return;
     if (cmd.argv[0] == NULL) 
         return;
-    /* if (cmd.builtin == NONE) // if comented provisinaly becasuse this way the program works correctly when u input a wrong command
-        make_child ( &cmd, bg, envp); */
-    else
-    	executeBuiltin(&cmd, envp);
+    // FIXME if comented provisinaly becasuse this way the program works correctly when u input a wrong command
+    /* if (cmd.builtin == NONE) */
+    /*     make_child ( &cmd, bg, envp); */
+    /* else */
+	if (cmd.builtin != 0)
+		executeBuiltin(&cmd, envp);
+	else
+		run_in_child(&cmd, envp);
 }
 
 /* void	add_history(char *line) */
