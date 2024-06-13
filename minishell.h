@@ -44,6 +44,12 @@ typedef struct s_command
 	} builtin;
 }	t_command;
 
+// various functions
+void	exit_and_free(char **args, int fd_in, int fd_out);
+void	run_command(t_command *cmd, char **envp);
+void eval(char *cmdline, char **envp);
+char	*get_prompt(void);
+
 // builtins.c
 int	ms_pwd(void);
 
@@ -51,6 +57,8 @@ int	ms_pwd(void);
 int	parse(const char *cmdline, t_command *cmd);
 void executeBuiltin(t_command *cmd, char **envp);
 
-// paths.c - find programs in PATH
+// paths.c - find and direct programs in PATH
 char	*find_command(char *cmd);
+void	run_in_child(t_command *cmd, char **envp);
+void	run_in_child_with_pipe(t_command *cmd, char **envp);
 #endif
