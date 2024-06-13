@@ -34,12 +34,23 @@ void	exit_and_free(char **args, int fd_in, int fd_out)
 	exit(EXIT_FAILURE);
 }
 
+// Free the memory allocated to a t_command
+// Mainly (only?) in the args part.
+void	clear_t_command(t_command *cmd)
+{
+	int	i;
+
+	i = 0;
+	while (cmd->argv[i])
+			free(cmd->argv[i++]);
+}
+
 // Take a command
 // Find it in PATH
 // Run the command
 // NOTE Any fork-ing needed should have been handled before calling this.
 // DONE in the basic Adapt this to work with the minishell command struct
-// TODO We need a clear_command_struct function to free mem allocated to cmd
+// DONE We need a clear_command_struct function to free mem allocated to cmd
 void	run_command(t_command *cmd, char **envp)
 {
 	char	*prog;
@@ -87,6 +98,7 @@ void eval(char *cmdline, char **envp)
 		executeBuiltin(&cmd, envp);
 	else
 		run_in_child(&cmd, envp);
+	clear_t_command(&cmd);
 }
 
 /* void	add_history(char *line) */

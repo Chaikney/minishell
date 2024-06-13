@@ -100,7 +100,7 @@ void executeBuiltin(t_command *cmd, char **envp)
 }
 
 
-// TODO Change strcspn calls to another function
+// DONE Change strcspn calls to another function
 // TODO Add 42 header to parse.c
 
 // TODO parse has to recognise redirection tokens: | < > << >>
@@ -115,7 +115,6 @@ void executeBuiltin(t_command *cmd, char **envp)
 // Parse input from cmdline into a command struct
 // Return values:
 // 1 - ?
-// TODO If it is not a builtin, try and run as a command
 int	parse(const char *cmdline, t_command *cmd)
 {
     char 	**token;
