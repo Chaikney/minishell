@@ -115,56 +115,29 @@ void executeBuiltin(t_command *cmd, char **envp)
 // Parse input from cmdline into a command struct
 // Return values:
 // 1 - ?
+// TODO If it is not a builtin, try and run as a command
 int	parse(const char *cmdline, t_command *cmd)
 {
-    // NOTE Don't need both array and **token, they do the same,
-//    static char 	array[MAXARGS];
-//    const char 	delims [10] = "\t\r\n";
-    //char line = array;
     char 	**token;
-    //char *endline;
     int 	is_bg;
 
     is_bg = 0;	// HACK for compilation, remove later.
     if (cmdline == NULL)
         perror("command line is NULL\n");
-    //(void) ft_strncpy(line, cmdline, MAXARGS);
-    //endline = line + ft_strlen(line);
     token = ft_split(cmdline, ' ');
     cmd->argc = 0;
     while (token[cmd->argc] != NULL) 
     {
         cmd->argv[cmd->argc] = token[cmd->argc];
         cmd->argc++;
-
         if (cmd->argc >= MAXARGS - 1) {
             break;
         }
     }
-    //while (line < endline) 
-    //{
-
-      //  line += strcspn (line, delims);
-        //if (line > endline) 
-          //  break;
-
- /*        token = line + strcspn (line, delims);
-
-        *token = '\0';
-
-        cmd->argv[cmd->argc++] = line;
-
-        if (cmd->argc > MAXARGS - 1) 
-            break;
-        line =  token + 1
-    } */
     cmd->argv[cmd->argc] = NULL;
-    free(token);
+    free(token);	// FIXME Ensure this frees *all* parts of token
     if (cmd->argc == 0)
         return (1);
     cmd->builtin = parseBuiltin (cmd);
-	// FIXME What does this try to do, the if statement?
-    /* if (is_bg (*cmd->argv[cmd->argc-1])) //== '6')) != 0 */
-    /*     cmd->argv[--cmd->argc] = NULL; */
     return (is_bg);
 }

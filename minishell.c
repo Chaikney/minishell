@@ -64,7 +64,6 @@ void	run_command(t_command *cmd, char **envp)
 // - run command
 // - wait for it to come back
 // NOTE child == 0 means we are in the child process!
-// DONE Adapt this to work with the minishell command struct
 // TODO We can make this work with & / background
 // FIXME Some of this is only needed if we are pipe-ing, logic may be wrong.
 void	make_child(t_command *cmd, int bg, char **envp)
