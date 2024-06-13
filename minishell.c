@@ -55,6 +55,7 @@ void	run_command(t_command *cmd, char **envp)
 	{
 		perror("Failed to execute program");
         free (prog);
+		
 //		exit_and_free(args, -1, -1);
 	}
 }
@@ -130,15 +131,14 @@ void eval(char *cmdline, char **envp)
 //    printf("Evaluating '%s'\n", cmdline);	// HACK For debugging, remove later
     bg = parse(cmdline, &cmd);
 //    printf("Found command %s\n", cmd.argv[0]);	// HACK For debugging, remove later
-    if (bg == -1) 
+    if (bg == -1)
         return;
     if (cmd.argv[0] == NULL) 
         return;
-    // FIXME if comented provisinaly becasuse this way the program works correctly when u input a wrong command
-    /* if (cmd.builtin == NONE) */
-    /*     make_child ( &cmd, bg, envp); */
-    /* else */
-    executeBuiltin(&cmd, envp);
+    /* if (cmd.builtin == NONE) // if comented provisinaly becasuse this way the program works correctly when u input a wrong command
+        make_child ( &cmd, bg, envp); */
+    else
+    	executeBuiltin(&cmd, envp);
 }
 
 /* void	add_history(char *line) */

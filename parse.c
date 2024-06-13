@@ -43,10 +43,7 @@ void executeBuiltin(t_command *cmd, char **envp)
             else 
             {
                 if (chdir(cmd->argv[1]) != 0) 
-                {
-                    perror("cd");
                     printf("wrong address\n");
-                }
             }
             return;
         } 
@@ -82,7 +79,7 @@ void executeBuiltin(t_command *cmd, char **envp)
             ms_pwd();
             return ;
         }
-        else if (cmd->builtin == 6) 
+        else if (cmd->builtin == 6)
         {
         }
         else if (cmd->builtin == 7) 
@@ -91,7 +88,7 @@ void executeBuiltin(t_command *cmd, char **envp)
         else if (cmd->builtin == 8) 
         {
         }
-        else 
+        else
         {
             printf("Unknown builtin command\n");
             return;
