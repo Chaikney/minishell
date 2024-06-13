@@ -122,14 +122,22 @@ void	make_child(t_command *cmd, int bg, char **envp)
 /* } */
 
 // DONE Implement runBuiltinCommand
+// Sends cmdline to parse functtion to get a t_command
+// If cmd is BUILTIN, run there
+// Otherwise, try and run system command
+// TODO Only execute builtins if the command is a builtin, else try and reun command
+// TODO We also need to catch if running in a pipe or not.
+// TODO Determine if there is input or output redirection.
+// TODO Decide if run_command / cmd should be a pointer
+// FIXME Commands need to be run through a child process.
 void eval(char *cmdline, char **envp) 
 {
-    int bg;
-    t_command cmd;
+    int			bg;
+    t_command	cmd;
 
-//    printf("Evaluating '%s'\n", cmdline);	// HACK For debugging, remove later
+    printf("Evaluating '%s'\n", cmdline);	// HACK For debugging, remove later
     bg = parse(cmdline, &cmd);
-//    printf("Found command %s\n", cmd.argv[0]);	// HACK For debugging, remove later
+    printf("Found command %s\n", cmd.argv[0]);	// HACK For debugging, remove later
     if (bg == -1) 
         return;
     if (cmd.argv[0] == NULL) 
@@ -138,7 +146,10 @@ void eval(char *cmdline, char **envp)
     /* if (cmd.builtin == NONE) */
     /*     make_child ( &cmd, bg, envp); */
     /* else */
-    executeBuiltin(&cmd, envp);
+	if (cmd.builtin != 0)
+		executeBuiltin(&cmd, envp);
+	else
+		run_command(&cmd, envp);
 }
 
 /* void	add_history(char *line) */
