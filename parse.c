@@ -23,7 +23,6 @@ int parseBuiltin(t_command *cmd)
         return (7);
     else if ((ft_strncmp(cmd->argv[0], "env", 3) == 0)&& (ft_strlen(cmd->argv[0]) == 3))
         return (8);
-    
     return (0);
 }
 
@@ -94,7 +93,7 @@ void executeBuiltin(t_command *cmd, char **envp)
         }
         else 
         {
-            fprintf(stderr, "Unknown builtin command\n");
+            printf("Unknown builtin command\n");
             return;
         }
     }

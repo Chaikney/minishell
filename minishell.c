@@ -134,10 +134,11 @@ void eval(char *cmdline, char **envp)
         return;
     if (cmd.argv[0] == NULL) 
         return;
-    if (cmd.builtin == NONE)
-        make_child ( &cmd, bg, envp);
-    else
-        executeBuiltin(&cmd, envp);
+    // FIXME if comented provisinaly becasuse this way the program works correctly when u input a wrong command
+    /* if (cmd.builtin == NONE) */
+    /*     make_child ( &cmd, bg, envp); */
+    /* else */
+    executeBuiltin(&cmd, envp);
 }
 
 /* void	add_history(char *line) */
