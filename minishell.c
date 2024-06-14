@@ -98,7 +98,9 @@ void eval(char *cmdline, char **envp)
 	if (cmd.builtin != 0)
 		executeBuiltin(&cmd, envp);
 	else
+	{
 		run_in_child(&cmd, envp);
+	}
 	clear_t_command(&cmd);
 }
 

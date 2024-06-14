@@ -8,9 +8,9 @@ int parseBuiltin(t_command *cmd)
         return (1);
     else if ((ft_strncmp(cmd->argv[0], "exit", 4) == 0) && (ft_strlen(cmd->argv[0]) == 4) && (cmd->argv[1] == NULL))
         return (2);
-    else if ((ft_strncmp(cmd->argv[0], "echo", 4) == 0)&& (ft_strlen(cmd->argv[0]) == 4))
+    else if ((ft_strncmp(cmd->argv[0], "echo", 4) == 0)&& (ft_strlen(cmd->argv[0]) == 4) && (cmd->argv[1] != NULL))
     {
-        if ((ft_strncmp(cmd->argv[1], "-n", 2) == 0)&& (ft_strlen(cmd->argv[0]) == 2))
+        if ((ft_strncmp(cmd->argv[1], "-n", 2) == 0)&& (ft_strlen(cmd->argv[1]) == 2))
             return (4);
         else
             return (3);
@@ -64,13 +64,14 @@ void executeBuiltin(t_command *cmd, char **envp)
             while (i < cmd->argc)
             {
                 printf("%s", cmd->argv[i]);
-                if (i < cmd->argc - 1)
+                if (i < cmd->argc)
                     printf(" ");
                 i++;
             }
             printf("\n");
             return;
         }
+        
         else if (cmd->builtin == 4) 
         {
             i = 2;
@@ -119,10 +120,11 @@ int	parse(const char *cmdline, t_command *cmd)
 {
     char 	**token;
     int 	is_bg;
-
+    
     is_bg = 0;	// HACK for compilation, remove later.
     if (cmdline == NULL)
         perror("command line is NULL\n");
+    
     token = ft_split(cmdline, ' ');
     cmd->argc = 0;
     while (token[cmd->argc] != NULL) 
