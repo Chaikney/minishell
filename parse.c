@@ -29,6 +29,15 @@ int parseBuiltin(t_command *cmd)
 // falta por añadir que hace cada 
 // TODO? Need to pass envp here for some of the commands, or maybe not if we 
 // FIXME cmd builtin == 1 I think its wrong
+// FIXME echo causes segfault
+// TODO Exit has to do some clean up
+// TODO Commands into separate functions, this is too long.
+//  [ ] echo with -n (newline or not)
+//  [ ] cd with only a relative or absolute path
+//  [x] pwd (no options)
+//  [ ] unset (no options)
+//  [ ] env, no options or args
+//  [ ] exit no options.
 void executeBuiltin(t_command *cmd, char **envp)
 {
     (void) envp;	// HACK for compilation, remove this or parameter later.
@@ -97,22 +106,15 @@ void executeBuiltin(t_command *cmd, char **envp)
 }
 
 
-// TODO Change strcspn calls to another function
+// DONE Change strcspn calls to another function
 // TODO Add 42 header to parse.c
 
 // TODO parse has to recognise redirection tokens: | < > << >>
 // DONE Change strcspn calls to another function
-// TODO Implement parseBuiltIn - simple match against the list of builtins?
-//  - echo with -n (newline or not)
-//  - cd with only a relative or absolute path
-//  - pwd (no options)
-//  - unset (no options)
-//  - env, no options or args
-//  - exit no options.
+// DONE Implement parseBuiltIn - simple match against the list of builtins?
 // Parse input from cmdline into a command struct
 // Return values:
 // 1 - ?
-// TODO If it is not a builtin, try and run as a command
 int	parse(const char *cmdline, t_command *cmd)
 {
     char 	**token;
