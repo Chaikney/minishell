@@ -115,7 +115,8 @@ char	*get_prompt(void)
 
 // FIXME I think feof is forbidden - find another way to catch EOF signal.
 // TODO Implement an exit routine that frees allocated memory.
-// TODO cmdline must be freed after use.
+// DONE cmdline must be freed after use.
+// TODO Add cmdline to readline history after we receive it.
 int main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;
