@@ -17,11 +17,11 @@ int parseBuiltin(t_command *cmd)
     }
     else if ((ft_strncmp(cmd->argv[0], "pwd", 3) == 0) && (ft_strlen(cmd->argv[0]) == 3) && (cmd->argv[1] == NULL))
         return (5);
-    else if ((ft_strncmp(cmd->argv[0], "export", 6) == 0)&& (ft_strlen(cmd->argv[0]) == 6))
+    else if ((ft_strncmp(cmd->argv[0], "export", 6) == 0)&& (ft_strlen(cmd->argv[0]) == 6) && (cmd->argv[1] != NULL))
         return (6);
     else if ((ft_strncmp(cmd->argv[0], "unset", 5) == 0)&& (ft_strlen(cmd->argv[0]) == 5))
         return (7);
-    else if ((ft_strncmp(cmd->argv[0], "env", 3) == 0)&& (ft_strlen(cmd->argv[0]) == 3))
+    else if ((ft_strncmp(cmd->argv[0], "env", 3) == 0)&& (ft_strlen(cmd->argv[0]) == 3) && (cmd->argv[1] == NULL) )
         return (8);
     return (0);
 }
@@ -97,6 +97,12 @@ void executeBuiltin(t_command *cmd, char **envp)
         }
         else if (cmd->builtin == 8) 
         {
+            while (*envp) 
+            {
+                printf("%s\n", *envp);
+                envp++;
+            }
+            return;
         }
         else
         {
