@@ -91,9 +91,13 @@ void executeBuiltin(t_command *cmd, char **envp)
         }
         else if (cmd->builtin == 6)
         {
+            ms_export(cmd, envp);
+            return;
         }
         else if (cmd->builtin == 7) 
         {
+            ms_unset(cmd, envp);
+            return;
         }
         else if (cmd->builtin == 8) 
         {
