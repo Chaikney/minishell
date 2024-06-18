@@ -53,6 +53,8 @@ char	*find_command(char *cmd)
 // - wait for it to come back
 // NOTE child == 0 means we are in the child process!
 // TODO We can make this work with & / background
+// TODO How would this work with different input / output?
+//
 void	run_in_child_with_pipe(t_command *cmd, char **envp)
 {
 	pid_t	child;

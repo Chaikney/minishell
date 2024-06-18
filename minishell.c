@@ -84,17 +84,13 @@ void eval(char *cmdline, char **envp)
     int			bg;
     t_command	cmd;
 
-    printf("Evaluating '%s'\n", cmdline);	// HACK For debugging, remove later
+//    printf("Evaluating '%s'\n", cmdline);	// HACK For debugging, remove later
     bg = parse(cmdline, &cmd);
-    printf("Found command %s\n", cmd.argv[0]);	// HACK For debugging, remove later
+//    printf("Found command %s\n", cmd.argv[0]);	// HACK For debugging, remove later
     if (bg == -1) 
         return;
     if (cmd.argv[0] == NULL) 
         return;
-    // FIXME if comented provisinaly becasuse this way the program works correctly when u input a wrong command
-    /* if (cmd.builtin == NONE) */
-    /*     make_child ( &cmd, bg, envp); */
-    /* else */
 	if (cmd.builtin != 0)
 		executeBuiltin(&cmd, envp);
 	else
@@ -104,22 +100,18 @@ void eval(char *cmdline, char **envp)
 	clear_t_command(&cmd);
 }
 
-/* void	add_history(char *line) */
-/* { */
-/*     (void) line; */
-/*     printf("add_history not implmented yet"); */
-/* } */
-
 // TODO Define a more interesting prompt
 char	*get_prompt(void)
 {
     return("what should i do? > ");
 }
 
-// FIXME I think feof is forbidden - find another way to catch EOF signal.
+// FIXME feof is forbidden - find another way to catch EOF signal.
+// TODO Implement signals handling.
 // TODO Implement an exit routine that frees allocated memory.
 // DONE cmdline must be freed after use.
-// TODO Add cmdline to readline history after we receive it.
+// DONE Add cmdline to readline history after we receive it.
+// TODO Persist history between runs of minishell.
 int main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;
@@ -139,7 +131,7 @@ int main(int argc, char **argv, char **envp)
 			}
 			if (cmdline[0] != '\0')
 			{
-				add_history(cmdline);
+				add_history((const char *) cmdline);
 				eval(cmdline, envp);
 			}
 			free(cmdline);

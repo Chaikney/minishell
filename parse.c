@@ -30,6 +30,7 @@ int parseBuiltin(t_command *cmd)
 // TODO? Need to pass envp here for some of the commands, or maybe not if we 
 // FIXME cmd builtin == 1 I think its wrong
 // FIXME echo causes segfault
+// FIXME Exit has to be typed twice to work?
 // TODO Exit has to do some clean up
 // TODO Commands into separate functions, this is too long.
 //  [ ] echo with -n (newline or not)
