@@ -42,7 +42,15 @@ typedef enum e_builtin
 	QUIT,
 	JOBS,
 	BG,
-	FG
+	FG,
+	CD,
+	EXIT,
+	ECHO,
+	ECHON,
+	PWD,
+	EXP,
+	UNSET,
+	ENV
 }	t_builtin;
 
 typedef struct s_command

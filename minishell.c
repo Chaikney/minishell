@@ -88,13 +88,13 @@ void eval(char *cmdline, char **envp)
     bg = parse(cmdline, &cmd);
     printf("Found command %s\n", cmd.argv[0]);	// HACK For debugging, remove later
     if (bg == -1) 
+	{
         return;
+	}
     if (cmd.argv[0] == NULL) 
+	{
         return;
-    // FIXME if comented provisinaly becasuse this way the program works correctly when u input a wrong command
-    /* if (cmd.builtin == NONE) */
-    /*     make_child ( &cmd, bg, envp); */
-    /* else */
+	}
 	if (cmd.builtin != 0)
 		executeBuiltin(&cmd, envp);
 	else
