@@ -67,6 +67,8 @@ void	clear_t_command(t_command *cmd);
 void	run_command(t_command *cmd, char **envp);
 void	eval(char *cmdline, char **envp);
 char	*get_prompt(void);
+
+// substitute.c - variable substitution
 int 	find_env_var(char **envp, const char *var);
 char	*ms_strsub(char *str, char *remove, char *replace);
 char 	*substitute_variables(char *cmd);

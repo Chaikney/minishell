@@ -23,7 +23,7 @@ FTLIB	= -L $(FTDIR) -lft
 
 LIBS	= $(FTLIB) -lreadline
 
-CFLAGS = -Werror -Wall -Wextra
+CFLAGS = -Werror -Wall -Wextra -ggdb
 CC		= cc
 
 HEADERS	= -I $(FTDIR)

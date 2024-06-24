@@ -124,6 +124,7 @@ int main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;
 	char	*prompt;
+	char	*subd;
 
 	(void) argv;
 	if (argc == 1)	// HACK for compilation, remove later
@@ -132,6 +133,8 @@ int main(int argc, char **argv, char **envp)
 		{
 			prompt = get_prompt();
 			cmdline = readline(prompt);
+			subd = substitute_variables(cmdline);
+			printf("Start with: b%s\nBecame: %s", cmdline, subd);
 			if (cmdline == NULL)
 			{
 				printf("\n");
