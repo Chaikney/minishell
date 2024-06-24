@@ -29,11 +29,11 @@ int parseBuiltin(t_command *cmd)
     }
     else if ((ft_strncmp(cmd->argv[0], "pwd", 3) == 0) && (ft_strlen(cmd->argv[0]) == 3) && (cmd->argv[1] == NULL))
         return (PWD);
-    else if ((ft_strncmp(cmd->argv[0], "export", 6) == 0)&& (ft_strlen(cmd->argv[0]) == 6))
+    else if ((ft_strncmp(cmd->argv[0], "export", 6) == 0)&& (ft_strlen(cmd->argv[0]) == 6) && (cmd->argv[1] != NULL))
         return (EXP);
     else if ((ft_strncmp(cmd->argv[0], "unset", 5) == 0)&& (ft_strlen(cmd->argv[0]) == 5))
         return (UNSET);
-    else if ((ft_strncmp(cmd->argv[0], "env", 3) == 0)&& (ft_strlen(cmd->argv[0]) == 3))
+    else if ((ft_strncmp(cmd->argv[0], "env", 3) == 0)&& (ft_strlen(cmd->argv[0]) == 3) && (cmd->argv[1] == NULL) )
         return (ENV);
     return (0);
 }
@@ -103,12 +103,22 @@ void executeBuiltin(t_command *cmd, char **envp)
         }
         else if (cmd->builtin == EXP)
         {
+            ms_export(cmd, envp);
+            return;
         }
         else if (cmd->builtin == UNSET)
         {
+            ms_unset(cmd, envp);
+            return;
         }
         else if (cmd->builtin == ENV)
         {
+            while (*envp) 
+            {
+                printf("%s\n", *envp);
+                envp++;
+            }
+            return;
         }
         else
         {
