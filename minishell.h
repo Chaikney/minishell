@@ -67,6 +67,9 @@ void	clear_t_command(t_command *cmd);
 void	run_command(t_command *cmd, char **envp);
 void	eval(char *cmdline, char **envp);
 char	*get_prompt(void);
+int 	find_env_var(char **envp, const char *var);
+char	*ms_strsub(char *str, char *remove, char *replace);
+char 	*substitute_variables(char *cmd);
 
 // builtins.c
 int		ms_pwd(void);
@@ -81,4 +84,7 @@ void	executeBuiltin(t_command *cmd, char **envp);
 char	*find_command(char *cmd);
 void	run_in_child(t_command *cmd, char **envp);
 void	run_in_child_with_pipe(t_command *cmd, char **envp);
+
+// substitute.c - functions to sub variables in commands
+int	needs_sub(char *str);
 #endif
