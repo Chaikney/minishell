@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/24 12:16:53 by chaikney          #+#    #+#             */
+/*   Updated: 2024/06/24 12:17:02 by chaikney         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int parseBuiltin(t_command *cmd)
@@ -108,9 +120,6 @@ void executeBuiltin(t_command *cmd, char **envp)
 
 
 // DONE Change strcspn calls to another function
-// TODO Add 42 header to parse.c
-
-// TODO parse has to recognise redirection tokens: | < > << >>
 // DONE Change strcspn calls to another function
 // DONE Implement parseBuiltIn - simple match against the list of builtins?
 // Parse input from cmdline into a command struct
