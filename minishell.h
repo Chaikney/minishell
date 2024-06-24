@@ -53,6 +53,7 @@ typedef enum e_builtin
 	ENV
 }	t_builtin;
 
+// TODO What if we flaag command types - system, builtin, what?
 typedef struct s_command
 {
 	int			argc;

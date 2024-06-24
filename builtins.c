@@ -1,4 +1,5 @@
 #include "minishell.h"
+#include <stdio.h>
 
 //TODO Add 42 header
 
@@ -41,7 +42,8 @@ int find_env_var(char **envp, const char *var)
 }
 
 // Set a new variable in env.
-// If the variable name already exists, change it.
+// If the variable name already exists, change it. (remove existing and then add?)
+// ....this is absically UNSET ?!
 // If the variable does not already exist, add it.
 // NOTE I think we have to distinguish between the variable's NAME and VALUE
 // FIXME This has variables defined in-line at time of use.
@@ -58,7 +60,7 @@ void ms_export(t_command *cmd, char **envp)
     }
     var = cmd->argv[1];
     var_index = find_env_var(envp, var);
-    if (var_index >= 0)
+    if (var_index >= 0)	// If the variable is already set, unset it
     {
         new_var = ft_strdup(var);
         if (new_var == NULL)
@@ -69,7 +71,7 @@ void ms_export(t_command *cmd, char **envp)
         free(envp[var_index]);
         envp[var_index] = new_var;
     }
-    else
+    else	// Add new env var
     {
         size_t env_len = 0;
         while ((envp)[env_len] != NULL)
@@ -90,7 +92,6 @@ void ms_export(t_command *cmd, char **envp)
             new_envp[i] = (envp)[i];
             i++;
         }
-
         new_var = ft_strdup(var);
         if (new_var == NULL)
         {
@@ -107,6 +108,7 @@ void ms_export(t_command *cmd, char **envp)
 // Remove the variable in cmd from ENV, if present.
 // If not present, take no action.
 // FIXME This causes an endless loop, I guess in the while(envp[i])
+// FIXME Also cause a segfault!
 void ms_unset(t_command *cmd, char **envp)
 {
     int	i;
@@ -114,16 +116,20 @@ void ms_unset(t_command *cmd, char **envp)
     int	var_index;
 
     i = 0;
+    printf("unset checking argc");
     if (cmd->argc < 2)
     {
         fprintf(stderr, "unset: missing argument\n");
         return;
     }
+    printf("looking for var in agv[1]");
     var = cmd->argv[1];
+    printf("looking for %s to unset it", var);
     var_index = find_env_var(envp, var);
+    printf("\tfound at index: %i", var_index);
     if (var_index >= 0)
     {
-        while (envp[i] != NULL)
+        while (*envp[i] != '\n')
         {
             i = var_index;
             envp[i] = envp[i + 1];	// NOTE I don't know what this does?

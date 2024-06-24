@@ -95,7 +95,7 @@ void eval(char *cmdline, char **envp)
 	{
         return;
 	}
-	if (cmd.builtin != 0)
+	if (cmd.builtin != NONE)	// FIXME How does this work now with the enum changes?
 		executeBuiltin(&cmd, envp);
 	else
 	{

@@ -15,7 +15,7 @@
 int parseBuiltin(t_command *cmd)
 {
     if (cmd->argc == 0) 
-        return (0);
+        return (NONE);
     if ((ft_strncmp(cmd->argv[0], "cd", 2) == 0) && (ft_strlen(cmd->argv[0]) == 2))
         return (CD);
     else if ((ft_strncmp(cmd->argv[0], "exit", 4) == 0) && (ft_strlen(cmd->argv[0]) == 4) && (cmd->argv[1] == NULL))
@@ -35,7 +35,7 @@ int parseBuiltin(t_command *cmd)
         return (UNSET);
     else if ((ft_strncmp(cmd->argv[0], "env", 3) == 0)&& (ft_strlen(cmd->argv[0]) == 3) && (cmd->argv[1] == NULL) )
         return (ENV);
-    return (0);
+    return (NONE);
 }
 
 // falta por añadir que hace cada 
@@ -83,7 +83,6 @@ void executeBuiltin(t_command *cmd, char **envp)
             printf("\n");
             return;
         }
-        
         else if (cmd->builtin == ECHO)
         {
             i = 2;
