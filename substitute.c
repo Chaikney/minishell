@@ -24,9 +24,8 @@ int	needs_sub(char *str)
 }
 
 // Subsitute the substr remove with replace in a string
-// FIXED Invalid write here, causes segfault
-// FIXED What is returned has not changed!
-// FIXME If replace or remove are null, still have to get rid of the $ (or endless loop)
+// TODO If replace or remove are null, still have to get rid of the $
+// (or we get an endless loop in substitute_variables)
 char	*ms_strsub(char *str, char *remove, char *replace)
 {
 	int		len;
@@ -35,11 +34,8 @@ char	*ms_strsub(char *str, char *remove, char *replace)
 
 	if ((!replace) || (!remove))
 		return (str);
-	printf("\nWill replace: %s\twith: %s\t in: %s", remove, replace, str);
-	len = ft_strlen(str) -
-		ft_strlen(remove)
-		+ ft_strlen(replace) + 1;	// FIXME problem with this part in "more than one substitution" case
-	new_str = malloc(sizeof(char) * len);	// FIXED Complaints of unitialised variable come from here
+	len = ft_strlen(str) - ft_strlen(remove) + ft_strlen(replace) + 1;
+	new_str = malloc(sizeof(char) * len);
 	ft_bzero(new_str, len);
 	if (!new_str)
 		return (NULL);
@@ -55,7 +51,6 @@ char	*ms_strsub(char *str, char *remove, char *replace)
 		str++;
 	while (*str != '\0')
 		*new_str++ = *str++;
-//	printf("\nresult: %s", cptr);	// HACK For debugging
 	return (cptr);
 }
 
@@ -67,8 +62,8 @@ char	*ms_strsub(char *str, char *remove, char *replace)
 // - run again / recurse until we have no more things to sub
 // NOTE cmd is assumed to be the unsplit input from readline
 // FIXED If no substitution, we return garbage - problem is the new_cmd thing
-// TODO Test with > 1 substitution in a command.
-// FIXED reduce number of variables in this function, fails Norm.
+// DONE Test with > 1 substitution in a command.
+// FIXME Function has too many lines
 char	*substitute_variables(char *cmd)
 {
 	int		sub_pos;
@@ -77,10 +72,8 @@ char	*substitute_variables(char *cmd)
 	char	*val;
 	char	*new_cmd;
 
-	printf("\nStart with: %s", cmd);	// HACK for debugging
 	sub_pos = needs_sub(cmd);
 	new_cmd = NULL;
-	printf("entering loop with sub_pos %i", sub_pos);
 	while (sub_pos != -1)	// NOTE Endless loop if replace or remove are null (Should remove the $ at least)
 	{
 		sub_pos++;	// NOTE Start the count *after* the $
@@ -97,6 +90,5 @@ char	*substitute_variables(char *cmd)
 		sub_pos = needs_sub(new_cmd);
 		cmd = new_cmd;
 	}
-//	printf("\tBecame: %s", new_cmd);	// HACK For debugging, causes invalid read warnings
 	return (cmd);
 }
