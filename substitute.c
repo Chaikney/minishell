@@ -30,12 +30,14 @@ char	*ms_strsub(char *str, char *remove, char *replace)
 {
 	int		len;
 	char	*new_str;
+	char	*cptr;
 
 	len = ft_strlen(str) - ft_strlen(remove) + ft_strlen(replace) + 1;
 	new_str = malloc(sizeof(char) * len);
 	if (!new_str)
 		return (NULL);
-	new_str[len] = '\0';
+	new_str[len - 1] = '\0';
+	cptr = new_str;
 	while (*str != '$')
 	{
 		*new_str++ = *str++;
@@ -46,7 +48,7 @@ char	*ms_strsub(char *str, char *remove, char *replace)
 		str++;
 	while (*str != '\0')
 		*new_str++ = *str++;
-	return (new_str);
+	return (cptr);
 }
 
 // Substitute a variable into its position in the command:
@@ -74,11 +76,11 @@ char	*substitute_variables(char *cmd)
 		var_name = ft_substr(cmd, sub_pos + 1, (sub_len));
 		val = getenv(var_name);
 		old_cmd = cmd;
-		cmd = ms_strsub(cmd, var_name, val);
+		cmd = ms_strsub(old_cmd, var_name, val);
 		free (old_cmd);	// FIXME invalid read of this later?
 		free(var_name);
-		free(val);
-		sub_pos = needs_sub(cmd);
+//		free(val); // NOTE return of getenv seems to not need to be freed
+		sub_pos = needs_sub(cmd);	// FIXME Uninitd here as well - cmd??
 	}
 	return (cmd);
 }

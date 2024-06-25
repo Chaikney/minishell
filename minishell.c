@@ -134,7 +134,7 @@ int main(int argc, char **argv, char **envp)
 			prompt = get_prompt();
 			cmdline = readline(prompt);
 			subd = substitute_variables(cmdline);
-			printf("Start with: b%s\nBecame: %s", cmdline, subd);
+			printf("Start with: %s\tBecame: %s", cmdline, subd);
 			if (cmdline == NULL)
 			{
 				printf("\n");
