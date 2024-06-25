@@ -127,6 +127,7 @@ int main(int argc, char **argv, char **envp)
 	char	*subd;
 
 	(void) argv;
+	subd = NULL;
 	if (argc == 1)	// HACK for compilation, remove later
 	{
 		while (1)
@@ -134,18 +135,17 @@ int main(int argc, char **argv, char **envp)
 			prompt = get_prompt();
 			cmdline = readline(prompt);
 			subd = substitute_variables(cmdline);
-			printf("Start with: %s\tBecame: %s", cmdline, subd);
-			if (cmdline == NULL)
+			if (subd == NULL)
 			{
 				printf("\n");
 				exit(0);
 			}
-			if (cmdline[0] != '\0')
+			if (subd[0] != '\0')
 			{
-				add_history(cmdline);
-				eval(cmdline, envp);
+				add_history(subd);
+				eval(subd, envp);
 			}
-			free(cmdline);
+			free(subd);
 		}
 	}
 	else

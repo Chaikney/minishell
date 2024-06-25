@@ -35,7 +35,9 @@ char	*ms_strsub(char *str, char *remove, char *replace)
 	char	*cptr;
 
 	printf("\nWill replace: %s\twith: %s\t in: %s", remove, replace, str);
-	len = ft_strlen(str) - ft_strlen(remove) + ft_strlen(replace) + 1;
+	len = ft_strlen(str) -
+		ft_strlen(remove)
+		+ ft_strlen(replace) + 1;	// FIXME problem with this part in "more than one substitution" case
 	new_str = malloc(sizeof(char) * len);	// FIXED Complaints of unitialised variable come from here
 	ft_bzero(new_str, len);
 	if (!new_str)
@@ -77,6 +79,7 @@ char	*substitute_variables(char *cmd)
 	printf("\nStart with: %s", cmd);
 	sub_pos = needs_sub(cmd);
 	new_cmd = NULL;
+	printf("entering loop with sub_pos %i", sub_pos);
 	while (sub_pos != -1)
 	{
 		sub_len = 0;
@@ -84,7 +87,9 @@ char	*substitute_variables(char *cmd)
 			&& (cmd[sub_pos + sub_len] != ' '))
 			sub_len++;
 		var_name = ft_substr(cmd, sub_pos + 1, (sub_len));
+		printf("searching for %s in env", var_name);
 		val = getenv(var_name);
+		printf("\tfound: %s", val);
 		new_cmd = ms_strsub(cmd, var_name, val);
 		free(var_name);
 		sub_pos = needs_sub(new_cmd);	// FIXED Uninitd warning as well - new_cmd??
