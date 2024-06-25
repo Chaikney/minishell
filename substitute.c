@@ -2,18 +2,16 @@
 
 // TODO Add 42 header
 
-// Return the index if the command needs to
-// have variable subsitution, i.e. has $
+// Return the index of the first $ if command needs to
+// have variable subsitution.
 // If no sub is needed, return -1
 // TODO Take into account "" and '' quoting to decide a sub is needed
-// FIXED str is uninitialised and causes valgrind complaints
-// ...call to ft_bzero in ms_strsub fixed that
 int	needs_sub(char *str)
 {
 	int	i;
 
 	i = 0;
-	while (str[i] != '\0')	// FIXED Uninitialised var here
+	while (str[i] != '\0')
 	{
 		if (str[i] == '$')
 			break ;
@@ -28,12 +26,15 @@ int	needs_sub(char *str)
 // Subsitute the substr remove with replace in a string
 // FIXED Invalid write here, causes segfault
 // FIXED What is returned has not changed!
+// FIXME If replace or remove are null, still have to get rid of the $ (or endless loop)
 char	*ms_strsub(char *str, char *remove, char *replace)
 {
 	int		len;
 	char	*new_str;
 	char	*cptr;
 
+	if ((!replace) || (!remove))
+		return (str);
 	printf("\nWill replace: %s\twith: %s\t in: %s", remove, replace, str);
 	len = ft_strlen(str) -
 		ft_strlen(remove)
@@ -76,23 +77,24 @@ char	*substitute_variables(char *cmd)
 	char	*val;
 	char	*new_cmd;
 
-	printf("\nStart with: %s", cmd);
+	printf("\nStart with: %s", cmd);	// HACK for debugging
 	sub_pos = needs_sub(cmd);
 	new_cmd = NULL;
 	printf("entering loop with sub_pos %i", sub_pos);
-	while (sub_pos != -1)
+	while (sub_pos != -1)	// NOTE Endless loop if replace or remove are null (Should remove the $ at least)
 	{
+		sub_pos++;	// NOTE Start the count *after* the $
 		sub_len = 0;
 		while ((cmd[sub_pos + sub_len] != '\0')
 			&& (cmd[sub_pos + sub_len] != ' '))
 			sub_len++;
-		var_name = ft_substr(cmd, sub_pos + 1, (sub_len));
+		var_name = ft_substr(cmd, sub_pos, (sub_len));
 		printf("searching for %s in env", var_name);
-		val = getenv(var_name);
+		val = getenv(var_name);	// NOTE This comes back null (when 2 requests)
 		printf("\tfound: %s", val);
-		new_cmd = ms_strsub(cmd, var_name, val);
+		new_cmd = ms_strsub(cmd, var_name, val);	// NOTE and this then segfaults.
 		free(var_name);
-		sub_pos = needs_sub(new_cmd);	// FIXED Uninitd warning as well - new_cmd??
+		sub_pos = needs_sub(new_cmd);
 		cmd = new_cmd;
 	}
 //	printf("\tBecame: %s", new_cmd);	// HACK For debugging, causes invalid read warnings
