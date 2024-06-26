@@ -6,26 +6,49 @@
 // have variable subsitution.
 // If no sub is needed, return -1
 // TODO Take into account "" and '' quoting to decide a sub is needed
+// If there is a $ between '' then we must ignore it.
+// A "$" gets subd as normal though
+// NOTE The '' and "" characters need to be stripped though.
+// FIXME This cannot handle the ' correctly, it only skips it if present
 int	needs_sub(char *str)
 {
 	int	i;
+	char	*ptr;
 
 	i = 0;
-	while (str[i] != '\0')
+	ptr = ft_strchr(str, '\'');
+	if (!ptr)	// NOTE Simple case, substitute $VARs
 	{
+		while (str[i] != '\0')
+		{
 		if (str[i] == '$')
-			break ;
-		i++;
+				break ;
+			i++;
+		}
+		if (str[i] == '$')
+			return (i);
+		else
+			return (-1);
 	}
-	if (str[i] == '$')
-		return (i);
-	else
-		return (-1);
+	else	// NOTE we have to skip over a set of comillas
+	{
+		/* while (str[i] != '\''/\* ) *\/ */
+		/* /\* 	i++; *\/ */
+		/* /\* // Then find the second *\/ */
+		/* /\* if (str[i] == '\'')	// NOTE Skipping past parts in comillas *\/ */
+		/* /\* { *\/ */
+		/* /\* 	while (str[i] == '\'') *\/ */
+		/* /\* 		i++; *\/ */
+		/* } */
+	return (-1);
+	}
 }
 
 // Subsitute the substr remove with replace in a string
 // TODO If replace or remove are null, still have to get rid of the $
 // (or we get an endless loop in substitute_variables)
+// TODO Have to remove " and ' characters from the final cmd
+// NOTE Does that get cut out of what we do here, or passed to the command to let that handle it¿???
 char	*ms_strsub(char *str, char *remove, char *replace)
 {
 	int		len;
