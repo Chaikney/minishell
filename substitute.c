@@ -23,32 +23,39 @@ int	needs_sub(char *str)
 		return (-1);
 }
 
-// Subsitute the substr remove with replace in a string
-// TODO If replace or remove are null, still have to get rid of the $
+// Substitute one substring for another in a string
+// DONE If new_sub or old_sub(?) are null, still have to get rid of the $
 // (or we get an endless loop in substitute_variables)
-char	*ms_strsub(char *str, char *remove, char *replace)
+// TODO Have to remove " and ' characters from the final cmd
+// NOTE Does that get cut out of what we do here, or passed to the command to let that handle it¿???
+// FIXME Adds a space for missing values, not needed? bash collapses it to a single space
+// FIXME Too many lines in this function.
+char	*ms_strsub(char *str, char *old_sub, char *new_sub)
 {
 	int		len;
 	char	*new_str;
 	char	*cptr;
 
-	if ((!replace) || (!remove))
+	if (!old_sub)
 		return (str);
-	len = ft_strlen(str) - ft_strlen(remove) + ft_strlen(replace) + 1;
+	len = ft_strlen(str) - ft_strlen(old_sub) + ft_strlen(new_sub) + 1;
 	new_str = malloc(sizeof(char) * len);
 	ft_bzero(new_str, len);
 	if (!new_str)
 		return (NULL);
 	new_str[len - 1] = '\0';
 	cptr = new_str;
-	while (*str != '$')
-	{
+	while (*str != '$')	// copy until the $
 		*new_str++ = *str++;
+	if (new_sub)
+	{
+		while (*new_sub != '\0')
+			*new_str++ = *new_sub++;
 	}
-	while (*replace != '\0')
-		*new_str++ = *replace++;
-	while ((*str != ' ') && (*str != '\0'))
+	while ((*str != ' ') && (*str != '\0'))	// Here we step over the variable name in the command
 		str++;
+	if (*str == ' ')
+		str++;		// NOTE tries to avoid the extra space issue; probably dangerous though
 	while (*str != '\0')
 		*new_str++ = *str++;
 	return (cptr);
@@ -61,9 +68,8 @@ char	*ms_strsub(char *str, char *remove, char *replace)
 // - put the value into the command
 // - run again / recurse until we have no more things to sub
 // NOTE cmd is assumed to be the unsplit input from readline
-// FIXED If no substitution, we return garbage - problem is the new_cmd thing
-// DONE Test with > 1 substitution in a command.
 // FIXME Function has too many lines
+// FIXED? Endless loop if replace or remove are null (Should remove the $ at least)
 char	*substitute_variables(char *cmd)
 {
 	int		sub_pos;
@@ -74,7 +80,7 @@ char	*substitute_variables(char *cmd)
 
 	sub_pos = needs_sub(cmd);
 	new_cmd = NULL;
-	while (sub_pos != -1)	// NOTE Endless loop if replace or remove are null (Should remove the $ at least)
+	while (sub_pos != -1)	
 	{
 		sub_pos++;	// NOTE Start the count *after* the $
 		sub_len = 0;
@@ -82,10 +88,10 @@ char	*substitute_variables(char *cmd)
 			&& (cmd[sub_pos + sub_len] != ' '))
 			sub_len++;
 		var_name = ft_substr(cmd, sub_pos, (sub_len));
-		printf("searching for %s in env", var_name);
-		val = getenv(var_name);	// NOTE This comes back null (when 2 requests)
-		printf("\tfound: %s", val);
-		new_cmd = ms_strsub(cmd, var_name, val);	// NOTE and this then segfaults.
+//		printf("searching for %s in env", var_name);
+		val = getenv(var_name);
+//		printf("\tfound: %s", val);
+		new_cmd = ms_strsub(cmd, var_name, val);
 		free(var_name);
 		sub_pos = needs_sub(new_cmd);
 		cmd = new_cmd;
