@@ -120,6 +120,9 @@ char	*get_prompt(void)
 // TODO Implement an exit routine that frees allocated memory.
 // DONE cmdline must be freed after use.
 // TODO Add cmdline to readline history after we receive it.
+// FIXME Variable substitution has to take place later than this!
+// ...think of the builtins that need to read $VARIABLENAMES (unset, etc)
+// ...maybe after we realise it is not a builtin?
 int main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;
