@@ -12,6 +12,7 @@
 
 #include "libft.h"
 
+// NOTE Added protection against empty strings
 size_t	ft_strlen(const char *s)
 {
 	size_t	i;

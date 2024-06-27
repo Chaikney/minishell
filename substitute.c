@@ -53,12 +53,12 @@ int	needs_sub(char *str)
 	}
 }
 
-// Subsitute the substr remove with replace in a string
-// DONE If replace or remove are null, still have to get rid of the $
+// Substitute one substring for another in a string
+// DONE If new_sub or old_sub(?) are null, still have to get rid of the $
 // (or we get an endless loop in substitute_variables)
 // TODO Have to remove " and ' characters from the final cmd
 // NOTE Does that get cut out of what we do here, or passed to the command to let that handle it¿???
-// FIXME Adds a space for missing values, not needed? bash collapses it to a single space
+// FIXME Too many lines in this function.
 char	*ms_strsub(char *str, char *old_sub, char *new_sub)
 {
 	int		len;
@@ -83,8 +83,6 @@ char	*ms_strsub(char *str, char *old_sub, char *new_sub)
 	}
 	while ((*str != ' ') && (*str != '\0'))	// Here we step over the variable name in the command
 		str++;
-	if (*str == ' ')
-		str++;		// NOTE tries to avoid the extra space issue; probably dangerous though
 	while (*str != '\0')
 		*new_str++ = *str++;
 	return (cptr);
@@ -97,10 +95,8 @@ char	*ms_strsub(char *str, char *old_sub, char *new_sub)
 // - put the value into the command
 // - run again / recurse until we have no more things to sub
 // NOTE cmd is assumed to be the unsplit input from readline
-// FIXED If no substitution, we return garbage - problem is the new_cmd thing
-// DONE Test with > 1 substitution in a command.
 // FIXME Function has too many lines
-// FIXED Causes an infinite loop if there is no variable found.
+// FIXED? Endless loop if replace or remove are null (Should remove the $ at least)
 char	*substitute_variables(char *cmd)
 {
 	int		sub_pos;
@@ -122,7 +118,7 @@ char	*substitute_variables(char *cmd)
 //		printf("searching for %s in env", var_name);
 		val = getenv(var_name);
 //		printf("\tfound: %s", val);
-		new_cmd = ms_strsub(cmd, var_name, val);	// NOTE and this then segfaults.
+		new_cmd = ms_strsub(cmd, var_name, val);
 		free(var_name);
 		sub_pos = needs_sub(new_cmd);
 		cmd = new_cmd;
