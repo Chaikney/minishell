@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 // TODO Remove un-needed includes, check against minishell forbidden functions.
-// TODO Add libft, or the needed functions.
+// DONE Add libft, or the needed functions.
 // DONE Separate the builtin_t definition
 // DONE Give struct command a typedef name (and fit Norm).
 
@@ -69,14 +69,14 @@ void	eval(char *cmdline, char **envp);
 char	*get_prompt(void);
 
 // substitute.c - variable substitution
-int 	find_env_var(char **envp, const char *var);
+int		find_env_var(char **envp, const char *var);
 char	*ms_strsub(char *str, char *remove, char *replace);
-char 	*substitute_variables(char *cmd);
+char	*substitute_variables(char *cmd);
 
 // builtins.c
 int		ms_pwd(void);
-void ms_export(t_command *cmd, char **envp);
-void ms_unset(t_command *cmd, char **envp);
+void	ms_export(t_command *cmd, char **envp);
+void	ms_unset(t_command *cmd, char **envp);
 
 // parse.c - functions to read and interpret user input
 int		parse(const char *cmdline, t_command *cmd);
@@ -88,5 +88,5 @@ void	run_in_child(t_command *cmd, char **envp);
 void	run_in_child_with_pipe(t_command *cmd, char **envp);
 
 // substitute.c - functions to sub variables in commands
-int	needs_sub(char *str);
+int		needs_sub(char *str);
 #endif

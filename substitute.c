@@ -1,6 +1,16 @@
-#include "minishell.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   substitute.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/28 19:04:12 by chaikney          #+#    #+#             */
+/*   Updated: 2024/06/28 19:04:18 by chaikney         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-// TODO Add 42 header
+#include "minishell.h"
 
 // Return the index of the first $ if command needs to
 // have variable subsitution.
