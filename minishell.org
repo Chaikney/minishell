@@ -1,0 +1,112 @@
+#+title:     Minishell
+#+author:    Chris Haikney
+#+email:     chaikney@student.42urduliz.com
+* Make a plan for minishell.
+** Video call on Monday
+SCHEDULED: <2024-06-10 Mon>
+** [ ] Implement builtins handling
+- Identify the ones we have to have
+- Parse them and record them (how? as ENUM?)
+- match them with our functions
+- implement those functions.
+
+[[file:~/Documents/00_WorkInProgress/2023_04_42UrdulizCurso/minishell/minishell/minishell.c::printf("%s: Command not found\n", cmd->argv\[0\]);]]
+* My minishell tasks
+** TODO Get pipex bonus parts working
+I need the heredoc and the output to work. (The second is easier, basically done)
+** DONE watch shell in 10 min video
+https://www.youtube.com/watch?v=k6TTj4C0LF0
+Some brief pieces on parsing but the majority of fork exec etc. That I have done.
+Parse the input looking for tokens.(NULL-termed). Outputs into a command struct like this:
+#+begin_src c
+#define MAXARGS 128	// apparently needs to be a define not a variable.
+
+struct command {
+	int argc;	// number of args}
+	char *argv[MAXARGS];	// the arguments (inc command as 0)
+    enum builtin_t {
+	NONE, QUIT, JOBS, BG, FG} builtin;	// is argv[0] a builtin command?
+};
+#+end_src
+some kind of flagging out for builtins
+With backgrounding, you do a conditional thing before the waitpid
+** DONE Find out about what the readline library does.
+man readline is a good start: get a line of input from the user with editing.
+...so we just have to call that and parse what it gives us?
+#+begin_src c
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+
+char	*readline(const char *prompt);
+#+end_src
+returns the line from the user, or an empty string. (Some nuance around EOF characters)
+Does this also handle history for us?
+
+*** Are we allowed to use the history parts?
+src_shell{man 3 history}
+
+*** NOTE I had to install readline-dev to get the header files.
+* Basic requirements
+- display a prompt
+  This is handled by an input to readline.
+- working history
+  (I assume that means record and scrollback)
+- search for and launch an executable with PATH
+  (I have this from pipex)
+- "avoid using more than one global variable to indicate a received signal"
+  was  this part of minitalk?
+- Not interpret unclosed quotes or special characters which are not required by the subject such as \ (backslash) or ; (semicolon).
+- handle single quote ''
+  stops interpretation of metacharacters
+- handle double quote ""
+  stops interpretation of metacharacters *except* $
+- Implement redirections - I have code for all these except <<
+  - < redirect input
+  - > redirect output
+  - << read input until delimiter
+  - >> redirect output in append mode
+- Implement pipes |
+  This is pipex, just need to interpret the commands correctly.
+- handle env vars
+  - expand $WHATEVER to its values (before interpreting a command?)
+- Handle $? - expand to the last exit status ("most recently executed foreground pipeline")
+- Handle ctrl-C, ctrl-D and ctrl-\
+  What are the signals that these each send?
+- builtins to code:
+  - echo with -n (newline or not)
+  - cd with only a relative or absolute path
+  - pwd (no options)
+  - unset (no options)
+  - env, no options or args
+  - exit no options.
+* General notes
+** Signals and ctrl sequences
+You can use stty to check or change the characters that generate signals
+src_sh{stty -a}
+CTRL-c = SIGINT
+CTRL-d = EOF (which amounts to quitting the shell; useful for the command parsing?)
+CTRL-\ = SIGQUIT (is that a real one?)
+** Parsing is a thing we need to do.
+People suggest splitting parsing and execution of tasks. I think that with pipex the execution is partly there.
+"abstract syntax trees" versus a simple split.
+What are the parts of what we would receive as input?
+- commands
+- special characters for control -- pipes, redirects and that
+- command options.
+...how would we tell the difference between a command and its options.
+The first thing that we read would be a command - NO, it might be input redirection. Or here_doc, etc.
+Remember escaping! \  to include a  space.
+** Things involving ENV
+working  directory is always in ENV -- constantly manipulated, changed.
+pwd must therefore amount to "print this thing from my ENV"
+cd  = change value in env
+note  that the prompt line is probably reading from this as well.
+** making a prompt
+- what should it show?
+  current directory.
+- username
+- fancy things in a prompt what are there?
+** history
+Very linked to readline behaviour. Which in turn is very linked to bash behaviour.
+This is extremely useful: http://web.mit.edu/gnu/doc/html/rlman_2.html
