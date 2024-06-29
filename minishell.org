@@ -110,3 +110,28 @@ note  that the prompt line is probably reading from this as well.
 ** history
 Very linked to readline behaviour. Which in turn is very linked to bash behaviour.
 This is extremely useful: http://web.mit.edu/gnu/doc/html/rlman_2.html
+Suggests creating a readline_initialise function to set up the desired behaviour.
+For example, default is to complete filenames on TAB. Might we want something else? Scrollbak with up and down for example?
+See also: https://tiswww.case.edu/php/chet/readline/history.html
+*** Allowed readline functions and what they do
+**** rl_clear_history
+Function: void clear_history (void)
+Clear the history list by deleting all the entries.
+...useful on exit, perhaps?
+**** rl_on_new_line,
+Function: int rl_on_new_line ()
+Tell the update routines that we have moved onto a new (empty) line, usually after ouputting a newline.
+...what use is that?
+**** rl_replace_line
+Not found
+**** rl_redisplay
+Function: int rl_redisplay ()
+
+Change what's displayed on the screen to reflect the current contents of rl_line_buffer.
+**** add_history
+This one is relatively simple - add the line to the history list. Should check that it is not empty before doing that.
+*** So what do we need from history?
+want things to be collected.
+Can we do persistent history across sesssions? I don't see any functions that would permit that, or any configuration.
+Would readline pick up an existing .inputrc file?
+* TODO Find and read minishell evaluation documents
