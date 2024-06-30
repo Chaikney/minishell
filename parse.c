@@ -1,29 +1,41 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/24 12:16:53 by chaikney          #+#    #+#             */
+/*   Updated: 2024/06/24 12:17:02 by chaikney         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int parseBuiltin(t_command *cmd)
 {
     if (cmd->argc == 0) 
-        return (0);
+        return (NONE);
     if ((ft_strncmp(cmd->argv[0], "cd", 2) == 0) && (ft_strlen(cmd->argv[0]) == 2))
-        return (1);
+        return (CD);
     else if ((ft_strncmp(cmd->argv[0], "exit", 4) == 0) && (ft_strlen(cmd->argv[0]) == 4) && (cmd->argv[1] == NULL))
-        return (2);
+        return (EXIT);
     else if ((ft_strncmp(cmd->argv[0], "echo", 4) == 0)&& (ft_strlen(cmd->argv[0]) == 4) && (cmd->argv[1] != NULL))
     {
         if ((ft_strncmp(cmd->argv[1], "-n", 2) == 0)&& (ft_strlen(cmd->argv[1]) == 2))
-            return (4);
+            return (ECHON);
         else
-            return (3);
+            return (ECHO);
     }
     else if ((ft_strncmp(cmd->argv[0], "pwd", 3) == 0) && (ft_strlen(cmd->argv[0]) == 3) && (cmd->argv[1] == NULL))
-        return (5);
-    else if ((ft_strncmp(cmd->argv[0], "export", 6) == 0)&& (ft_strlen(cmd->argv[0]) == 6))
-        return (6);
+        return (PWD);
+    else if ((ft_strncmp(cmd->argv[0], "export", 6) == 0)&& (ft_strlen(cmd->argv[0]) == 6) && (cmd->argv[1] != NULL))
+        return (EXP);
     else if ((ft_strncmp(cmd->argv[0], "unset", 5) == 0)&& (ft_strlen(cmd->argv[0]) == 5))
-        return (7);
-    else if ((ft_strncmp(cmd->argv[0], "env", 3) == 0)&& (ft_strlen(cmd->argv[0]) == 3))
-        return (8);
-    return (0);
+        return (UNSET);
+    else if ((ft_strncmp(cmd->argv[0], "env", 3) == 0)&& (ft_strlen(cmd->argv[0]) == 3) && (cmd->argv[1] == NULL) )
+        return (ENV);
+    return (NONE);
 }
 
 // falta por añadir que hace cada 
@@ -46,7 +58,7 @@ void executeBuiltin(t_command *cmd, char **envp)
 
     while (1) 
     {
-        if (cmd->builtin == 1) 
+        if (cmd->builtin == CD)
         {
             if (cmd->argc < 2) 
                 fprintf(stderr, "cd: missing argument\n");
@@ -57,9 +69,9 @@ void executeBuiltin(t_command *cmd, char **envp)
             }
             return;
         } 
-        else if (cmd->builtin == 2) 
+        else if (cmd->builtin == EXIT)
             exit(0);
-        else if (cmd->builtin == 3) 
+        else if (cmd->builtin == ECHON)
         {
             i = 1;
             while (i < cmd->argc)
@@ -72,8 +84,7 @@ void executeBuiltin(t_command *cmd, char **envp)
             printf("\n");
             return;
         }
-        
-        else if (cmd->builtin == 4) 
+        else if (cmd->builtin == ECHO)
         {
             i = 2;
             while (i < cmd->argc)
@@ -85,19 +96,29 @@ void executeBuiltin(t_command *cmd, char **envp)
             }
             return;
         }
-        else if (cmd->builtin == 5)
+        else if (cmd->builtin == PWD)
         {
             ms_pwd();
             return ;
         }
-        else if (cmd->builtin == 6)
+        else if (cmd->builtin == EXP)
         {
+            ms_export(cmd, envp);
+            return;
         }
-        else if (cmd->builtin == 7) 
+        else if (cmd->builtin == UNSET)
         {
+            ms_unset(cmd, envp);
+            return;
         }
-        else if (cmd->builtin == 8) 
+        else if (cmd->builtin == ENV)
         {
+            while (*envp) 
+            {
+                printf("%s\n", *envp);
+                envp++;
+            }
+            return;
         }
         else
         {
@@ -109,9 +130,6 @@ void executeBuiltin(t_command *cmd, char **envp)
 
 
 // DONE Change strcspn calls to another function
-// TODO Add 42 header to parse.c
-
-// TODO parse has to recognise redirection tokens: | < > << >>
 // DONE Change strcspn calls to another function
 // DONE Implement parseBuiltIn - simple match against the list of builtins?
 // Parse input from cmdline into a command struct

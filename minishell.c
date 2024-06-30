@@ -88,10 +88,14 @@ void eval(char *cmdline, char **envp)
     bg = parse(cmdline, &cmd);
 //    printf("Found command %s\n", cmd.argv[0]);	// HACK For debugging, remove later
     if (bg == -1) 
+	{
         return;
+	}
     if (cmd.argv[0] == NULL) 
+	{
         return;
-	if (cmd.builtin != 0)
+	}
+	if (cmd.builtin != NONE)	// FIXME How does this work now with the enum changes?
 		executeBuiltin(&cmd, envp);
 	else
 	{
@@ -109,32 +113,39 @@ char	*get_prompt(void)
 // FIXME feof is forbidden - find another way to catch EOF signal.
 // TODO Implement signals handling.
 // TODO Implement an exit routine that frees allocated memory.
-// DONE cmdline must be freed after use.
-// DONE Add cmdline to readline history after we receive it.
-// TODO Persist history between runs of minishell.
+// TODO Add cmdline to readline history after we receive it.
+// FIXME This is the wrong place to trigger the substitution
 int main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;
 	char	*prompt;
+	char	*subd;
 
 	(void) argv;
+	subd = NULL;
 	if (argc == 1)	// HACK for compilation, remove later
 	{
 		while (1)
 		{
 			prompt = get_prompt();
 			cmdline = readline(prompt);
-			if (cmdline == NULL)
+			subd = substitute_variables(cmdline);
+			if (subd == NULL)
 			{
 				printf("\n");
 				exit(0);
 			}
-			if (cmdline[0] != '\0')
+			if (subd[0] != '\0')
 			{
+<<<<<<< HEAD
 				add_history((const char *) cmdline);
 				eval(cmdline, envp);
+=======
+				add_history(subd);
+				eval(subd, envp);
+>>>>>>> 5f0288b235ff000e1399e36518a3420bb455c88c
 			}
-			free(cmdline);
+			free(subd);
 		}
 	}
 	else

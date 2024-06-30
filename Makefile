@@ -13,7 +13,7 @@
 # FIXED add a -L call to include readline
 NAME	= minishell
 
-SRC		= minishell.c paths.c parse.c builtins.c
+SRC		= minishell.c paths.c parse.c builtins.c substitute.c
 
 OBJ		= $(SRC:.c=.o)
 
@@ -23,7 +23,7 @@ FTLIB	= -L $(FTDIR) -lft
 
 LIBS	= $(FTLIB) -lreadline
 
-CFLAGS = -Werror -Wall -Wextra
+CFLAGS = -Werror -Wall -Wextra -ggdb
 CC		= cc
 
 HEADERS	= -I $(FTDIR)
