@@ -128,13 +128,72 @@ void executeBuiltin(t_command *cmd, char **envp)
     }
 }
 
+// Return one single parameter from a command line.
+// DONE Consider this with a static var to track position in the line
+// DONE Ensure that the final parameter returned is null
+// TODO Can I wrap the substitute_variables call to make it work in here?
+char	*get_param(const char *cmd)
+{
+    int	i;
+    static int	j;
+    char	*par;
 
-// DONE Change strcspn calls to another function
-// DONE Change strcspn calls to another function
-// DONE Implement parseBuiltIn - simple match against the list of builtins?
+    i = 0;
+    par = malloc(sizeof(char) * 256);
+    if (!par)
+        return (NULL);
+    if (cmd[j] == '\0')
+    {
+        j = 0;
+        return (NULL);
+    }
+    while ((cmd[j] != '\0'))
+    {
+        if (cmd[j] == ' ')
+        {
+            j++;
+            break ;
+        }
+        par[i++] = cmd[j++];
+    }
+    par[i] = '\0';
+    printf("returning: %s\t", par);
+    return (par);
+}
+
+// better command line split / tokenising
+// go char by char, consious of quoting and escaping
+// 3 modes: raw, 'weak' quoting and "strong" quoting
+// raw: stop on a space, respect \escapes, substitute variables.
+// weak: subb variables? respect escapes?
+// strong: just go to the end of the quotes for our token?
+// NOTE on each case what do we do with the leftover 'symbols'?
+// TODO check quoting definitions and make them clear to us all.
+// Take a command line and return a NULL-terminated array of its parameters.
+char	**better_split(const char *cmdline)
+{
+    char	**params;
+    int	i;
+
+    i = 0;
+    params = malloc (sizeof (char *) * MAXARGS);
+    if (!params)
+        return (NULL);
+    params[i] = get_param(cmdline);
+    printf("added: %s\n", params[i]);	// HACK remove debugging statement
+    while ((params[i] != NULL) && (i < MAXARGS))
+    {
+        i++;
+        params[i] = get_param(cmdline);	// HACK Get a better approach to start pos
+        printf("added: %s\n", params[i]);	// HACK remove debugging statement
+    }
+	return (params);
+}
+
 // Parse input from cmdline into a command struct
 // Return values:
 // 1 - ?
+// TODO More sophisticated tokenisation / split needed.
 int	parse(const char *cmdline, t_command *cmd)
 {
     char 	**token;
@@ -143,8 +202,8 @@ int	parse(const char *cmdline, t_command *cmd)
     is_bg = 0;	// HACK for compilation, remove later.
     if (cmdline == NULL)
         perror("command line is NULL\n");
-    
-    token = ft_split(cmdline, ' ');
+    token = better_split(cmdline);
+//    token = ft_split(cmdline, ' ');
     cmd->argc = 0;
     while (token[cmd->argc] != NULL) 
     {

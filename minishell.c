@@ -137,13 +137,8 @@ int main(int argc, char **argv, char **envp)
 			}
 			if (subd[0] != '\0')
 			{
-<<<<<<< HEAD
 				add_history((const char *) cmdline);
 				eval(cmdline, envp);
-=======
-				add_history(subd);
-				eval(subd, envp);
->>>>>>> 5f0288b235ff000e1399e36518a3420bb455c88c
 			}
 			free(subd);
 		}
