@@ -206,12 +206,15 @@ char	*get_param(const char *cmd)
 // - Start copying characters until the end quote
 // - Expand any variable found
 // TODO Implement variable expansion.
+// TODO Handle NULL returns from getenv: add nothing, remove the $
+// TODO Free var_name and value
 char	*get_weak_param(const char *cmdline)
 {
 	char	*par;
 	int	i;
 	int	j;
     char	*var_name;
+    char	*value;
 
 	par = malloc(sizeof(char) * 256);
 	if (!par)
@@ -225,12 +228,21 @@ char	*get_weak_param(const char *cmdline)
 	{
         if (cmdline[i] == '$')
         {
-            printf("found variable to sub:");
+            printf("found variable to sub:");// HACK for debugging only
             var_name = get_var_name(&cmdline[i]);
-            printf("\t%s", var_name);
+            printf("\t%s", var_name);// HACK for debugging only
+            value = getenv(var_name);
+            printf("\tIts value is:%s", value);// HACK for debugging only
+            // copy value to par
+            ft_strlcat(par, value, ft_strlen(value) + 1);
+            // move cmdline forward the length of var_name
+            i = i + ft_strlen(var_name) + 1;	// NOTE +1 for the $
+            j = j + ft_strlen(value);
         }
-		par[j++] = cmdline[i++];
+        else
+            par[j++] = cmdline[i++];
 	}
+    printf("\nWeak quoting parameter to return: %s", par);	// HACK for debugging only
     return (par);
 }
 
