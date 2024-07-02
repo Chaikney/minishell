@@ -128,6 +128,45 @@ void executeBuiltin(t_command *cmd, char **envp)
     }
 }
 
+// Return  the name of a $variable for later substitution
+// - check we are at $
+// - count length (until a space)
+// - alloc a string
+// - copy characters
+// (alt: use the substr functions?)
+// NOTE Returns the correct var_name without the $
+char	*get_var_name(const char *str)
+{
+	int	name_len;
+	char	*ptr;
+	char	*var_name;
+
+	ptr = (char *) str;
+	if (*ptr != '$')
+	{
+		printf("Tried to find a variable but you passed the wrong position");
+		return (NULL);
+	}
+    ptr++;
+	name_len = 0;
+	while ((*ptr != ' ') && (*ptr != '\"') && (*ptr != '\0'))
+    {
+		name_len++;
+        ptr++;
+    }
+	var_name = malloc(sizeof(char) * (name_len + 1));
+	if (!var_name)
+		return (NULL);
+	var_name[name_len] = '\0';
+	while (name_len > 0)
+	{
+        ptr--;
+		var_name[name_len - 1] = *ptr;
+		name_len--;
+	}
+	return (var_name);
+}
+
 // Return one single parameter from a command line.
 // TODO Can I wrap the substitute_variables call to make it work in here?
 char	*get_param(const char *cmd)
@@ -167,11 +206,12 @@ char	*get_param(const char *cmd)
 // - Start copying characters until the end quote
 // - Expand any variable found
 // TODO Implement variable expansion.
-char	*get_weak_param(char *cmdline)
+char	*get_weak_param(const char *cmdline)
 {
 	char	*par;
 	int	i;
 	int	j;
+    char	*var_name;
 
 	par = malloc(sizeof(char) * 256);
 	if (!par)
@@ -183,6 +223,12 @@ char	*get_weak_param(char *cmdline)
 	i++;
 	while (cmdline[i] != '\"')
 	{
+        if (cmdline[i] == '$')
+        {
+            printf("found variable to sub:");
+            var_name = get_var_name(&cmdline[i]);
+            printf("\t%s", var_name);
+        }
 		par[j++] = cmdline[i++];
 	}
     return (par);
@@ -194,7 +240,8 @@ char	*get_weak_param(char *cmdline)
 // - start copying characters until the next quote
 // NOTE This version does not allow for escaped quotes!
 // TODO Protect against hitting the end of the string.
-char	*get_strong_param(char *cmdline)
+// FIXME segfaults, probably as noted above...
+char	*get_strong_param(const char *cmdline)
 {
 	char	*par;
 	int	i;
@@ -205,7 +252,7 @@ char	*get_strong_param(char *cmdline)
 		return (NULL);
 	i = 0;
 	j = 0;
-	while (cmdline[i] != '\'')
+	while (cmdline[i] != '\'')	// FIXME Invalid read here.
 		i++;
 	i++;
 	while (cmdline[i] != '\'')
