@@ -53,7 +53,16 @@ typedef enum e_builtin
 	ENV
 }	t_builtin;
 
-// TODO What if we flaag command types - system, builtin, what?
+// Flags to indicate the quoting style to be used on the
+// input commands when parsing.
+typedef enum e_quote
+{
+	RAW,
+	WEAK,
+	STRONG
+}	t_quote;
+
+// TODO What if we flag command types - system, builtin, what?
 typedef struct s_command
 {
 	int			argc;

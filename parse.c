@@ -135,9 +135,9 @@ void executeBuiltin(t_command *cmd, char **envp)
 // DONE Skip over multiple spaces
 char	*get_param(const char *cmd)
 {
-	int	i;
+	int		i;
 	static int	j;
-	char	*par;
+	char		*par;
 
 	i = 0;
 	par = malloc(sizeof(char) * 256);
@@ -156,6 +156,7 @@ char	*get_param(const char *cmd)
                 j++;
 			break ;
 		}
+        // TODO Tests for other characters
 		par[i++] = cmd[j++];
 	}
 	par[i] = '\0';
@@ -166,29 +167,44 @@ char	*get_param(const char *cmd)
 // better command line split / tokenising
 // go char by char, consious of quoting and escaping
 // 3 modes: raw, 'weak' quoting and "strong" quoting
-// raw: stop on a space, respect \escapes, substitute variables.
-// weak: subb variables? respect escapes?
-// strong: just go to the end of the quotes for our token?
+// RAW: stop on a space, respect \escapes, substitute variables.
+// WEAK: subb variables? respect escapes?
+// STRONG: just go to the end of the quotes for our token?
 // NOTE on each case what do we do with the leftover 'symbols'?
 // TODO check quoting definitions and make them clear to us all.
 // Take a command line and return a NULL-terminated array of its parameters.
 char	**better_split(const char *cmdline)
 {
-	char	**params;
-	int	i;
+	char		**params;
+	int		i;
+	t_quote	quote_mode;
 
 	i = 0;
 	params = malloc (sizeof (char *) * MAXARGS);
 	if (!params)
 		return (NULL);
-	params[i] = get_param(cmdline);
-	printf("added: %s\n", params[i]);	// HACK remove debugging statement
-	while ((params[i] != NULL) && (i < MAXARGS))
+	if (ft_strchr(cmdline, '\'') != NULL)
+		quote_mode = STRONG;
+	else if ((ft_strchr(cmdline, '\"') != NULL))
+		quote_mode = WEAK;
+	else
+		quote_mode = RAW;
+	if (quote_mode == RAW)
 	{
-		i++;
-		params[i] = get_param(cmdline);	// HACK Get a better approach to start pos
+		params[i] = get_param(cmdline);
 		printf("added: %s\n", params[i]);	// HACK remove debugging statement
+		while ((params[i] != NULL) && (i < MAXARGS))
+		{
+			i++;
+			params[i] = get_param(cmdline);
+			printf("added: %s\n", params[i]);	// HACK remove debugging statement
+		}
 	}
+	else
+    {
+		printf("TODO: Quoting style not implemented\n");
+        return (NULL);
+    }
 	return (params);
 }
 
@@ -196,17 +212,26 @@ char	**better_split(const char *cmdline)
 // Return values:
 // 1 - ?
 // TODO More sophisticated tokenisation / split needed.
+// NOTE Understand why we have here both cmdline and cmd
+// ...the tokens are put into a cmd struct, and *this* is
+// what we then execute.
+// TODO Perhaps the trim of cmdline should happen in better_split?
 int	parse(const char *cmdline, t_command *cmd)
 {
     char	**token;
     int	is_bg;
+    char	*cmd_trim;
     
     is_bg = 0;	// HACK for compilation, remove later.
-    if (cmdline == NULL)
+    cmd_trim = ft_strtrim(cmdline, " ");
+    if (cmd_trim == NULL)
         perror("command line is NULL\n");
-    token = better_split(cmdline);
+    token = better_split(cmd_trim);
 //    token = ft_split(cmdline, ' ');
+    if (!token)
+        return (0);
     cmd->argc = 0;
+    // NOTE Find out what this structure does.
     while (token[cmd->argc] != NULL) 
     {
         cmd->argv[cmd->argc] = token[cmd->argc];
@@ -220,5 +245,6 @@ int	parse(const char *cmdline, t_command *cmd)
     if (cmd->argc == 0)
         return (1);
     cmd->builtin = parseBuiltin (cmd);
+    free (cmd_trim);
     return (is_bg);
 }

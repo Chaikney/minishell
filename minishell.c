@@ -36,6 +36,7 @@ void	exit_and_free(char **args, int fd_in, int fd_out)
 
 // Free the memory allocated to a t_command
 // Mainly (only?) in the args part.
+// TODO Ensure that this is protected against empty cmds
 void	clear_t_command(t_command *cmd)
 {
 	int	i;
