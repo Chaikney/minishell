@@ -132,6 +132,7 @@ void executeBuiltin(t_command *cmd, char **envp)
 // DONE Consider this with a static var to track position in the line
 // DONE Ensure that the final parameter returned is null
 // TODO Can I wrap the substitute_variables call to make it work in here?
+// DONE Skip over multiple spaces
 char	*get_param(const char *cmd)
 {
 	int	i;
@@ -151,7 +152,8 @@ char	*get_param(const char *cmd)
 	{
 		if (cmd[j] == ' ')
 		{
-			j++;
+            while ((cmd[j] == ' ') && (cmd[j] != '\0'))
+                j++;
 			break ;
 		}
 		par[i++] = cmd[j++];
