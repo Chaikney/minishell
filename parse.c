@@ -205,20 +205,22 @@ char	*get_param(const char *cmd)
 // - Fund the first double quote
 // - Start copying characters until the end quote
 // - Expand any variable found
-// TODO Implement variable expansion.
-// TODO Handle NULL returns from getenv: add nothing, remove the $
-// TODO Free var_name and value
+// -- get its name and value
+// -- if value isn't null, copy value to par
+// -- move cmdline forward the length of var_name
+// FIXME Function too long (probably)
 char	*get_weak_param(const char *cmdline)
 {
 	char	*par;
 	int	i;
 	int	j;
-    char	*var_name;
-    char	*value;
+	char	*var_name;
+	char	*value;
 
 	par = malloc(sizeof(char) * 256);
 	if (!par)
 		return (NULL);
+	ft_bzero(par, 256);
 	i = 0;
 	j = 0;
 	while (cmdline[i] != '\"')
@@ -226,24 +228,25 @@ char	*get_weak_param(const char *cmdline)
 	i++;
 	while (cmdline[i] != '\"')
 	{
-        if (cmdline[i] == '$')
-        {
-            printf("found variable to sub:");// HACK for debugging only
-            var_name = get_var_name(&cmdline[i]);
-            printf("\t%s", var_name);// HACK for debugging only
-            value = getenv(var_name);
-            printf("\tIts value is:%s", value);// HACK for debugging only
-            // copy value to par
-            ft_strlcat(par, value, ft_strlen(value) + 1);
-            // move cmdline forward the length of var_name
-            i = i + ft_strlen(var_name) + 1;	// NOTE +1 for the $
-            j = j + ft_strlen(value);
-        }
-        else
-            par[j++] = cmdline[i++];
+		if (cmdline[i] == '$')
+		{
+			printf("found variable to sub:");// HACK for debugging only
+			var_name = get_var_name(&cmdline[i]);
+			printf("\t%s", var_name);// HACK for debugging only
+			if ((value = getenv(var_name)))
+			{
+				printf("\tIts value is:%s", value);// HACK for debugging only
+				ft_strlcat(par, value, ft_strlen(value) + 1);
+				j = j + ft_strlen(value);
+			}
+			i = i + ft_strlen(var_name) + 1;	// NOTE +1 for the $
+			free (var_name);
+		}
+		else
+			par[j++] = cmdline[i++];
 	}
-    printf("\nWeak quoting parameter to return: %s", par);	// HACK for debugging only
-    return (par);
+	printf("\nWeak quoting parameter to return: %s", par);	// HACK for debugging only
+	return (par);
 }
 
 // return a 'strongly-quoted' parameter from cmdline.
