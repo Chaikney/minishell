@@ -33,6 +33,46 @@ int	needs_sub(char *str)
 		return (-1);
 }
 
+// Return the name of a $variable for later substitution
+// - check we are at $
+// - count length (until a space)
+// - alloc a string
+// - copy characters
+// (alt: use the substr functions?)
+// NOTE Returns the correct var_name without the $
+// FIXME Probably too long.
+char	*get_var_name(const char *str)
+{
+	int	name_len;
+	char	*ptr;
+	char	*var_name;
+
+	ptr = (char *) str;
+	if (*ptr != '$')
+	{
+		printf("Tried to find a variable but you passed the wrong position");
+		return (NULL);
+	}
+	ptr++;
+	name_len = 0;
+	while ((*ptr != ' ') && (*ptr != '\"') && (*ptr != '\0'))
+	{
+		name_len++;
+		ptr++;
+	}
+	var_name = malloc(sizeof(char) * (name_len + 1));
+	if (!var_name)
+		return (NULL);
+	var_name[name_len] = '\0';
+	while (name_len > 0)
+	{
+		ptr--;
+		var_name[name_len - 1] = *ptr;
+		name_len--;
+	}
+	return (var_name);
+}
+
 // Substitute one substring for another in a string
 // DONE If new_sub or old_sub(?) are null, still have to get rid of the $
 // (or we get an endless loop in substitute_variables)

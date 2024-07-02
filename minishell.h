@@ -81,6 +81,7 @@ char	*get_prompt(void);
 int		find_env_var(char **envp, const char *var);
 char	*ms_strsub(char *str, char *remove, char *replace);
 char	*substitute_variables(char *cmd);
+char	*get_var_name(const char *str);
 
 // builtins.c
 int		ms_pwd(void);
