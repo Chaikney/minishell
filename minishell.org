@@ -160,16 +160,16 @@ https://flokoe.github.io/bash-hackers-wiki/syntax/quoting/
 ...some of that is unclear, some is useful.
 ** weak quoting, "double quotes"
 #+begin_quote
-Inside a weak-quoted string there's no special interpretion of:
+Inside a weak-quoted string there's no special interpretation of:
 
-    spaces as word-separators (on inital command line splitting and on word splitting!)
+    spaces as word-separators (on initial command line splitting and on word splitting!)
     single-quotes to introduce strong-quoting (see below)
     characters for pattern matching
     tilde expansion
     pathname expansion
     process substitution
 
-Everything else, especially parameter expansion, is performed!
+Everything else, **especially parameter expansion**, is performed!
 #+end_quote
 ** strong quoting, 'single quotes'
 This one seems easiest to implement. You copy everything until the closing ' is reached. (Except for something unclear for this subject about backslash-escaped characters)

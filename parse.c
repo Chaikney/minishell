@@ -161,6 +161,33 @@ char	*get_param(const char *cmd)
 	return (par);
 }
 
+// Return a "weakly-quoted" parameter from cmdline.
+// (Weakly quoted = parameter expansion happens, space separation doesn't)
+// - Fund the first double quote
+// - Start copying characters until the end quote
+// - Expand any variable found
+// TODO Implement variable expansion.
+char	*get_weak_param(char *cmdline)
+{
+	char	*par;
+	int	i;
+	int	j;
+
+	par = malloc(sizeof(char) * 256);
+	if (!par)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (cmdline[i] != '\"')
+		i++;
+	i++;
+	while (cmdline[i] != '\"')
+	{
+		par[j++] = cmdline[i++];
+	}
+    return (par);
+}
+
 // return a 'strongly-quoted' parameter from cmdline.
 // (Strongly quoted = no esscaping or substituting).
 // - Find the first single quote
