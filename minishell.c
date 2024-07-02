@@ -115,6 +115,7 @@ char	*get_prompt(void)
 // TODO Implement an exit routine that frees allocated memory.
 // TODO Add cmdline to readline history after we receive it.
 // FIXME This is the wrong place to trigger the substitution
+// TODO Implement a global variable to handle process status.
 int main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;

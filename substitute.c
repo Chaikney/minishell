@@ -80,6 +80,7 @@ char	*ms_strsub(char *str, char *old_sub, char *new_sub)
 // NOTE cmd is assumed to be the unsplit input from readline
 // FIXME Function has too many lines
 // FIXED? Endless loop if replace or remove are null (Should remove the $ at least)
+// TODO Also have to handle $? / ? as a var name, shows the exit status.
 char	*substitute_variables(char *cmd)
 {
 	int		sub_pos;

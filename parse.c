@@ -134,31 +134,31 @@ void executeBuiltin(t_command *cmd, char **envp)
 // TODO Can I wrap the substitute_variables call to make it work in here?
 char	*get_param(const char *cmd)
 {
-    int	i;
-    static int	j;
-    char	*par;
+	int	i;
+	static int	j;
+	char	*par;
 
-    i = 0;
-    par = malloc(sizeof(char) * 256);
-    if (!par)
-        return (NULL);
-    if (cmd[j] == '\0')
-    {
-        j = 0;
-        return (NULL);
-    }
-    while ((cmd[j] != '\0'))
-    {
-        if (cmd[j] == ' ')
-        {
-            j++;
-            break ;
-        }
-        par[i++] = cmd[j++];
-    }
-    par[i] = '\0';
-    printf("returning: %s\t", par);
-    return (par);
+	i = 0;
+	par = malloc(sizeof(char) * 256);
+	if (!par)
+		return (NULL);
+	if (cmd[j] == '\0')
+	{
+		j = 0;
+		return (NULL);
+	}
+	while ((cmd[j] != '\0'))
+	{
+		if (cmd[j] == ' ')
+		{
+			j++;
+			break ;
+		}
+		par[i++] = cmd[j++];
+	}
+	par[i] = '\0';
+	printf("returning: %s\t", par);
+	return (par);
 }
 
 // better command line split / tokenising
@@ -172,21 +172,21 @@ char	*get_param(const char *cmd)
 // Take a command line and return a NULL-terminated array of its parameters.
 char	**better_split(const char *cmdline)
 {
-    char	**params;
-    int	i;
+	char	**params;
+	int	i;
 
-    i = 0;
-    params = malloc (sizeof (char *) * MAXARGS);
-    if (!params)
-        return (NULL);
-    params[i] = get_param(cmdline);
-    printf("added: %s\n", params[i]);	// HACK remove debugging statement
-    while ((params[i] != NULL) && (i < MAXARGS))
-    {
-        i++;
-        params[i] = get_param(cmdline);	// HACK Get a better approach to start pos
-        printf("added: %s\n", params[i]);	// HACK remove debugging statement
-    }
+	i = 0;
+	params = malloc (sizeof (char *) * MAXARGS);
+	if (!params)
+		return (NULL);
+	params[i] = get_param(cmdline);
+	printf("added: %s\n", params[i]);	// HACK remove debugging statement
+	while ((params[i] != NULL) && (i < MAXARGS))
+	{
+		i++;
+		params[i] = get_param(cmdline);	// HACK Get a better approach to start pos
+		printf("added: %s\n", params[i]);	// HACK remove debugging statement
+	}
 	return (params);
 }
 
@@ -196,8 +196,8 @@ char	**better_split(const char *cmdline)
 // TODO More sophisticated tokenisation / split needed.
 int	parse(const char *cmdline, t_command *cmd)
 {
-    char 	**token;
-    int 	is_bg;
+    char	**token;
+    int	is_bg;
     
     is_bg = 0;	// HACK for compilation, remove later.
     if (cmdline == NULL)
