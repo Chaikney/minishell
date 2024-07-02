@@ -121,28 +121,29 @@ int main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;
 	char	*prompt;
-	char	*subd;
+//	char	*subd;
 
 	(void) argv;
-	subd = NULL;
+//	subd = NULL;
 	if (argc == 1)	// HACK for compilation, remove later
 	{
 		while (1)
 		{
 			prompt = get_prompt();
 			cmdline = readline(prompt);
-			subd = substitute_variables(cmdline);
-			if (subd == NULL)
+		//	subd = substitute_variables(cmdline);
+	//		printf("\nSubd command is: %s\n", subd);	// HACK for testing, remove later,
+			if (cmdline == NULL)
 			{
 				printf("\n");
 				exit(0);
 			}
-			if (subd[0] != '\0')
+			if (cmdline[0] != '\0')
 			{
 				add_history((const char *) cmdline);
 				eval(cmdline, envp);
 			}
-			free(subd);
+//			free(subd);
 		}
 	}
 	else
