@@ -129,10 +129,7 @@ void executeBuiltin(t_command *cmd, char **envp)
 }
 
 // Return one single parameter from a command line.
-// DONE Consider this with a static var to track position in the line
-// DONE Ensure that the final parameter returned is null
 // TODO Can I wrap the substitute_variables call to make it work in here?
-// DONE Skip over multiple spaces
 char	*get_param(const char *cmd)
 {
 	int		i;
@@ -164,15 +161,43 @@ char	*get_param(const char *cmd)
 	return (par);
 }
 
+// return a 'strongly-quoted' parameter from cmdline.
+// (Strongly quoted = no esscaping or substituting).
+// - Find the first single quote
+// - start copying characters until the next quote
+// NOTE This version does not allow for escaped quotes!
+// TODO Protect against hitting the end of the string.
+char	*get_strong_param(char *cmdline)
+{
+	char	*par;
+	int	i;
+	int	j;
+
+	par = malloc(sizeof(char) * 256);
+	if (!par)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (cmdline[i] != '\'')
+		i++;
+	i++;
+	while (cmdline[i] != '\'')
+	{
+		par[j++] = cmdline[i++];
+	}
+	return (par);
+}
+
 // better command line split / tokenising
 // go char by char, consious of quoting and escaping
-// 3 modes: raw, 'weak' quoting and "strong" quoting
+// 3 modes: raw, "weak" quoting and 'strong' quoting
 // RAW: stop on a space, respect \escapes, substitute variables.
-// WEAK: subb variables? respect escapes?
+// WEAK: sub variables? respect escapes?
 // STRONG: just go to the end of the quotes for our token?
 // NOTE on each case what do we do with the leftover 'symbols'?
 // TODO check quoting definitions and make them clear to us all.
 // Take a command line and return a NULL-terminated array of its parameters.
+// TODO Check definitions again! What is strong, what is weak?
 char	**better_split(const char *cmdline)
 {
 	char		**params;

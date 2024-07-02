@@ -48,7 +48,7 @@ Does this also handle history for us?
 src_shell{man 3 history}
 
 *** NOTE I had to install readline-dev to get the header files.
-** [ ] Adapt output redirection from pipex
+** [X] Adapt output redirection from pipex
 So run_child_in_pipe is like an internal thing at the moment, and end of pipe output redirection requires things done to the files that in pipex are done in main like this:
 #+begin_src c
 	dup2(out_file, STDOUT_FILENO);
@@ -155,3 +155,26 @@ want things to be collected.
 Can we do persistent history across sesssions? I don't see any functions that would permit that, or any configuration.
 Would readline pick up an existing .inputrc file?
 * TODO Find and read minishell evaluation documents
+* Quoting types
+https://flokoe.github.io/bash-hackers-wiki/syntax/quoting/
+...some of that is unclear, some is useful.
+** weak quoting, "double quotes"
+#+begin_quote
+Inside a weak-quoted string there's no special interpretion of:
+
+    spaces as word-separators (on inital command line splitting and on word splitting!)
+    single-quotes to introduce strong-quoting (see below)
+    characters for pattern matching
+    tilde expansion
+    pathname expansion
+    process substitution
+
+Everything else, especially parameter expansion, is performed!
+#+end_quote
+** strong quoting, 'single quotes'
+This one seems easiest to implement. You copy everything until the closing ' is reached. (Except for something unclear for this subject about backslash-escaped characters)
+#+begin_quote
+Strong quoting is very easy to explain:
+
+Inside a single-quoted string nothing is interpreted, except the single-quote that closes the string.
+#+end_quote
