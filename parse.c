@@ -282,6 +282,8 @@ void	find_stop_char(const char *cmdline, int *posn)
 // -- pass the command line and a pointer to our position in it.
 // -- receive the paramter.
 // -- break when the parameter is NULL.
+// NOTE This applies variable substition where wanted.
+// FIXME Likely quote_aware_split has too many lines.
 char	**quote_aware_split(const char *cmdline)
 {
 	char	**params;
@@ -302,16 +304,18 @@ char	**quote_aware_split(const char *cmdline)
 		else if (cmdline[cmd_pos] == '\"')
 		{
 			params[p_num] = get_weak_param(cmdline, &cmd_pos);
-			// also call var sub?
+            if (needs_sub(params[p_num]) != -1)
+                params[p_num] = substitute_variables(params[p_num]);
 		}
 		else if (cmdline[cmd_pos] == '\'')
 			params[p_num] = get_strong_param(cmdline, &cmd_pos);
 		else
 		{
 			params[p_num] = get_raw_param(cmdline, &cmd_pos);
-			// also call var sub?
+            if (needs_sub(params[p_num]) != -1)
+                params[p_num] = substitute_variables(params[p_num]);
 		}
-//		printf("added: %s\n", params[p_num]);	// HACK remove debugging statement
+		printf("added: %s\n", params[p_num]);	// HACK remove debugging statement
 //		printf("Stop pos is now %i (%c)", cmd_pos, cmdline[cmd_pos]);
 		if (params[p_num] == NULL)
 			break ;

@@ -12,11 +12,10 @@
 
 #include "minishell.h"
 
-// Return the index of the first $ if command needs to
+// Return the index of the first $ if the string needs to
 // have variable subsitution.
 // If no sub is needed, return -1
-// TODO Take into account "" and '' quoting to decide a sub is needed
-// ...still needed? Could be useful. Only have to skip bits in 'single'
+// NOTE Attempts to ignore values within 'strong quoting'.
 int	needs_sub(char *str)
 {
 	int	i;
@@ -154,6 +153,7 @@ char	*substitute_variables(char *cmd)
 		free(var_name);
 		sub_pos = needs_sub(new_cmd);
 		cmd = new_cmd;
+//		free (new_cmd);	// TODO watch this carefully
 	}
 	return (cmd);
 }
