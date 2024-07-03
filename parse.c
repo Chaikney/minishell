@@ -51,6 +51,7 @@ int parseBuiltin(t_command *cmd)
 //  [ ] unset (no options)
 //  [ ] env, no options or args
 //  [ ] exit no options.
+
 void executeBuiltin(t_command *cmd, char **envp)
 {
     (void) envp;	// HACK for compilation, remove this or parameter later.
@@ -128,40 +129,6 @@ void executeBuiltin(t_command *cmd, char **envp)
     }
 }
 
-// Return one single parameter from a command line.
-// TODO Add variable substitution.
-// - allocate arbitrary space
-// - if we are at the end, reset the static and return NULL to finish.
-// - step over initial spaces, avoiding the end marker
-// - if we find a $ substitute it NO, later
-// - copy characters
-// - null-term and return
-// TODO Tests for other characters?
-char	*get_raw_param(const char *cmd, int *posn)
-{
-	int		i;
-	char		*par;
-
-	if ((cmd[*posn] == ' ') || (cmd[*posn] == '\0'))
-		printf("\t*** entered raw_param at incorrect char: %c", cmd[*posn]);
-	i = 0;
-	par = malloc(sizeof(char) * 256);
-	if (!par)
-		return (NULL);
-	ft_bzero(par, 256);
-	// TODO Consider if this should stop at a ' or " (they would be misplaced, but...)
-	while ((cmd[*posn] != '\0') && (cmd[*posn] != ' '))
-	{
-		par[i] = cmd[*posn];
-		i++;
-		(*posn)++;
-	}
-	par[i] = '\0';	// TODO Make the other 2 null-terminate their param
-	// TODO Does raw param need to step over anything?
-//	printf("returning: %s\t", par);
-	return (par);
-}
-
 // Substitute a variable's value into the parameter par being prepared.
 // par is assumed to have enough space for the strlcat call.
 // And was mallocated outside of this call.
@@ -169,6 +136,7 @@ char	*get_raw_param(const char *cmd, int *posn)
 // or to move it
 // FIXME Get clear what to return, this gives nonsense back.
 // Is is because par is not null-terminated at the time we pass it?
+// TODO I think this is unused and can be removed. No different to the other
 int	var_sub(char *par, char *cmdline)
 {
 	int	i;
@@ -193,69 +161,6 @@ int	var_sub(char *par, char *cmdline)
 	else
 		printf("\nOdd. Variable name not found");
 	return (i);
-}
-
-// Return a "weakly-quoted" parameter from cmdline.
-// (Weakly quoted = parameter expansion happens, space separation doesn't)
-// - Find the first double quote
-// - Start copying characters until the end quote
-// - Expand any variable found
-// -- get its name and value
-// -- if value isn't null, copy value to par
-// -- move cmdline forward the length of var_name
-// TODO var sub part has to be handled somewhere.
-char	*get_weak_param(const char *cmdline, int *posn)
-{
-	char	*par;
-	int	j;
-
-	if (cmdline[*posn] != '\"')
-		printf("\t*** entered weak_param at incorrect char: %c", cmdline[*posn]);
-	par = malloc(sizeof(char) * 256);
-	if (!par)
-		return (NULL);
-	ft_bzero(par, 256);
-	j = 0;
-	(*posn)++;	// Step past the first
-	while ((cmdline[*posn] != '\"')&& (cmdline[*posn] != '\0'))
-	{
-		par[j] = cmdline[*posn];
-		j++;
-		(*posn)++;
-	}
-	if (cmdline[*posn] != '\0')
-		(*posn)++;	// NOTE step past the final ' if safe
-//	printf("\nWeak quoting parameter to return: %s", par);	// HACK for debugging only
-	return (par);
-}
-
-// return a 'strongly-quoted' parameter from cmdline.
-// (Strongly quoted = no escaping or substituting).
-// - Find the first single quote
-// - start copying characters until the next quote
-// NOTE This version does not allow for escaped quotes!
-char	*get_strong_param(const char *cmdline, int *posn)
-{
-	char	*par;
-	int	j;
-
-	par = malloc(sizeof(char) * 256);
-	if (!par)
-		return (NULL);
-	ft_bzero(par, 256);
-	j = 0;
-	if (cmdline[*posn] != '\'')
-		printf("\t*** entered strong_param at incorrect char: %c", cmdline[*posn]);
-	(*posn)++;	// NOTE Step past the first ' to start copying
-	while ((cmdline[*posn] != '\'') && (cmdline[*posn] != '\0'))
-	{
-		par[j] = cmdline[*posn];
-		j++;
-		(*posn)++;
-	}
-	if (cmdline[*posn] != '\0')
-		(*posn)++;	// NOTE step past the final ' if safe
-	return (par);
 }
 
 // Moves the *posn pointer forward through a command line

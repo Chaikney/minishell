@@ -82,7 +82,11 @@ int		find_env_var(char **envp, const char *var);
 char	*ms_strsub(char *str, char *remove, char *replace);
 char	*substitute_variables(char *cmd);
 char	*get_var_name(const char *str);
-int	var_sub(char *par, char *cmdline);
+
+// tokens.c - break up line according to "quote" 'styles'
+char	*get_raw_param(const char *cmd, int *posn);
+char	*get_weak_param(const char *cmdline, int *posn);
+char	*get_strong_param(const char *cmdline, int *posn);
 
 // builtins.c
 int		ms_pwd(void);
@@ -92,6 +96,8 @@ void	ms_unset(t_command *cmd, char **envp);
 // parse.c - functions to read and interpret user input
 int		parse(const char *cmdline, t_command *cmd);
 void	executeBuiltin(t_command *cmd, char **envp);
+char	**quote_aware_split(const char *cmdline);
+void	find_stop_char(const char *cmdline, int *posn);
 
 // paths.c - find and direct programs in PATH
 char	*find_command(char *cmd);

@@ -10,10 +10,9 @@
 #                                                                              #
 # **************************************************************************** #
 
-# FIXED add a -L call to include readline
 NAME	= minishell
 
-SRC		= minishell.c paths.c parse.c builtins.c substitute.c
+SRC		= minishell.c paths.c parse.c builtins.c substitute.c tokens.c
 
 OBJ		= $(SRC:.c=.o)
 
