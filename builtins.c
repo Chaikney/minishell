@@ -25,9 +25,10 @@ int ms_pwd(void)
 // If not found, returns -1
 int find_env_var(char **envp, const char *var)
 {
-    size_t len ;
+    size_t len;
 	int i;
 
+    len = 0;
 	i = 0;
     len = ft_strlen(var);
     while (envp[i] != NULL)
@@ -47,23 +48,59 @@ int find_env_var(char **envp, const char *var)
 // If the variable does not already exist, add it.
 // NOTE I think we have to distinguish between the variable's NAME and VALUE
 // FIXME This has variables defined in-line at time of use.
-void ms_export(t_command *cmd, char **envp) {
+void ms_unset_export(char *unset_var, char **envp) {
+    int var_index = 0; 
+    var_index = find_env_var(envp, unset_var);
+
+    if (var_index >= 0) 
+    {
+        // Liberar la memoria de la variable de entorno
+
+        // Eliminar la variable de entorno del arreglo envp
+        int i = var_index;
+        while (envp[i] != NULL) 
+        {
+            envp[i] = envp[i + 1];
+            i++;
+        }
+    } 
+    else 
+    {
+        printf("unset: variable %s not found\n", unset_var);
+    }
+}
+
+// Set a new variable in env.
+// If the variable name already exists, change it. (remove existing and then add?)
+// ....this is basically the same functionality as UNSET ?!
+// If the variable does not already exist, add it.
+// NOTE I think we have to distinguish between the variable's NAME and VALUE
+// FIXME This has variables defined in-line at time of use.
+void ms_export(t_command *cmd, char **envp) 
+{
     char *var;
     char *new_var;
-    int var_index;
-
+    int len_unset;
+    char *unset_var;
+    len_unset = 0;
+    int j = 0;
     if (cmd->argc < 2) 
     {
-        fprintf(stderr, "export: missing argument\n");
+        printf("export: missing argument\n");
         return;
     }
     var = cmd->argv[1];
-    var_index = find_env_var(envp, var);
-
-    if(var_index != -1)
-        ms_unset(cmd,envp);
-    else
+    while (cmd->argv[1][len_unset] != '=')
+            len_unset++;
+    unset_var = malloc(sizeof(char) * len_unset + 1);
+    while (j <= len_unset -1 )
     {
+        unset_var[j] = var[j];
+        j++;
+    }
+    
+        printf("\n\n\n-----%s------\n\n\n",unset_var);
+        ms_unset_export(unset_var,envp);
         size_t env_len = 0;
         while (envp[env_len] != NULL) 
         {
@@ -102,7 +139,6 @@ void ms_export(t_command *cmd, char **envp) {
         envp[env_len + 1] = NULL;
 
         free(new_envp);
-    }
 }
 
 
@@ -113,10 +149,9 @@ void ms_export(t_command *cmd, char **envp) {
 void ms_unset(t_command *cmd, char **envp) {
     if (cmd->argc < 2) 
     {
-        fprintf(stderr, "unset: missing argument\n");
+        printf("unset: missing argument\n");
         return;
     }
-
     char *var = cmd->argv[1];
     int var_index = find_env_var(envp, var);
 
@@ -135,6 +170,6 @@ void ms_unset(t_command *cmd, char **envp) {
     } 
     else 
     {
-        fprintf(stderr, "unset: variable %s not found\n", var);
+        printf("unset: variable %s not found\n", var);
     }
 }
