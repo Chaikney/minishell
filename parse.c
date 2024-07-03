@@ -134,46 +134,38 @@ void executeBuiltin(t_command *cmd, char **envp)
 // - allocate arbitrary space
 // - if we are at the end, reset the static and return NULL to finish.
 // - step over initial spaces, avoiding the end marker
-// - if we find a $ substitute it
+// - if we find a $ substitute it NO, later
 // - copy chaarcters  - FIXME?
 // - null-term and return
 // TODO report position using the posn pointer
+// TODO Tests for other characters?
+// FIXME This path never escapes the outer loop
 char	*get_raw_param(const char *cmd, int *posn)
 {
 	int		i;
-	static int	j;
 	char		*par;
-    int	step;
 
-    (void) posn;
+	if ((cmd[*posn] == ' ') || (cmd[*posn] == '\0'))
+		printf("\t*** entered raw_param at incorrect char: %c", cmd[*posn]);
 	i = 0;
 	par = malloc(sizeof(char) * 256);
 	if (!par)
 		return (NULL);
-	if (cmd[j] == '\0')
+    ft_bzero(par, 256);
+	/* if (cmd[*posn] == '\0') */
+	/* { */
+	/* 	j = 0; */
+	/* 	return (NULL); */
+	/* } */
+    // TODO Consider if this should stop at a ' or " (they would be misplaced, but...)
+	while ((cmd[*posn] != '\0') && (cmd[*posn] != ' '))
 	{
-		j = 0;
-		return (NULL);
+        par[i] = cmd[*posn];
+        i++;
+        (*posn)++;
 	}
-	while ((cmd[j] != '\0'))
-	{
-		if (cmd[j] == ' ')
-		{
-            while ((cmd[j] == ' ') && (cmd[j] != '\0'))
-                j++;
-			break ;
-		}
-        if (cmd[j] == '$')
-        {
-            step = var_sub(&par[i], (char *) &cmd[j]);
-            j = j + step;
-            printf("\npar is now: %s", par);
-            // need to move par (abck?) to the end.
-        }
-        // TODO Tests for other characters
-		par[i++] = cmd[j++];
-	}
-	par[i] = '\0';
+	par[i] = '\0';	// TODO Make the other 2 null-terminate their param
+    // TODO Does raw param need to step over anything?
 	printf("returning: %s\t", par);
 	return (par);
 }
@@ -219,66 +211,42 @@ int	var_sub(char *par, char *cmdline)
 // -- get its name and value
 // -- if value isn't null, copy value to par
 // -- move cmdline forward the length of var_name
-// FIXME Function too long (probably)
-// TODO The var sub part really should be standalone.
-// ...how to handle the skipping forward though?
+// TODO var sub part has to be handled somewhere.
 // FIXME doesn't work with "$PWD" - odd extra characters either side?
-// TODO What does this one do with spaces?
 // TODO report position using the posn pointer
 char	*get_weak_param(const char *cmdline, int *posn)
 {
 	char	*par;
-	int	i;
 	int	j;
-	/* char	*var_name; */
-	/* char	*value; */
-    int	step;
 
-    (void) posn;	// HACK to compile
+	if (cmdline[*posn] != '\"')
+		printf("\t*** entered weak_param at incorrect char: %c", cmdline[*posn]);
 	par = malloc(sizeof(char) * 256);
 	if (!par)
 		return (NULL);
 	ft_bzero(par, 256);
-	i = 0;
 	j = 0;
-	while (cmdline[i] != '\"')
-		i++;
-	i++;
-	while (cmdline[i] != '\"')
+	// HACK Should no longer need the step forward
+	while (cmdline[*posn] != '\"')
+		(*posn)++;
+	(*posn)++;	// Step past the first
+	while ((cmdline[*posn] != '\"')&& (cmdline[*posn] != '\0'))
 	{
-		if (cmdline[i] == '$')
-		{
-            step = var_sub(&par[i], (char *) &cmdline[j]);
-            j = j + step;
-            printf("\npar is now: %s", par);
- 		/* 	printf("found variable to sub:");// HACK for debugging only */
-		/* 	var_name = get_var_name(&cmdline[i]); */
-		/* 	printf("\t%s", var_name);// HACK for debugging only */
-		/* 	if ((value = getenv(var_name))) */
-		/* 	{ */
-		/* 		printf("\tIts value is:%s", value);// HACK for debugging only */
-		/* 		ft_strlcat(par, value, ft_strlen(value) + 1); */
-		/* 		j = j + ft_strlen(value); */
-		/* 	} */
-		/* 	i = i + ft_strlen(var_name) + 1;	// NOTE +1 for the $ */
-		/* 	free (var_name); */
-		}
-		else
-			par[j++] = cmdline[i++];
-    }
-    printf("\nWeak quoting parameter to return: %s", par);	// HACK for debugging only
-    return (par);
+		par[j] = cmdline[*posn];
+		j++;
+		(*posn)++;
+	}
+	if (cmdline[*posn] != '\0')
+		(*posn)++;	// NOTE step past the final ' if safe
+	printf("\nWeak quoting parameter to return: %s", par);	// HACK for debugging only
+	return (par);
 }
 
 // return a 'strongly-quoted' parameter from cmdline.
-// (Strongly quoted = no esscaping or substituting).
+// (Strongly quoted = no escaping or substituting).
 // - Find the first single quote
 // - start copying characters until the next quote
 // NOTE This version does not allow for escaped quotes!
-// TODO Protect against hitting the end of the string.
-// FIXME segfaults, probably as noted above...
-// TODO report position using the posn pointer
-// FIXME Here a space should not signal a split (might be outerloop prob)
 char	*get_strong_param(const char *cmdline, int *posn)
 {
 	char	*par;
@@ -287,16 +255,31 @@ char	*get_strong_param(const char *cmdline, int *posn)
 	par = malloc(sizeof(char) * 256);
 	if (!par)
 		return (NULL);
+    ft_bzero(par, 256);
 	j = 0;
-	while (cmdline[*posn] != '\'')	// FIXME Invalid read here.
-		(*posn)++;
-    (*posn)++;
-	while ((cmdline[*posn] != '\'') && (cmdline[*posn] != '\0'))	// FIXED? Created an epic number of read errors
+    if (cmdline[*posn] != '\'')
+        printf("\t*** entered strong_param at incorrect char: %c", cmdline[*posn]);
+    // HACK while below should be obsolete now
+	/* while (cmdline[*posn] != '\'')	// FIXME Invalid read here. */
+	/* 	(*posn)++; */
+    (*posn)++;	// NOTE Step past the first ' to start copying
+	while ((cmdline[*posn] != '\'') && (cmdline[*posn] != '\0'))
 	{
-		par[j++] = cmdline[*posn];
+		par[j] = cmdline[*posn];
+        j++;
         (*posn)++;
 	}
+	if (cmdline[*posn] != '\0')
+		(*posn)++;	// NOTE step past the final ' if safe
 	return (par);
+}
+
+void	find_stop_char(const char *cmdline, int *posn)
+{
+    while ((cmdline[*posn] != '\0') && (cmdline[*posn] == ' ')
+//           && (cmdline[*posn] != '\'') && (cmdline[*posn] != '\"'))
+    )
+        (*posn)++;
 }
 
 // better command line split / tokenising
@@ -322,13 +305,24 @@ char	**better_split(const char *cmdline)
    // FIXME Will need to handle stepping forward - pointer to cmd_pos?
     while ((p_num < MAXARGS))
     {
-        if (cmdline[cmd_pos] == '\"')
+        find_stop_char(cmdline, &cmd_pos);
+        printf("stop char found: %c\n", cmdline[cmd_pos]);
+        if (cmdline[cmd_pos] == '\0')
+            params[p_num] = NULL;
+        else if (cmdline[cmd_pos] == '\"')
+        {
             params[p_num] = get_weak_param(cmdline, &cmd_pos);
+            // also call var sub?
+        }
         else if (cmdline[cmd_pos] == '\'')
             params[p_num] = get_strong_param(cmdline, &cmd_pos);
         else
+        {
             params[p_num] = get_raw_param(cmdline, &cmd_pos);
+            // also call var sub?
+        }
         printf("added: %s\n", params[p_num]);	// HACK remove debugging statement
+        printf("Stop pos is now %i (%c)", cmd_pos, cmdline[cmd_pos]);
         if (params[p_num] == NULL)
             break ;
         p_num++;
