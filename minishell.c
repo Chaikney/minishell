@@ -62,7 +62,7 @@ void	run_command(t_command *cmd, char **envp)
 	if (access(cmd->argv[0], X_OK) == 0)
 		prog = cmd->argv[0];
 	else
-		prog = find_command(cmd->argv[0]);
+		prog = search_in_path(cmd->argv[0]);
 	if (!prog)
 	{
 		perror("Program not found in PATH");

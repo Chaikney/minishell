@@ -19,8 +19,7 @@
 // -- does path + cmd = an executable?
 // -- if YES we have our command: keep that and discard the rest.
 // NOTE The return value of getenv("PATH") does not need to be freed
-// TODO Change the name of this, command is too ambiguous. Executable?
-char	*find_command(char *cmd)
+char	*search_in_path(char *cmd)
 {
 	char	**pathparts;
 	char	*candidate;

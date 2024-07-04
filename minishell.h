@@ -100,7 +100,7 @@ char	**quote_aware_split(const char *cmdline);
 void	find_stop_char(const char *cmdline, int *posn);
 
 // paths.c - find and direct programs in PATH
-char	*find_command(char *cmd);
+char	*search_in_path(char *cmd);
 void	run_in_child(t_command *cmd, char **envp);
 void	run_in_child_with_pipe(t_command *cmd, char **envp);
 
