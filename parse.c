@@ -12,6 +12,9 @@
 
 #include "minishell.h"
 
+// Read the first command argument and if it matches a builtin, set the flag.
+// TODO What do we look at in case of input redirection?
+// The third parameter, argv[2], would be the one to read.
 int parseBuiltin(t_command *cmd)
 {
     if (cmd->argc == 0) 
@@ -38,23 +41,21 @@ int parseBuiltin(t_command *cmd)
     return (NONE);
 }
 
-// falta por añadir que hace cada 
-// TODO? Need to pass envp here for some of the commands, or maybe not if we 
-// FIXME cmd builtin == 1 I think its wrong
-// FIXME echo causes segfault
+// FIXME echo skips its 1st argument
 // FIXME Exit has to be typed twice to work?
 // TODO Exit has to do some clean up
 // TODO Commands into separate functions, this is too long.
+// FIXME Too many lines in function.
+// falta por añadir que hace cada
 //  [ ] echo with -n (newline or not)
-//  [ ] cd with only a relative or absolute path
+//  [x] cd with only a relative or absolute path
 //  [x] pwd (no options)
 //  [ ] unset (no options)
-//  [ ] env, no options or args
-//  [ ] exit no options.
-
+//  [x] env, no options or args
+//  [ ] export
+//  [x] exit no options.
 void executeBuiltin(t_command *cmd, char **envp)
 {
-    (void) envp;	// HACK for compilation, remove this or parameter later.
     int	i;
 
     while (1) 
@@ -71,7 +72,7 @@ void executeBuiltin(t_command *cmd, char **envp)
             return;
         } 
         else if (cmd->builtin == EXIT)
-            exit(0);
+            ms_exit(cmd);
         else if (cmd->builtin == ECHON)
         {
             i = 1;
@@ -134,9 +135,8 @@ void executeBuiltin(t_command *cmd, char **envp)
 // And was mallocated outside of this call.
 // Returns should be the cursor position to continue reading cmdline from.
 // or to move it
-// FIXME Get clear what to return, this gives nonsense back.
-// Is is because par is not null-terminated at the time we pass it?
 // TODO I think this is unused and can be removed. No different to the other
+// ...except that one works...
 int	var_sub(char *par, char *cmdline)
 {
 	int	i;

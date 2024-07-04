@@ -7,18 +7,28 @@
 
 // Minishell builtin, our version of pwd.
 // Calls getcwd, displays wd then frees the variable.
-// FIXED Just use getcwd!
+// NOTE Calling getcwd with NULL and 0 mallocs as much space as is needed
 int ms_pwd(void)
 {
 	char    *wd;
 
 	wd = NULL;
-	wd = getcwd(wd, 0);     // Calling with NULL and 0 mallocs as much space as is needed.
+	wd = getcwd(wd, 0);
 	if (!wd)
 		return (-1);
 	printf("%s\n", wd);
 	free (wd);
 	return (0);
+}
+
+// Shell's exit clears the relevant variables and ends the program.
+// - free cmd
+// - anything else?
+void	ms_exit(t_command *cmd)
+{
+	printf("Agurrrr....\n");
+	clear_t_command(cmd);
+	exit(EXIT_SUCCESS);
 }
 
 // Returns the line index number of PATH for the requested var string

@@ -92,6 +92,7 @@ char	*get_strong_param(const char *cmdline, int *posn);
 int		ms_pwd(void);
 void	ms_export(t_command *cmd, char **envp);
 void	ms_unset(t_command *cmd, char **envp);
+void	ms_exit(t_command *cmd);
 
 // parse.c - functions to read and interpret user input
 int		parse(const char *cmdline, t_command *cmd);
