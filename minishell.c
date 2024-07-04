@@ -12,6 +12,14 @@
 
 #include "minishell.h"
 
+
+void manipule_sigint(int sig)
+{
+	if(sig)
+	{
+		printf("\nwhat should i do? >");
+	}
+}
 // TODO Implement a shell :-)
 
 // Clear the pathparts and close fds created by piping before exit.
@@ -134,6 +142,7 @@ int main(int argc, char **argv, char **envp)
 	{
 		while (1)
 		{
+			signal(SIGINT, manipule_sigint);
 			prompt = get_prompt();
 			cmdline = readline(prompt);
 			if (cmdline == NULL)
