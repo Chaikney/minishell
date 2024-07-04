@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+// FIXME Too many functions in file.
+
 // Return an executable path for cmd.
 // NOTE cmd must be the name only, not any of its arguments.
 // - split the pieces of PATH and add a trailing slash.
@@ -50,12 +52,10 @@ char	*search_in_path(char *cmd)
 // Look through a parsed set of commands and see if it contains
 // flow control parameters: | > < >> or <<
 // They would be separate from commands either side.
-// FIXME This is PoC only: expand to other flow things
-// - [ ] >>
-// - [ ] <
-// - [ ] <<
-// - [ ] |
-// TODO If not found, return -1.
+// FIXED This is PoC only: expand to other flow things
+// (locates, it is up to the outer loop to re-identify what the thing is)
+// DONE If not found, return -1. this can be if the reidrect is the last term
+// ...it would be invalid in that position.
 int	find_flow_control(t_command *cmdset)
 {
 	int	i;
@@ -71,8 +71,12 @@ int	find_flow_control(t_command *cmdset)
 			break ;
 		else if (ft_strncmp(cmdset->argv[i], "<", 1 == 0))
 			break ;
+		else if (ft_strncmp(cmdset->argv[i], "|", 1 == 0))
+			break ;
 		i++;
 	}
+	if (i == cmdset->argc)
+		i = -1;
 	return (i);
 }
 
@@ -81,7 +85,7 @@ int	find_flow_control(t_command *cmdset)
 // Set the output to that file.
 // run the command in a child process
 // close file when done.
-// FIXME This will not work without mangling the argvs
+// FIXME This will not work without mangling the argvs before sending to run_
 // NOTE The main (only?) difference from redirect_output is the O_APPEND flag
 // TODO This could be combined with redirect: just set file options differently.
 void	run_in_child_append_output(t_command *cmd, char **envp)
@@ -95,7 +99,7 @@ void	run_in_child_append_output(t_command *cmd, char **envp)
 		perror("Could not open output file");
 	dup2(out_file, STDOUT_FILENO);
 	close (out_file);
-	run_in_child(cmd, envp);	// FIXME This will not work without mangling argvs!
+	run_in_child(cmd, envp);
 }
 
 // Find the path part (after the redirect >)
@@ -125,8 +129,6 @@ void	run_in_child_redirect_output(t_command *cmd, char **envp)
 // - run command
 // - wait for it to come back
 // NOTE child == 0 means we are in the child process!
-// TODO We can make this work with & / background
-// TODO How would this work with different input / output?
 // TODO Can I use the output from this to measure state?
 void	run_in_child_with_pipe(t_command *cmd, char **envp)
 {

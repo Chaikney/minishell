@@ -45,10 +45,10 @@ int	needs_sub(char *str)
 // - count length (until a space)
 // - alloc a string
 // - copy characters
-// FIXME Probably too long.
+// FIXME Function too long. Can I do this with fewer vars?
 char	*get_var_name(const char *str)
 {
-	int	name_len;
+	int		name_len;
 	char	*ptr;
 	char	*var_name;
 
@@ -79,12 +79,17 @@ char	*get_var_name(const char *str)
 }
 
 // Substitute one substring for another in a string
-// DONE If new_sub or old_sub(?) are null, still have to get rid of the $
-// (or we get an endless loop in substitute_variables)
-// TODO Have to remove " and ' characters from the final cmd
+// - calculate new length needed
+// - allocate, zero and null-terminate that
+// - copy until we reach the $
+// - then add the char from new_sub (i.e. the value)
+// - step over the variable name
+// - copy the rest of the original string
+// NOTE We do not free the string passed; that is for the caller
+// KILL out of scope here Have to remove " and ' characters from the final cmd
 // NOTE Does that get cut out of what we do here, or passed to the command to let that handle it¿???
-// FIXME Adds a space for missing values, not needed? bash collapses it to a single space
-// FIXME Too many lines in this function.
+// NOTE Adds a space for missing values, not needed? bash collapses it to a single space
+// FIXED Too many lines in this function.
 char	*ms_strsub(char *str, char *old_sub, char *new_sub)
 {
 	int		len;
@@ -100,17 +105,15 @@ char	*ms_strsub(char *str, char *old_sub, char *new_sub)
 		return (NULL);
 	new_str[len - 1] = '\0';
 	cptr = new_str;
-	while (*str != '$')	// copy until the $
+	while (*str != '$')
 		*new_str++ = *str++;
 	if (new_sub)
-	{
 		while (*new_sub != '\0')
 			*new_str++ = *new_sub++;
-	}
-	while ((*str != ' ') && (*str != '\0'))	// Here we step over the variable name in the command
+	while ((*str != ' ') && (*str != '\0'))
 		str++;
 	if (*str == ' ')
-		str++;		// NOTE tries to avoid the extra space issue; probably dangerous though
+		str++;
 	while (*str != '\0')
 		*new_str++ = *str++;
 	return (cptr);
@@ -146,14 +149,13 @@ char	*substitute_variables(char *cmd)
 			sub_len++;
 		var_name = ft_substr(cmd, sub_pos, (sub_len));
 //		var_name = get_var_name(&cmd[sub_pos]);	// FIXME This should work but segfaults.
-		printf("searching for %s in env", var_name);
+//		printf("searching for %s in env", var_name);	// HACK for debugging
 		val = getenv(var_name);
-		printf("\tfound: %s", val);
+//		printf("\tfound: %s", val);	// HACK for debugging
 		new_cmd = ms_strsub(cmd, var_name, val);
 		free(var_name);
 		sub_pos = needs_sub(new_cmd);
 		cmd = new_cmd;
-//		free (new_cmd);	// TODO watch this carefully
 	}
 	return (cmd);
 }
