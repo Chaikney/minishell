@@ -93,6 +93,7 @@ void	run_in_child_with_pipe(t_command *cmd, char **envp)
 // Simplest command runner.
 // Launches one command in a child process and waits for it to complete.
 // NOTE This is the one we use for simple commands.
+// TODO do something with error status here.
 void	run_in_child(t_command *cmd, char **envp)
 {
 	pid_t	child;

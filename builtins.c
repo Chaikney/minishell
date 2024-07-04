@@ -24,6 +24,7 @@ int ms_pwd(void)
 // Shell's exit clears the relevant variables and ends the program.
 // - free cmd
 // - anything else?
+// TODO If this is called from main, we have a char* to free
 void	ms_exit(t_command *cmd)
 {
 	printf("Agurrrr....\n");
