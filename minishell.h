@@ -78,10 +78,10 @@ void	eval(char *cmdline, char **envp);
 char	*get_prompt(void);
 
 // substitute.c - variable substitution
-int		find_env_var(char **envp, const char *var);
 char	*ms_strsub(char *str, char *remove, char *replace);
 char	*substitute_variables(char *cmd);
 char	*get_var_name(const char *str);
+int		needs_sub(char *str);
 
 // tokens.c - break up line according to "quote" 'styles'
 char	*get_raw_param(const char *cmd, int *posn);
@@ -98,13 +98,14 @@ void	ms_exit(t_command *cmd);
 int		parse(const char *cmdline, t_command *cmd);
 void	executeBuiltin(t_command *cmd, char **envp);
 char	**quote_aware_split(const char *cmdline);
-void	find_stop_char(const char *cmdline, int *posn);
 
 // paths.c - find and direct programs in PATH
-char	*search_in_path(char *cmd);
 void	run_in_child(t_command *cmd, char **envp);
 void	run_in_child_with_pipe(t_command *cmd, char **envp);
 
-// substitute.c - functions to sub variables in commands
-int		needs_sub(char *str);
+// helpers.c - finder and helper functions
+char	*search_in_path(char *cmd);
+void	goto_stop_char(const char *cmdline, int *posn);
+int		find_flow_control(t_command *cmdset);
+int		find_env_var(char **envp, const char *var);
 #endif

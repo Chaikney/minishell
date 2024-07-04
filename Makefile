@@ -12,7 +12,8 @@
 
 NAME	= minishell
 
-SRC		= minishell.c paths.c parse.c builtins.c substitute.c tokens.c
+SRC		= minishell.c paths.c parse.c builtins.c substitute.c tokens.c \
+		helpers.c
 
 OBJ		= $(SRC:.c=.o)
 

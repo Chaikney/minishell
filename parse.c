@@ -163,17 +163,6 @@ int	var_sub(char *par, char *cmdline)
 	return (i);
 }
 
-// Moves the *posn pointer forward through a command line
-// until it reaches a stop character (which is badly named because we
-// use this to find a place to *start* parsing).
-// The stop chars are null or any non-space character.
-// (The quote styles are matched for in the main loop.)
-void	find_stop_char(const char *cmdline, int *posn)
-{
-	while ((cmdline[*posn] != '\0') && (cmdline[*posn] == ' '))
-		(*posn)++;
-}
-
 // Quotation-aware command line split / tokenising
 // 3 modes: raw, "weak" quoting and 'strong' quoting
 // RAW: stop on a space, respect \escapes, substitute variables.
@@ -202,7 +191,7 @@ char	**quote_aware_split(const char *cmdline)
 		return (NULL);
 	while ((p_num < MAXARGS))
 	{
-		find_stop_char(cmdline, &cmd_pos);
+		goto_stop_char(cmdline, &cmd_pos);
 //		printf("stop char found: %c\n", cmdline[cmd_pos]);
 		if (cmdline[cmd_pos] == '\0')
 			params[p_num] = NULL;

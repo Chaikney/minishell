@@ -31,27 +31,6 @@ void	ms_exit(t_command *cmd)
 	exit(EXIT_SUCCESS);
 }
 
-// Returns the line index number of PATH for the requested var string
-// If not found, returns -1
-int find_env_var(char **envp, const char *var)
-{
-    size_t len;
-	int i;
-
-    len = 0;
-	i = 0;
-    len = ft_strlen(var);
-    while (envp[i] != NULL)
-    {
-        if (ft_strncmp(envp[i], var, len) == 0 && envp[i][len] == '=')
-        {
-            return (i);
-        }
-		i++;
-    }
-    return (-1);
-}
-
 // Set a new variable in env.
 // If the variable name already exists, change it. (remove existing and then add?)
 // ....this is basically the same functionality as UNSET ?!
