@@ -33,6 +33,7 @@
 # include <errno.h>	// error codes
 # include <string.h>	// strerror
 # include "libft/libft.h"
+# include <signal.h>
 
 // FIXME The name for this should be better.
 // TODO Understand what these values *should* be
