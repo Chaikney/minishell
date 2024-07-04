@@ -16,6 +16,7 @@
 
 // Clear the pathparts and close fds created by piping before exit.
 // TODO This probably needs to be expanded and / or replaced for minishell use.
+// TODO Should this be merged into or called by ms_exit?
 void	exit_and_free(char **args, int fd_in, int fd_out)
 {
 	int	i;
@@ -84,6 +85,7 @@ void	run_command(t_command *cmd, char **envp)
 // TODO We also need to catch if running in a pipe or not.
 // TODO Determine if there is input or output redirection.
 // TODO Decide if run_command / cmd should be a pointer
+// TODO rename the bg variable to say what it does (what does it do?)
 void eval(char *cmdline, char **envp)
 {
     int			bg;
@@ -109,34 +111,31 @@ void eval(char *cmdline, char **envp)
 	clear_t_command(&cmd);
 }
 
-// TODO Define a more interesting prompt
+// TODO Define a more interesting prompt, e.g. show wd.
 char	*get_prompt(void)
 {
     return("what should i do? > ");
 }
 
-// FIXME feof is forbidden - find another way to catch EOF signal.
+// NOTE feof is forbidden - find another way to catch EOF signal.
+// FIXME Not clear what cmdline == NULL attempts, i can't trigger it.
+// ...readline man page says this what it returns on EOF on an empty line.
 // TODO Implement signals handling.
 // TODO Implement an exit routine that frees allocated memory.
-// TODO Add cmdline to readline history after we receive it.
-// FIXME This is the wrong place to trigger the substitution
+// DONE? Add cmdline to readline history after we receive it.
 // TODO Implement a global variable to handle process status.
 int main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;
 	char	*prompt;
-//	char	*subd;
 
 	(void) argv;
-//	subd = NULL;
 	if (argc == 1)	// HACK for compilation, remove later
 	{
 		while (1)
 		{
 			prompt = get_prompt();
 			cmdline = readline(prompt);
-		//	subd = substitute_variables(cmdline);
-	//		printf("\nSubd command is: %s\n", subd);	// HACK for testing, remove later,
 			if (cmdline == NULL)
 			{
 				printf("\n");
@@ -147,7 +146,6 @@ int main(int argc, char **argv, char **envp)
 				add_history((const char *) cmdline);
 				eval(cmdline, envp);
 			}
-//			free(subd);
 		}
 	}
 	else
