@@ -28,27 +28,25 @@ int	find_env_var(char **envp, const char *var)
 // Look through a parsed set of commands and see if it contains
 // flow control parameters: | > < >> or <<
 // They would be separate from commands either side.
-// FIXED This is PoC only: expand to other flow things
 // (locates, it is up to the outer loop to re-identify what the thing is)
-// DONE If not found, return -1. this can be if the reidrect is the last term
-// ...it would be invalid in that position.
 int	find_flow_control(t_command *cmdset)
 {
 	int	i;
 
 	i = 0;
-	while (i < cmdset->argc)
+	while (cmdset->argv[i])
 	{
-		if (ft_strncmp(cmdset->argv[i], ">>", 2 == 0))
+		if (ft_strncmp(cmdset->argv[i], ">>", 2) == 0)
 			break ;
-		else if (ft_strncmp(cmdset->argv[i], "<<", 2 == 0))
+		else if (ft_strncmp(cmdset->argv[i], "<<", 2) == 0)
 			break ;
-		else if (ft_strncmp(cmdset->argv[i], ">", 1 == 0))
+		else if (ft_strncmp(cmdset->argv[i], ">", 1) == 0)
 			break ;
-		else if (ft_strncmp(cmdset->argv[i], "<", 1 == 0))
+		else if (ft_strncmp(cmdset->argv[i], "<", 1) == 0)
 			break ;
-		else if (ft_strncmp(cmdset->argv[i], "|", 1 == 0))
+		else if (ft_strncmp(cmdset->argv[i], "|", 1) == 0)
 			break ;
+//        printf("nothing in %i", i);	// HACK Debugging only remove later
 		i++;
 	}
 	if (i == cmdset->argc)
