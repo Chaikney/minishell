@@ -12,7 +12,6 @@
 
 #include "minishell.h"
 
-
 void manipule_sigint(int sig)
 {
 	if(sig)
@@ -132,7 +131,7 @@ char	*get_prompt(void)
 int main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;
-	char	*prompt;
+	char	*prompt;	// NOTE This is the global holder of ext statuses
 //	char	*subd;
 
 	(void) argv;
@@ -141,6 +140,7 @@ int main(int argc, char **argv, char **envp)
 	{
 		while (1)
 		{
+			g_procstatus = 0;
 			signal(SIGINT, manipule_sigint);
 			prompt = get_prompt();
 			cmdline = readline(prompt);

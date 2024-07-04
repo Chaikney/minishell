@@ -35,6 +35,7 @@
 # include "libft/libft.h"
 # include <signal.h>
 
+int g_procstatus;
 // FIXME The name for this should be better.
 // TODO Understand what these values *should* be
 typedef enum e_builtin

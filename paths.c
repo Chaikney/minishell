@@ -90,18 +90,26 @@ void	run_in_child_with_pipe(t_command *cmd, char **envp)
 	}
 }
 
+
 // Simplest command runner.
 // Launches one command in a child process and waits for it to complete.
 // NOTE This is the one we use for simple commands.
+// TODO do something with error status here.
 void	run_in_child(t_command *cmd, char **envp)
 {
 	pid_t	child;
-
+	int		ret_val;
+	g_procstatus = 0;
 	child = fork();
 	if (child == -1)
 		exit_and_free(NULL, -1, -1);
 	if (child == 0)
 		run_command(cmd, envp);
 	else
-		waitpid(child, 0, 0);
+	{
+		ret_val = waitpid(child, &g_procstatus, 0);
+		if (ret_val == -1)
+			printf("error in child process");
+			// set error value
+	}
 }
