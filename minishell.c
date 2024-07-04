@@ -46,17 +46,23 @@ void	clear_t_command(t_command *cmd)
 			free(cmd->argv[i++]);
 }
 
-// Take a command
-// Find it in PATH
-// Run the command
+// Take a command (currently assumed argv[0])
+// Check to see if it is itself a valid path.
+// Otherwise, find it in PATH
+// Run the command using argv set -- assumed to be NT'd and valid
 // NOTE Any fork-ing needed should have been handled before calling this.
-// DONE in the basic Adapt this to work with the minishell command struct
-// DONE We need a clear_command_struct function to free mem allocated to cmd
+// NOTE The assumptions here are: argv[0] is a command not a redirect.
+// ...and that we can pass the arguments using cmd->argv
+// - this will fail when there are control characters and or multiple parameters
+// TODO Check we have a valid format of argv (NTd, only one command and parameters)
 void	run_command(t_command *cmd, char **envp)
 {
 	char	*prog;
 
-	prog = find_command(cmd->argv[0]);
+	if (access(cmd->argv[0], X_OK) == 0)
+		prog = cmd->argv[0];
+	else
+		prog = find_command(cmd->argv[0]);
 	if (!prog)
 	{
 		perror("Program not found in PATH");
