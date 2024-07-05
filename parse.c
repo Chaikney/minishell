@@ -26,9 +26,9 @@ int parseBuiltin(t_command *cmd)
     else if ((ft_strncmp(cmd->argv[0], "echo", 4) == 0)&& (ft_strlen(cmd->argv[0]) == 4) && (cmd->argv[1] != NULL))
     {
         if ((ft_strncmp(cmd->argv[1], "-n", 2) == 0)&& (ft_strlen(cmd->argv[1]) == 2))
-            return (ECHON);
-        else
             return (ECHO);
+        else
+            return (ECHON);
     }
     else if ((ft_strncmp(cmd->argv[0], "pwd", 3) == 0) && (ft_strlen(cmd->argv[0]) == 3) && (cmd->argv[1] == NULL))
         return (PWD);

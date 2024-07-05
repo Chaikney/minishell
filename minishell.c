@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 
+int g_procstatus;
 
 void manipule_sigint(int sig)
 {
@@ -142,6 +143,7 @@ int main(int argc, char **argv, char **envp)
 	{
 		while (1)
 		{
+			g_procstatus = 0;
 			signal(SIGINT, manipule_sigint);
 			prompt = get_prompt();
 			cmdline = readline(prompt);

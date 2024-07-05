@@ -33,7 +33,9 @@
 # include <errno.h>	// error codes
 # include <string.h>	// strerror
 # include "libft/libft.h"
-# include <signal.h>
+# include <signal.h>	// catch CRTL-c, CTRL-d, other signals
+
+extern int g_procstatus;	// global variable to hold exit codes
 
 // FIXME The name for this should be better.
 // TODO Understand what these values *should* be
