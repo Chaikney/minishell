@@ -99,6 +99,7 @@ void	run_in_child(t_command *cmd, char **envp)
 {
 	pid_t	child;
 	int		ret_val;
+	extern int	g_procstatus;
 
 	g_procstatus = 0;
 	child = fork();
