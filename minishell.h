@@ -105,6 +105,8 @@ char	**quote_aware_split(const char *cmdline);
 // paths.c - find and direct programs in PATH
 void	run_in_child(t_command *cmd, char **envp);
 void	run_in_child_with_pipe(t_command *cmd, char **envp);
+void	run_in_child_append_output(t_command *cmd, char **envp);
+void	run_in_child_redirect_output(t_command *cmd, char **envp);
 
 // helpers.c - finder and helper functions
 char	*search_in_path(char *cmd);

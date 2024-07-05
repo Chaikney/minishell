@@ -14,6 +14,58 @@
 
 // FIXME Too many functions in file.
 
+// When there is a control character present, guide it to the correct
+// execution function(s)
+// TODO Shorter (but still descriptive!) name needed.
+// NOTE Flags for o_reidrection:
+// 0 - no output redirection
+// 1 - create file mode
+// 2 - append file mode
+void	handle_complex_command_structure(t_command *cmd, char **envp)
+{
+	int	num_pipes;
+	int	i;
+	int	o_redir;
+
+	num_pipes = 0;
+	i = 0;
+	o_redir = 0;
+	while (i < cmd->argc)
+		if (ft_strncmp(cmd->argv[i++], "|", 1) == 0)
+			num_pipes++;
+	if (num_pipes > 0)
+	{
+		printf("\nthere is more than one (%i) command to run!\n", num_pipes);
+		return ;
+	}
+	else
+	{
+		// if input redirection is needed, do that.
+		// if output redirection is needed, do that.
+		i = cmd->argc;
+		while (i-- > 0)
+			if (ft_strncmp(cmd->argv[i], ">", 1) == 0)
+			{
+				o_redir = 1;
+				if (ft_strncmp(cmd->argv[i], ">>", 2) == 0)
+					o_redir = 1;
+				break ;
+			}
+		if (o_redir  > 0)
+		{
+			if (o_redir == 2)
+			{
+				// send to redirection, append mode
+				run_in_child_append_output(cmd, envp);
+			}
+			else
+			{
+				// send to redirection, create mode
+				run_in_child_redirect_output(cmd, envp);
+			}
+		}
+	}
+}
 // Find the path part (after the redirect >>)
 // Open a file of that name for writing.
 // Set the output to that file.
