@@ -14,6 +14,9 @@
 
 int g_procstatus;
 
+// catch CTRL-c / SIGINT
+// TODO This should return to the normal prompt / readline call
+// ...I think this leads to duplicated prompt message.
 void manipule_sigint(int sig)
 {
 	if(sig)
@@ -115,13 +118,14 @@ void eval(char *cmdline, char **envp)
 		printf("simple case");	// HACK for debugging
 		cmd_loc = 0;
 		if (cmd.builtin != NONE)
-		executeBuiltin(&cmd, envp);
+			executeBuiltin(&cmd, envp);
 		else
 			run_in_child(&cmd, envp);
 	}
 	else
 	{	// If the control char is at posn 1 then it is input substitution <
 		printf("flow control needed");	// HACK for debugging
+		printf("\nI found control instructions at: %i\nand my command is at: %i (%s)", con_loc, cmd_loc, cmd.argv[cmd_loc]);	// HACK for debugging
 		if (con_loc == 1)
 			cmd_loc = 2;
 		else if (con_loc == (cmd.argc - 1))
@@ -129,7 +133,6 @@ void eval(char *cmdline, char **envp)
 	}
 	if (bg == -1)	// TODO Do we still need this, what is it for?
 		return;
-	printf("\nI found control instructions at: %i\nand my command is at: %i (%s)", con_loc, cmd_loc, cmd.argv[cmd_loc]);	// HACK for debugging
 	if (cmd.argv[cmd_loc] == NULL)
 		return;	// TODO This should throw some sort of error?
 	clear_t_command(&cmd);
@@ -138,6 +141,8 @@ void eval(char *cmdline, char **envp)
 // TODO Define a more interesting prompt, e.g. show wd.
 // TODO Display exit status in prompt.
 // TODO Add colours to prompt.
+// This returns a text string to be dsiplayed by readline
+// when waiting for user input
 char	*get_prompt(void)
 {
     return("what should i do? > ");
