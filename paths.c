@@ -85,8 +85,9 @@ void	run_in_child_with_pipe(t_command *cmd, char **envp)
 	{
 		close(tube[1]);
 		dup2(tube[0], STDIN_FILENO);
-		waitpid(child, 0, 0);
+		waitpid(child, &g_procstatus, 0);
 		close(tube[0]);
+		printf("process finished with code: %i", g_procstatus); // HACK for debugging
 	}
 }
 
@@ -97,12 +98,19 @@ void	run_in_child_with_pipe(t_command *cmd, char **envp)
 void	run_in_child(t_command *cmd, char **envp)
 {
 	pid_t	child;
+	int		ret_val;
 
+	g_procstatus = 0;
 	child = fork();
 	if (child == -1)
 		exit_and_free(NULL, -1, -1);
 	if (child == 0)
 		run_command(cmd, envp);
 	else
-		waitpid(child, 0, 0);
+	{
+		ret_val = waitpid(child, &g_procstatus, 0);
+		if (ret_val == -1)
+			printf("error in child process");
+		printf("process finished with code: %i", g_procstatus); // HACK for debugging
+	}
 }
