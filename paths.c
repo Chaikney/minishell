@@ -21,15 +21,23 @@
 // 0 - no output redirection
 // 1 - create file mode
 // 2 - append file mode
+// Similar with input redirection:
+// 0 - no special input
+// 1 - input from file
+// 2 - input from STDIN with stop word.
+// TODO Split into identification and routing parts (is too long)
+// TODO Implement pieces - what ones do we lack?
 void	handle_complex_command_structure(t_command *cmd, char **envp)
 {
 	int	num_pipes;
 	int	i;
 	int	o_redir;
+	int	i_redir;
 
 	num_pipes = 0;
 	i = 0;
 	o_redir = 0;
+	i_redir = 0;
 	while (i < cmd->argc)
 		if (ft_strncmp(cmd->argv[i++], "|", 1) == 0)
 			num_pipes++;
@@ -48,7 +56,7 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 			{
 				o_redir = 1;
 				if (ft_strncmp(cmd->argv[i], ">>", 2) == 0)
-					o_redir = 1;
+					o_redir = 2;
 				break ;
 			}
 		if (o_redir  > 0)
@@ -64,8 +72,42 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 				run_in_child_redirect_output(cmd, envp);
 			}
 		}
+		i = 0;
+		while (i++ > 0)
+			if (ft_strncmp(cmd->argv[i], "<", 1) == 0)
+			{
+				i_redir = 1;
+				if (ft_strncmp(cmd->argv[i], "<<", 2) == 0)
+					i_redir = 2;
+				break ;
+			}
+		if (o_redir > 0)
+		{
+			if (o_redir == 2)
+			{
+				// send to redirection, append mode
+				run_in_child_append_output(cmd, envp);
+			}
+			else
+			{
+				// send to redirection, create mode
+				run_in_child_redirect_output(cmd, envp);
+			}
+			}
+		if (i_redir > 0)
+		{
+			if (i_redir == 2)
+			{
+				// open the here_doc palaver
+			}
+			else
+			{
+				// run using an opened file
+			}
+		}
 	}
 }
+
 // Find the path part (after the redirect >>)
 // Open a file of that name for writing.
 // Set the output to that file.
@@ -74,6 +116,7 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 // FIXME This will not work without mangling the argvs before sending to run_
 // NOTE The main (only?) difference from redirect_output is the O_APPEND flag
 // TODO This could be combined with redirect: just set file options differently.
+// TODO If this fails it should set the g_procstatus variable
 void	run_in_child_append_output(t_command *cmd, char **envp)
 {
 	int	out_file;
@@ -96,6 +139,7 @@ void	run_in_child_append_output(t_command *cmd, char **envp)
 // FIXME This will not work without mangling the argvs
 // TODO Think about how to find the needed parts
 // TODO Do we need to reset STDOUT afterwards, or is this going to be process-limited?
+// TODO If this fails it should set the g_procstatus variable
 void	run_in_child_redirect_output(t_command *cmd, char **envp)
 {
 	int	out_file;
@@ -115,7 +159,11 @@ void	run_in_child_redirect_output(t_command *cmd, char **envp)
 // - run command
 // - wait for it to come back
 // NOTE child == 0 means we are in the child process!
-// TODO Can I use the output from this to measure state?
+// DONE Can I use the output from this to measure state?
+// TODO This needs an outer loop / function calling it with the correct cmd parts
+// FIXME Looks like function is getting too long...
+// TODO The exit_and_free should be unified with ms_exit, or renamed.
+// ...don't want to leave the entire shell for fork/pipe errors.
 void	run_in_child_with_pipe(t_command *cmd, char **envp)
 {
 	pid_t	child;
