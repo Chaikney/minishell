@@ -71,12 +71,12 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 			}
 		// NOTE Below is the direction part
 		if (o_redir > 0)
-			direct_output(cmd, o_redir);
+			o_redir = direct_output(cmd, o_redir);
 		if (i_redir > 0)
 			setup_input(cmd, i_redir);
 		// after looking and setting up input and output, remove control chars and run command
 		trim_cmdset(cmd);
-		run_in_child(cmd, envp);
+		run_in_child(cmd, envp, o_redir);
 	}
 }
 
@@ -87,16 +87,17 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 // - set fd of file to be STDOUT
 // NOTE DO we also have to slice off the > and after? Would be bad param for command...
 // NOTE Of course, *input* may also need to be handled; so this is uncomplete.
-// TODO What if this just returns an open / valid fd that we should use
-// TODO Do we need to reset STDOUT afterwards, or is this going to be process-limited?
+// DONE What if this just returns an open / valid fd that we should use
+// DONE We need to reset STDOUT afterwards, or not change till later.
 // TODO If this fails it should set the g_procstatus variable
-void	direct_output(t_command *cmd, int o_lvl)
+// FIXED After this, control is never returned to the shell.
+int	direct_output(t_command *cmd, int o_lvl)
 {
 	int		perms;
 	char	*o_path;
 	int		o_file;
 
-	if (o_lvl == 2)	//
+	if (o_lvl == 2)
 		perms = O_WRONLY | O_CREAT | O_APPEND;
 	else if (o_lvl == 1)
 		perms = O_WRONLY | O_CREAT | O_TRUNC;
@@ -105,12 +106,14 @@ void	direct_output(t_command *cmd, int o_lvl)
 	o_file = open(o_path, perms, 0777);
 	if (o_file == -1)
 		perror("Could not open output file");
-	dup2(o_file, STDOUT_FILENO);
+	else
+		return (o_file);
+//	dup2(o_file, STDOUT_FILENO);	// FIXED I think this output switch  is in the wrong place
 //	close (o_file);	// this file descriptor not needed now? or call this after running?
+	return (-1);
 }
 
-// TODO What if this just returns an open / valid fd that we should use
-// for the command?
+// TODO Change to just returns an open / valid fd for the command
 // TODO Implement stop word / here_doc input redirection
 // NOTE That is in the format: cmd << stop_word
 // NOTE Input redir in format:  < infile grep a1
@@ -146,6 +149,7 @@ void	setup_input(t_command *cmd, int i_lvl)
 // TODO Make sure the removed pieces are not needed/used elsewhere.
 // TODO Have to also trim the first pieces - different method needed?
 // TODO What happens if there is < and > in the same command??
+// HACK Most of the input parts are commented out, fix them
 // NOTE Is it legit to have << *after* > ?
 void	trim_cmdset(t_command *cmd)
 {
@@ -225,7 +229,7 @@ void	run_in_child_with_pipe(t_command *cmd, char **envp)
 // Launches one command in a child process and waits for it to complete.
 // NOTE This is the one we use for simple commands.
 // TODO do something with error status here.
-void	run_in_child(t_command *cmd, char **envp)
+void	run_in_child(t_command *cmd, char **envp, int o_file)
 {
 	pid_t	child;
 	int		ret_val;
@@ -235,10 +239,15 @@ void	run_in_child(t_command *cmd, char **envp)
 	child = fork();
 	if (child == -1)
 		exit_and_free(NULL, -1, -1);
-	if (child == 0)
+	if (child == 0)	// NOTE only set output / STDOUT here?
+	{
+		if (o_file > 0)
+			dup2(o_file, STDOUT_FILENO);
 		run_command(cmd, envp);
+	}
 	else
 	{
+		printf("waiting for child porcess: %i", child);	// HACK for debugging
 		ret_val = waitpid(child, &g_procstatus, 0);
 		if (ret_val == -1)
 			printf("error in child process");

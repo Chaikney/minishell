@@ -22,7 +22,7 @@ char	*get_raw_param(const char *cmd, int *posn)
 	if ((cmd[*posn] == ' ') || (cmd[*posn] == '\0'))
 		printf("\t*** entered at incorrect char: %c", cmd[*posn]);
 	i = 0;
-	par = malloc(sizeof(char) * 256);
+	par = malloc(sizeof(char) * 256);	// FIXME two blocks lost after less > test.txt
 	if (!par)
 		return (NULL);
 	ft_bzero(par, 256);

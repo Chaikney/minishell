@@ -67,12 +67,14 @@ void	clear_t_command(t_command *cmd)
 // NOTE The assumptions here are: argv[0] is a command not a redirect.
 // ...and that we can pass the arguments using cmd->argv
 // - this will fail when there are control characters and or multiple parameters
-// TODO Check we have a valid format of argv (NTd, only one command and parameters)
+// NOTE Check we have a valid format of argv (NTd, only one command and parameters)
 // TODO Move this to a suitable other file.
+// TODO If errors here, set g_procstatus
 void	run_command(t_command *cmd, char **envp)
 {
 	char	*prog;
 
+	printf("here to run a command: %s", cmd->argv[0]);	// HACK for debugging
 	if (access(cmd->argv[0], X_OK) == 0)
 		prog = cmd->argv[0];
 	else
@@ -87,6 +89,7 @@ void	run_command(t_command *cmd, char **envp)
 	{
 		perror("Failed to execute program");
         free (prog);
+		ms_exit(cmd);	// TODO Determine proper free-ing needs here.
 //		exit_and_free(args, -1, -1);
 	}
 }
@@ -121,7 +124,7 @@ void eval(char *cmdline, char **envp)
 		if (cmd.builtin != NONE)
 			executeBuiltin(&cmd, envp);
 		else
-			run_in_child(&cmd, envp);
+			run_in_child(&cmd, envp, -1);
 	}
 	else
 	{	// If the control char is at posn 1 then it is input substitution <
@@ -157,6 +160,7 @@ char	*get_prompt(void)
 // TODO Implement an exit routine that frees allocated memory.
 // DONE? Add cmdline to readline history after we receive it.
 // TODO Implement a global variable to handle process status.
+// TODO Can we configure the readline history to be friendlier?
 int main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;
