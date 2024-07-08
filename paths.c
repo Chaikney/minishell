@@ -70,18 +70,12 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 			}
 		// NOTE Below is the direction part
 		if (o_redir > 0)
-				direct_output(cmd, envp, o_redir);
+				direct_output(cmd, o_redir);
 		if (i_redir > 0)
-		{
-			if (i_redir == 2)
-			{
-				// open the here_doc palaver
-			}
-			else
-			{
-				// run using an opened file
-			}
-		}
+			setup_input(cmd, i_redir);
+		// after looking and setting up input and output, renmove control chars and run command
+		trim_cmdset(cmd);
+		run_in_child(cmd, envp);
 	}
 }
 
@@ -94,9 +88,8 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 // NOTE Of course, *input* may also need to be handled; so this is uncomplete.
 // TODO What if this just returns an open / valid fd that we should use
 // TODO Do we need to reset STDOUT afterwards, or is this going to be process-limited?
-// FIXME This will not work without mangling the argvs before sending to run_
 // TODO If this fails it should set the g_procstatus variable
-void	direct_output(t_command *cmd, char **envp, int o_lvl)
+void	direct_output(t_command *cmd, int o_lvl)
 {
 	int		perms;
 	char	*o_path;
@@ -111,9 +104,7 @@ void	direct_output(t_command *cmd, char **envp, int o_lvl)
 	if (o_file == -1)
 		perror("Could not open output file");
 	dup2(o_file, STDOUT_FILENO);
-	close (o_file);	// this file descriptor not needed now? or call this after running?
-	trim_cmdset(cmd);
-	run_in_child(cmd, envp);
+//	close (o_file);	// this file descriptor not needed now? or call this after running?
 }
 
 // TODO What if this just returns an open / valid fd that we should use
@@ -121,7 +112,7 @@ void	direct_output(t_command *cmd, char **envp, int o_lvl)
 // TODO Implement stop word / here_doc input redirection
 // NOTE That is in the format: cmd << stop_word
 // NOTE Input redir in format:  < infile grep a1
-void	setup_input(t_command *cmd, char **envp, int i_lvl)
+void	setup_input(t_command *cmd, int i_lvl)
 {
 	char	*i_path;
 	int		i_file;
@@ -140,8 +131,6 @@ void	setup_input(t_command *cmd, char **envp, int i_lvl)
 		i_file = open(i_path, O_RDONLY);
 	}
 	dup2(i_file, STDIN_FILENO);
-	// TODO Slice off the first part of the cmd set.
-	run_in_child(cmd, envp);	// FIXME This will not work without mangling argvs!
 }
 
 // remove the last part of the argv and argc of the passed command
@@ -152,6 +141,7 @@ void	setup_input(t_command *cmd, char **envp, int i_lvl)
 // TODO This could also trim the first pieces - different method needed?
 void	trim_cmdset(t_command *cmd)
 {
+	int	i;
 	if (ft_strncmp(cmd->argv[cmd->argc - 1], ">", 1) == 0)	// NOTE this matches both
 	{
 		free(cmd->argv[cmd->argc]);	// the filename
@@ -162,8 +152,14 @@ void	trim_cmdset(t_command *cmd)
 	{
 		printf("remove input file parts");
 	}
-	else if (ft_strncmp(cmd->argv[1], "<<", 2) == 0)	// FIXME try and match input redirs
+	else
 	{
+		i = 0;
+		while (i++ < cmd->argc)
+			if (ft_strncmp(cmd->argv[i], "<<", 2) == 0)	// FIXME try and match input redirs
+			{
+				// remove i and i + 1
+			}
 		printf("remove stop word parameters");
 	}
 }
