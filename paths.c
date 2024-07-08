@@ -99,7 +99,8 @@ void	direct_output(t_command *cmd, int o_lvl)
 		perms = O_WRONLY | O_CREAT | O_APPEND;
 	else if (o_lvl == 1)
 		perms = O_WRONLY | O_CREAT | O_TRUNC;
-	o_path = cmd->argv[cmd->argc];
+	o_path = cmd->argv[cmd->argc - 1];
+	printf("\nTrying to open file: %s\n", o_path);
 	o_file = open(o_path, perms);
 	if (o_file == -1)
 		perror("Could not open output file");
