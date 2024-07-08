@@ -168,49 +168,6 @@ void	trim_cmdset(t_command *cmd)
 	}
 }
 
-// Find the path part (after the redirect >>)
-// Open a file of that name for writing.
-// Set the output to that file.
-// run the command in a child process
-// close file when done.
-// NOTE The main (only?) difference from redirect_output is the O_APPEND flag
-// TODO This could be combined with redirect: just set file options differently.
-void	run_in_child_append_output(t_command *cmd, char **envp)
-{
-	int	out_file;
-	int	redirect_posn;
-
-	redirect_posn = find_flow_control(cmd);
-	out_file = open(cmd->argv[redirect_posn + 1], O_WRONLY | O_CREAT | O_APPEND, 0777);
-	if (out_file == -1)
-		perror("Could not open output file");
-	dup2(out_file, STDOUT_FILENO);
-	close (out_file);
-	run_in_child(cmd, envp);
-}
-
-// Find the path part (after the redirect >)
-// Open a file of that name for writing.
-// Set the output to that file.
-// run the command in a child process
-// close file when done.
-// FIXME This will not work without mangling the argvs
-// TODO Think about how to find the needed parts
-// TODO If this fails it should set the g_procstatus variable
-void	run_in_child_redirect_output(t_command *cmd, char **envp)
-{
-	int	out_file;
-	int	redirect_posn;
-
-	redirect_posn = find_flow_control(cmd);
-	out_file = open(cmd->argv[redirect_posn + 1], O_WRONLY | O_CREAT | O_TRUNC, 0777);
-	if (out_file == -1)
-		perror("Could not open output file");
-	dup2(out_file, STDOUT_FILENO);
-	close (out_file);
-	run_in_child(cmd, envp);	// FIXME This will not work without mangling argvs!
-}
-
 // Make a child process to execute the command, putting the output in a pipe
 // - fork
 // - run command
