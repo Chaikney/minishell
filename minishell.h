@@ -107,6 +107,9 @@ void	run_in_child(t_command *cmd, char **envp);
 void	run_in_child_with_pipe(t_command *cmd, char **envp);
 void	run_in_child_append_output(t_command *cmd, char **envp);
 void	run_in_child_redirect_output(t_command *cmd, char **envp);
+void	direct_output(t_command *cmd, char **envp, int o_lvl);
+void	trim_cmdset(t_command *cmd);
+void	setup_input(t_command *cmd, char **envp, int i_lvl);
 
 // helpers.c - finder and helper functions
 char	*search_in_path(char *cmd);
