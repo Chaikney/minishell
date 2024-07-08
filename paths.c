@@ -29,6 +29,7 @@
 // TODO Implement pipe handling - split commands and run in order
 // TODO Implement << stop word type input!
 // TODO Unify input and output mangling so they can both run.
+// FIXME Note that in bash, >file is acceptable: matters for split!
 void	handle_complex_command_structure(t_command *cmd, char **envp)
 {
 	int	num_pipes;
@@ -49,7 +50,7 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 	}
 	else	// we can handle the other redir types
 	{
-		// Identity if input or redirection is needed, and its type.
+		// Identify if input or redirection is needed, and its type.
 		i = cmd->argc;
 		while (i-- > 0)
 			if (ft_strncmp(cmd->argv[i], ">", 1) == 0)
@@ -70,10 +71,10 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 			}
 		// NOTE Below is the direction part
 		if (o_redir > 0)
-				direct_output(cmd, o_redir);
+			direct_output(cmd, o_redir);
 		if (i_redir > 0)
 			setup_input(cmd, i_redir);
-		// after looking and setting up input and output, renmove control chars and run command
+		// after looking and setting up input and output, remove control chars and run command
 		trim_cmdset(cmd);
 		run_in_child(cmd, envp);
 	}
@@ -101,7 +102,7 @@ void	direct_output(t_command *cmd, int o_lvl)
 		perms = O_WRONLY | O_CREAT | O_TRUNC;
 	o_path = cmd->argv[cmd->argc - 1];
 	printf("\nTrying to open file: %s\n", o_path);
-	o_file = open(o_path, perms);
+	o_file = open(o_path, perms, 0777);
 	if (o_file == -1)
 		perror("Could not open output file");
 	dup2(o_file, STDOUT_FILENO);
@@ -113,6 +114,10 @@ void	direct_output(t_command *cmd, int o_lvl)
 // TODO Implement stop word / here_doc input redirection
 // NOTE That is in the format: cmd << stop_word
 // NOTE Input redir in format:  < infile grep a1
+// If opening the file fails,
+// bash quits with error and doesn’t run the command.
+// If it succeeds, bash uses the file descriptor
+// of the opened file as the stdin file descriptor for the command.
 void	setup_input(t_command *cmd, int i_lvl)
 {
 	char	*i_path;
@@ -139,31 +144,45 @@ void	setup_input(t_command *cmd, int i_lvl)
 // take away the last 2 terms (filename and symbol)
 // (both need to be free'd, yes?)
 // TODO Make sure the removed pieces are not needed/used elsewhere.
-// TODO This could also trim the first pieces - different method needed?
+// TODO Have to also trim the first pieces - different method needed?
+// TODO What happens if there is < and > in the same command??
+// NOTE Is it legit to have << *after* > ?
 void	trim_cmdset(t_command *cmd)
 {
-	int	i;
-	if (ft_strncmp(cmd->argv[cmd->argc - 1], ">", 1) == 0)	// NOTE this matches both
+//	int	i;
+
+//	i = 0;
+	// Trim the create / append command output pieces
+	if (ft_strncmp(cmd->argv[cmd->argc - 2], ">", 1) == 0)	// NOTE this matches both
 	{
-		free(cmd->argv[cmd->argc]);	// the filename
-		cmd->argv[cmd->argc - 1] = NULL;	// the control chars
+		free(cmd->argv[cmd->argc - 1]);	// wipe the filename
+		cmd->argv[cmd->argc - 2] = NULL;	// mark the control chars as the last point
 		cmd->argc = cmd->argc - 2;
 	}
-	if (ft_strncmp(cmd->argv[0], "<", 1) == 0)	// match input redirs
-	{
-		printf("remove input file parts");
+	/* if (ft_strncmp(cmd->argv[0], "<", 1) == 0)	// match input redirs Does it?? */
+	/* { */
+	/* 	cmd->argv[i] = cmd->argv[i + 2]; */
+	/* 	cmd->argv[i + 1] = cmd->argv[i + 3]; */
+	/* 	// TODO move *all the parts* back over the set. Needs a loop! */
+	/* 	cmd->argc = cmd->argc - 2; */
+	/* 	printf("remove input file parts");	// HACK for debugging */
+	/* } */
+	/* else */
+	/* { */
+	/* 	while (i < cmd->argc) */
+	/* 	{ */
+	/* 		if (ft_strncmp(cmd->argv[i], "<<", 2) == 0) */
+	/* 		{ */
+	/* 			// remove the last two parts and reduce argc */
+	/* 			free(cmd->argv[cmd->argc]);	// the stopword */
+	/* 			cmd->argv[cmd->argc - 1] = NULL;	// the control chars */
+	/* 			cmd->argc = cmd->argc - 2; */
+	/* 			break ; */
+	/* 		} */
+	/* 		i++; */
+	/* 	} */
+	/* 	printf("remove stop word parameters"); */
 	}
-	else
-	{
-		i = 0;
-		while (i++ < cmd->argc)
-			if (ft_strncmp(cmd->argv[i], "<<", 2) == 0)	// FIXME try and match input redirs
-			{
-				// remove i and i + 1
-			}
-		printf("remove stop word parameters");
-	}
-}
 
 // Make a child process to execute the command, putting the output in a pipe
 // - fork

@@ -55,8 +55,8 @@ void	clear_t_command(t_command *cmd)
 	int	i;
 
 	i = 0;
-	while (cmd->argv[i])
-			free(cmd->argv[i++]);
+	while (cmd->argv[i])	// FIXME Segfault here.
+		free(cmd->argv[i++]);
 }
 
 // Take a command (currently assumed argv[0])
@@ -111,6 +111,7 @@ void eval(char *cmdline, char **envp)
 //    printf("Evaluating '%s'\n", cmdline);	// HACK For debugging, remove later
 	cmd_loc = 0;	// NOTE This is needed to silence valgrind warning of uninitialised value.
     bg = parse(cmdline, &cmd);
+	(void) bg;
 //    printf("Found command %s\n", cmd.argv[0]);	// HACK For debugging, remove later
 	con_loc = find_flow_control(&cmd);
 	if (con_loc == -1)
@@ -130,12 +131,13 @@ void eval(char *cmdline, char **envp)
 			cmd_loc = 2;
 		else if (con_loc == (cmd.argc - 1))
 			cmd_loc = (cmd.argc - 2);
+		handle_complex_command_structure(&cmd, envp);
 	}
-	if (bg == -1)	// TODO Do we still need this, what is it for?
-		return;
-	if (cmd.argv[cmd_loc] == NULL)
-		return;	// TODO This should throw some sort of error?
-	clear_t_command(&cmd);
+	/* if (bg == -1)	// TODO Do we still need this, what is it for? */
+	/* 	return; */
+	/* if (cmd.argv[cmd_loc] == NULL) */
+	/* 	return;	// TODO This should throw some sort of error? */
+//	clear_t_command(&cmd);
 }
 
 // TODO Define a more interesting prompt, e.g. show wd.

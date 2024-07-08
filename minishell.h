@@ -101,6 +101,7 @@ void	ms_exit(t_command *cmd);
 int		parse(const char *cmdline, t_command *cmd);
 void	executeBuiltin(t_command *cmd, char **envp);
 char	**quote_aware_split(const char *cmdline);
+void	handle_complex_command_structure(t_command *cmd, char **envp);
 
 // paths.c - find and direct programs in PATH
 void	run_in_child(t_command *cmd, char **envp);
