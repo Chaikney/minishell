@@ -73,10 +73,10 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 		if (o_redir > 0)
 			o_redir = direct_output(cmd, o_redir);
 		if (i_redir > 0)
-			setup_input(cmd, i_redir);
+			i_redir = setup_input(cmd, i_redir);
 		// after looking and setting up input and output, remove control chars and run command
 		trim_cmdset(cmd);
-		run_in_child(cmd, envp, o_redir);
+		run_in_child(cmd, envp, i_redir, o_redir);
 	}
 }
 
@@ -113,15 +113,16 @@ int	direct_output(t_command *cmd, int o_lvl)
 	return (-1);
 }
 
-// TODO Change to just returns an open / valid fd for the command
+// DONE Change to just returns an open / valid fd for the command
 // TODO Implement stop word / here_doc input redirection
+// TODO Check access() to i_path?
 // NOTE That is in the format: cmd << stop_word
 // NOTE Input redir in format:  < infile grep a1
 // If opening the file fails,
 // bash quits with error and doesn’t run the command.
 // If it succeeds, bash uses the file descriptor
 // of the opened file as the stdin file descriptor for the command.
-void	setup_input(t_command *cmd, int i_lvl)
+int	setup_input(t_command *cmd, int i_lvl)
 {
 	char	*i_path;
 	int		i_file;
@@ -139,7 +140,10 @@ void	setup_input(t_command *cmd, int i_lvl)
 		i_path = cmd->argv[1];
 		i_file = open(i_path, O_RDONLY);
 	}
-	dup2(i_file, STDIN_FILENO);
+	else
+		i_file = -1;
+	return (i_file);
+//	dup2(i_file, STDIN_FILENO);
 }
 
 // remove the last part of the argv and argc of the passed command
@@ -230,7 +234,7 @@ void	run_in_child_with_pipe(t_command *cmd, char **envp)
 // Launches one command in a child process and waits for it to complete.
 // NOTE This is the one we use for simple commands.
 // TODO do something with error status here.
-void	run_in_child(t_command *cmd, char **envp, int o_file)
+void	run_in_child(t_command *cmd, char **envp, int i_file, int o_file)
 {
 	pid_t	child;
 	int		ret_val;
@@ -244,6 +248,8 @@ void	run_in_child(t_command *cmd, char **envp, int o_file)
 	{
 		if (o_file > 0)
 			dup2(o_file, STDOUT_FILENO);
+		if (i_file > 0)
+			dup2(i_file, STDIN_FILENO);	// TODO I have no idea if this works!
 		run_command(cmd, envp);
 	}
 	else
