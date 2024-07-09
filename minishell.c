@@ -111,11 +111,9 @@ void eval(char *cmdline, char **envp)
 {
     int			bg;
     t_command	cmd;
-	int			cmd_loc;
 	int			con_loc;
 
 //    printf("Evaluating '%s'\n", cmdline);	// HACK For debugging, remove later
-	cmd_loc = 0;	// NOTE This is needed to silence valgrind warning of uninitialised value.
     bg = parse(cmdline, &cmd);
 	(void) bg;
 //    printf("Found command %s\n", cmd.argv[0]);	// HACK For debugging, remove later
@@ -123,26 +121,19 @@ void eval(char *cmdline, char **envp)
 	if (con_loc == -1)
 	{
 //		printf("simple case");	// HACK for debugging
-		cmd_loc = 0;	// TODO Is this still needed?
 		if (cmd.builtin != NONE)
 			executeBuiltin(&cmd, envp);
 		else
 			run_in_child(&cmd, envp, -1, -1);
 	}
 	else
-	{	// If the control char is at posn 1 then it is input substitution <
-		printf("flow control needed");	// HACK for debugging
-		printf("\nI found control instructions at: %i\nand my command is at: %i (%s)", con_loc, cmd_loc, cmd.argv[cmd_loc]);	// HACK for debugging
-		if (con_loc == 1)
-			cmd_loc = 2;
-		else if (con_loc == (cmd.argc - 1))
-			cmd_loc = (cmd.argc - 2);
+	{
+//		printf("flow control needed");	// HACK for debugging
+//		printf("\nI found control instructions at: %i\nand my command is at: %i (%s)", con_loc, cmd_loc, cmd.argv[cmd_loc]);	// HACK for debugging
 		handle_complex_command_structure(&cmd, envp);
 	}
 	/* if (bg == -1)	// TODO Do we still need this, what is it for? */
 	/* 	return; */
-	/* if (cmd.argv[cmd_loc] == NULL) */
-	/* 	return;	// TODO This should throw some sort of error? */
 	clear_t_command(&cmd);
 }
 

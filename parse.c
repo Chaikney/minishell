@@ -179,6 +179,7 @@ int	var_sub(char *par, char *cmdline)
 // NOTE This applies variable substition where wanted.
 // FIXME Likely quote_aware_split has too many lines.
 // TODO Splitting around > type chars needs to be rethought
+// FIXME Note that in bash, >file is acceptable: matters for split!
 char	**quote_aware_split(const char *cmdline)
 {
 	char	**params;

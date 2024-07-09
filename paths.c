@@ -28,8 +28,7 @@
 // TODO Split into identification and routing parts (is too long)
 // TODO Implement pipe handling - split commands and run in order
 // TODO Implement << stop word type input!
-// TODO Unify input and output mangling so they can both run.
-// FIXME Note that in bash, >file is acceptable: matters for split!
+// DONE Unify input and output mangling so they can both run.
 // FIXME Will need to be shorter
 void	handle_complex_command_structure(t_command *cmd, char **envp)
 {
@@ -74,7 +73,6 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 				remove_cmd_parts(cmd, "<");
 				break ;
 			}
-		// after looking and setting up input and output, remove control chars and run command
 		run_in_child(cmd, envp, i_redir, o_redir);
 	}
 }
@@ -86,7 +84,7 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 // - set fd of file to be STDOUT
 // NOTE DO we also have to slice off the > and after? Would be bad param for command...
 // NOTE Of course, *input* may also need to be handled; so this is uncomplete.
-// TODO If this fails it should set the g_procstatus variable
+// DONE? If this fails it should set the g_procstatus variable
 int	direct_output(t_command *cmd, int o_lvl)
 {
 	int		perms;
@@ -107,9 +105,9 @@ int	direct_output(t_command *cmd, int o_lvl)
 	return (-1);
 }
 
-// TODO Implement stop word / here_doc input redirection
-// TODO Check access() to i_path?
+// DONE Check access() to i_path? open probably covers it
 // FIXME < does not work; trim_cmd issue I think.
+// TODO Implement stop word / here_doc input redirection
 // NOTE That is in the format: cmd << stop_word
 // NOTE Input redir in format:  < infile grep a1
 // If opening the file fails,
