@@ -69,7 +69,7 @@ void	clear_t_command(t_command *cmd)
 // - this will fail when there are control characters and or multiple parameters
 // NOTE Check we have a valid format of argv (NTd, only one command and parameters)
 // TODO Move this to a suitable other file.
-// TODO If errors here, set g_procstatus
+// DONE? If errors here, set g_procstatus
 void	run_command(t_command *cmd, char **envp)
 {
 	char	*prog;
@@ -82,12 +82,14 @@ void	run_command(t_command *cmd, char **envp)
 	if (!prog)
 	{
 		perror("Program not found in PATH");
+		g_procstatus = errno;
 		free(prog);
 //		exit_and_free(cmd, -1, -1);
 	}
 	if (execve(prog, cmd->argv, envp) == -1)
 	{
 		perror("Failed to execute program");
+		g_procstatus = errno;
         free (prog);
 		ms_exit(cmd);	// TODO Determine proper free-ing needs here.
 //		exit_and_free(args, -1, -1);
@@ -165,16 +167,15 @@ int main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;
 	char	*prompt;
-	extern int	g_procstatus;
+//	extern int	g_procstatus;
 
 	(void) argv;
-	(void) g_procstatus;
 	cmdline = NULL;
 	if (argc == 1)
 	{
 		while (1)
 		{
-			g_procstatus = 0;
+//			g_procstatus = 0;
 			signal(SIGINT, manipule_sigint);
 			prompt = get_prompt();
 			cmdline = readline(prompt);

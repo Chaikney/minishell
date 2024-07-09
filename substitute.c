@@ -148,10 +148,13 @@ char	*substitute_variables(char *cmd)
 			&& (cmd[sub_pos + sub_len] != ' '))
 			sub_len++;
 		var_name = ft_substr(cmd, sub_pos, (sub_len));
+		if (ft_strncmp(var_name, "?", 1) == 0)
+			val = ft_itoa(g_procstatus);
 //		var_name = get_var_name(&cmd[sub_pos]);	// FIXME This should work but segfaults.
 //		printf("searching for %s in env", var_name);	// HACK for debugging
-		val = getenv(var_name);
-//		printf("\tfound: %s", val);	// HACK for debugging
+		else
+			val = getenv(var_name);
+		printf("\tfound: %s", val);	// HACK for debugging
 		new_cmd = ms_strsub(cmd, var_name, val);
 		free(var_name);
 		sub_pos = needs_sub(new_cmd);

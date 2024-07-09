@@ -149,6 +149,7 @@ void	setup_input(t_command *cmd, int i_lvl)
 // TODO Make sure the removed pieces are not needed/used elsewhere.
 // TODO Have to also trim the first pieces - different method needed?
 // TODO What happens if there is < and > in the same command??
+// FIXME One block is lost after stripping things for > >>
 // HACK Most of the input parts are commented out, fix them
 // NOTE Is it legit to have << *after* > ?
 void	trim_cmdset(t_command *cmd)
@@ -235,7 +236,7 @@ void	run_in_child(t_command *cmd, char **envp, int o_file)
 	int		ret_val;
 	extern int	g_procstatus;
 
-	g_procstatus = 0;
+//	g_procstatus = 0;
 	child = fork();
 	if (child == -1)
 		exit_and_free(NULL, -1, -1);

@@ -8,7 +8,6 @@
 // - allocate arbitrary space
 // - if we are at the end, reset the static and return NULL to finish.
 // - step over initial spaces, avoiding the end marker
-// - if we find a $ substitute it NO, later
 // - copy characters
 // - null-term and return
 // TODO We may need to handle some escape characters in this function.
