@@ -109,7 +109,6 @@ void	run_in_child_with_pipe(t_command *cmd, char **envp);
 int		direct_output(t_command *cmd, int o_lvl);
 void	trim_cmdset(t_command *cmd);
 int		setup_input(t_command *cmd, int i_lvl);
-void	alt_trim_cmdset(t_command *cmd);
 
 // helpers.c - finder and helper functions
 char	*search_in_path(char *cmd);
