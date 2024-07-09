@@ -107,8 +107,8 @@ void	handle_complex_command_structure(t_command *cmd, char **envp);
 void	run_in_child(t_command *cmd, char **envp, int i_file, int o_file);
 void	run_in_child_with_pipe(t_command *cmd, char **envp);
 int		direct_output(t_command *cmd, int o_lvl);
-void	trim_cmdset(t_command *cmd);
 int		setup_input(t_command *cmd, int i_lvl);
+void	remove_cmd_parts(t_command *cmd, char *target);
 
 // helpers.c - finder and helper functions
 char	*search_in_path(char *cmd);

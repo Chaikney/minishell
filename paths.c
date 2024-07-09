@@ -59,6 +59,8 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 				o_redir = 1;
 				if (ft_strncmp(cmd->argv[i], ">>", 2) == 0)
 					o_redir = 2;
+				o_redir = direct_output(cmd, o_redir);
+				remove_cmd_parts(cmd, ">");
 				break ;
 			}
 		i = 0;
@@ -68,15 +70,11 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 				i_redir = 1;
 				if (ft_strncmp(cmd->argv[i], "<<", 2) == 0)
 					i_redir = 2;
+				i_redir = setup_input(cmd, i_redir);
+				remove_cmd_parts(cmd, "<");
 				break ;
 			}
-		// NOTE Below is the direction part
-		if (o_redir > 0)
-			o_redir = direct_output(cmd, o_redir);
-		if (i_redir > 0)
-			i_redir = setup_input(cmd, i_redir);
 		// after looking and setting up input and output, remove control chars and run command
-		trim_cmdset(cmd);	// FIXME Perhaps trim_cmdset better called from i/o functions
 		run_in_child(cmd, envp, i_redir, o_redir);
 	}
 }
@@ -177,14 +175,6 @@ void	remove_cmd_parts(t_command *cmd, char *target)
 	free (cmd->argv[i + 1]);	// FIXME Invalid free
 	free (cmd->argv[i + 2]);
 	cmd->argc = cmd->argc -2;
-}
-
-// Wrap the stripping of flow control chars from cmdset
-// FIXME Is this even needed?
-void	trim_cmdset(t_command *cmd)
-{
-	remove_cmd_parts(cmd, ">");
-	remove_cmd_parts(cmd, "<");
 }
 
 // Make a child process to execute the command, putting the output in a pipe
