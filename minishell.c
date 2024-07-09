@@ -24,7 +24,6 @@ void manipule_sigint(int sig)
 		printf("\nwhat should i do? >");
 	}
 }
-// TODO Implement a shell :-)
 
 // Clear the pathparts and close fds created by piping before exit.
 // TODO This probably needs to be expanded and / or replaced for minishell use.
@@ -83,15 +82,15 @@ void	run_command(t_command *cmd, char **envp)
 		prog = search_in_path(cmd->argv[0]);
 	if (!prog)
 	{
-		perror("Program not found in PATH");
 		g_procstatus = errno;
+		perror("Program not found in PATH");
 		free(prog);
 //		exit_and_free(cmd, -1, -1);
 	}
 	if (execve(prog, cmd->argv, envp) == -1)
 	{
-		perror("Failed to execute program");
 		g_procstatus = errno;
+		perror("Failed to execute program");
         free (prog);
 		ms_exit(cmd);	// TODO Determine proper free-ing needs here.
 //		exit_and_free(args, -1, -1);
@@ -128,7 +127,7 @@ void eval(char *cmdline, char **envp)
 		if (cmd.builtin != NONE)
 			executeBuiltin(&cmd, envp);
 		else
-			run_in_child(&cmd, envp, -1);
+			run_in_child(&cmd, envp, -1, -1);
 	}
 	else
 	{	// If the control char is at posn 1 then it is input substitution <
@@ -144,7 +143,7 @@ void eval(char *cmdline, char **envp)
 	/* 	return; */
 	/* if (cmd.argv[cmd_loc] == NULL) */
 	/* 	return;	// TODO This should throw some sort of error? */
-//	clear_t_command(&cmd);
+	clear_t_command(&cmd);
 }
 
 // TODO Define a more interesting prompt, e.g. show wd.

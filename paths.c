@@ -30,6 +30,7 @@
 // TODO Implement << stop word type input!
 // TODO Unify input and output mangling so they can both run.
 // FIXME Note that in bash, >file is acceptable: matters for split!
+// FIXME Will need to be shorter
 void	handle_complex_command_structure(t_command *cmd, char **envp)
 {
 	int	num_pipes;
@@ -75,7 +76,7 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 		if (i_redir > 0)
 			i_redir = setup_input(cmd, i_redir);
 		// after looking and setting up input and output, remove control chars and run command
-		trim_cmdset(cmd);
+		trim_cmdset(cmd);	// FIXME Perhaps trim_cmdset better called from i/o functions
 		run_in_child(cmd, envp, i_redir, o_redir);
 	}
 }
@@ -87,10 +88,7 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 // - set fd of file to be STDOUT
 // NOTE DO we also have to slice off the > and after? Would be bad param for command...
 // NOTE Of course, *input* may also need to be handled; so this is uncomplete.
-// DONE What if this just returns an open / valid fd that we should use
-// DONE We need to reset STDOUT afterwards, or not change till later.
 // TODO If this fails it should set the g_procstatus variable
-// FIXED After this, control is never returned to the shell.
 int	direct_output(t_command *cmd, int o_lvl)
 {
 	int		perms;
@@ -108,14 +106,12 @@ int	direct_output(t_command *cmd, int o_lvl)
 		perror("Could not open output file");
 	else
 		return (o_file);
-//	dup2(o_file, STDOUT_FILENO);	// FIXED I think this output switch  is in the wrong place
-//	close (o_file);	// this file descriptor not needed now? or call this after running?
 	return (-1);
 }
 
-// DONE Change to just returns an open / valid fd for the command
 // TODO Implement stop word / here_doc input redirection
 // TODO Check access() to i_path?
+// FIXME < does not work; trim_cmd issue I think.
 // NOTE That is in the format: cmd << stop_word
 // NOTE Input redir in format:  < infile grep a1
 // If opening the file fails,
@@ -131,19 +127,21 @@ int	setup_input(t_command *cmd, int i_lvl)
 	if (i_lvl == 2)
 	{
 		// heredocs
+		perror("heredocs << not yet implemented");
 		i_file = STDIN_FILENO;	// FIXME Or is this "open the file?"
-		stop_word = cmd->argv[2];
+		stop_word = cmd->argv[2];	// FIXME this should be "position after <<"
 		printf("read input until reaching %s", stop_word);	// HACK for debugging
 	}
 	else if (i_lvl == 1)
 	{
 		i_path = cmd->argv[1];
 		i_file = open(i_path, O_RDONLY);
+		if (i_file == -1)
+			g_procstatus = errno;
 	}
 	else
 		i_file = -1;
 	return (i_file);
-//	dup2(i_file, STDIN_FILENO);
 }
 
 // NOTE target could be a single char for matching purposes...
@@ -155,6 +153,8 @@ int	setup_input(t_command *cmd, int i_lvl)
 // FIXME One block is lost (to valgrind) after stripping things for > >>
 // NOTE Is it legit to have << *after* > ?
 // NOTE In bash the < and > can be anywhere: you take the control posn and the next param,
+// FIXME IF I remove pieces fromm the start, execve later is "unaddressable bytes"
+// ...is this because of argv pointer confusion??
 void	remove_cmd_parts(t_command *cmd, char *target)
 {
 	int	i;
@@ -162,22 +162,25 @@ void	remove_cmd_parts(t_command *cmd, char *target)
 	i = 0;
 	while ((cmd->argv[i]) && (ft_strncmp(cmd->argv[i], target, 1) != 0))	// NOTE this matches both
 	{
-		if (i == cmd->argc)
+		if (i == cmd->argc - 1)
 			return ;
 		i++;
 	}
-	while (cmd->argv[i + 2])
+	printf("\ntarget at position %i", i);	// HACK debugging only
+	while (cmd->argv[i + 2])	// FIXME Can reach here when target not present
 	{
 		cmd->argv[i] = cmd->argv[i + 2];
 		i++;
 	}
+	printf("\tending at position %i", i);	// HACK debugging only
 	cmd->argv[i] = NULL;
-//	free (cmd->argv[i + 1]);	// FIXME Invalid free
+	free (cmd->argv[i + 1]);	// FIXME Invalid free
 	free (cmd->argv[i + 2]);
 	cmd->argc = cmd->argc -2;
 }
 
 // Wrap the stripping of flow control chars from cmdset
+// FIXME Is this even needed?
 void	trim_cmdset(t_command *cmd)
 {
 	remove_cmd_parts(cmd, ">");
@@ -222,9 +225,10 @@ void	run_in_child_with_pipe(t_command *cmd, char **envp)
 }
 
 // Simplest command runner.
-// Launches one command in a child process and waits for it to complete.
+// Forks, sets up input and output for one child process
+// and waits for it to complete.
 // NOTE This is the one we use for simple commands.
-// TODO do something with error status here.
+// DONE do something with error status here.
 void	run_in_child(t_command *cmd, char **envp, int i_file, int o_file)
 {
 	pid_t	child;
@@ -234,8 +238,11 @@ void	run_in_child(t_command *cmd, char **envp, int i_file, int o_file)
 //	g_procstatus = 0;
 	child = fork();
 	if (child == -1)
-		exit_and_free(NULL, -1, -1);
-	if (child == 0)	// NOTE only set output / STDOUT here?
+	{
+		g_procstatus = errno;
+	//	exit_and_free(NULL, -1, -1);
+	}
+	if (child == 0)
 	{
 		if (o_file > 0)
 			dup2(o_file, STDOUT_FILENO);
