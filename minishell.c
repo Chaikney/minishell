@@ -55,8 +55,10 @@ void	clear_t_command(t_command *cmd)
 	int	i;
 
 	i = 0;
-	while (cmd->argv[i])	// FIXME Segfault here.
+	while (cmd->argv[i])	// FIXED Segfault here.
 		free(cmd->argv[i++]);
+	free(cmd->argv[cmd->argc]);
+//	free (*cmd->argv);	// NOTE Invalid free
 }
 
 // Take a command (currently assumed argv[0])
@@ -121,8 +123,8 @@ void eval(char *cmdline, char **envp)
 	con_loc = find_flow_control(&cmd);
 	if (con_loc == -1)
 	{
-		printf("simple case");	// HACK for debugging
-		cmd_loc = 0;
+//		printf("simple case");	// HACK for debugging
+		cmd_loc = 0;	// TODO Is this still needed?
 		if (cmd.builtin != NONE)
 			executeBuiltin(&cmd, envp);
 		else

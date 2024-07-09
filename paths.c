@@ -248,7 +248,7 @@ void	run_in_child(t_command *cmd, char **envp, int o_file)
 	}
 	else
 	{
-		printf("waiting for child porcess: %i", child);	// HACK for debugging
+//		printf("waiting for child process: %i", child);	// HACK for debugging
 		ret_val = waitpid(child, &g_procstatus, 0);
 		if (ret_val == -1)
 			printf("error in child process");

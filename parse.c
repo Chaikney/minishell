@@ -178,6 +178,7 @@ int	var_sub(char *par, char *cmdline)
 // -- break when the parameter is NULL.
 // NOTE This applies variable substition where wanted.
 // FIXME Likely quote_aware_split has too many lines.
+// TODO Splitting around > type chars needs to be rethought
 char	**quote_aware_split(const char *cmdline)
 {
 	char	**params;
