@@ -104,9 +104,6 @@ void	run_command(t_command *cmd, char **envp)
 // TODO Decide if run_command / cmd should be a pointer
 // TODO rename the bg variable to say what it does (what does it do?)
 // DONE Recognise and handle the simple case.
-// TODO Handle piping output
-// TODO Handle output redirection (create and append modes)
-// TODO Handle input redirection (file and STDIN modes)
 void eval(char *cmdline, char **envp)
 {
     int			bg;

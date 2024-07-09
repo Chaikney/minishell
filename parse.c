@@ -222,11 +222,12 @@ char	**quote_aware_split(const char *cmdline)
 
 // Parse input from cmdline into a command struct
 // Return values:
-// 1 - ?
-// NOTE Understand why we have here both cmdline and cmd
-// ...the tokens are put into a cmd struct, and *this* is
-// what we then execute.
+// 0 - no tokens from split
+// 1 - Nothing added to the cmd
+// cmdline = string from readline
+// cmd - t_command to hold tokens from cmdline and other data
 // TODO Perhaps the trim of cmdline should happen in quote_aware_split?
+// TODO Needs more consistent / clear error conditions
 int	parse(const char *cmdline, t_command *cmd)
 {
     char	**token;
@@ -238,12 +239,10 @@ int	parse(const char *cmdline, t_command *cmd)
     if (cmd_trim == NULL)
         perror("command line is NULL\n");
     token = quote_aware_split(cmd_trim);
-//    token = ft_split(cmdline, ' ');
     if (!token)
         return (0);
     cmd->argc = 0;
-    // NOTE Find out what this structure does.
-    while (token[cmd->argc] != NULL) 
+    while (token[cmd->argc] != NULL)
     {
         cmd->argv[cmd->argc] = token[cmd->argc];
         cmd->argc++;

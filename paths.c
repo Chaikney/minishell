@@ -30,6 +30,7 @@
 // TODO Implement << stop word type input!
 // DONE Unify input and output mangling so they can both run.
 // FIXME Will need to be shorter
+// TODO Handle input redirection (file and STDIN modes)
 void	handle_complex_command_structure(t_command *cmd, char **envp)
 {
 	int	num_pipes;
