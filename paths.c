@@ -96,10 +96,13 @@ int	direct_output(t_command *cmd, int o_lvl)
 	else if (o_lvl == 1)
 		perms = O_WRONLY | O_CREAT | O_TRUNC;
 	o_path = cmd->argv[cmd->argc - 1];
-	printf("\nTrying to open file: %s\n", o_path);
+	printf("\nTrying to open file: %s\n", o_path);	// HACK for debugging
 	o_file = open(o_path, perms, 0777);
 	if (o_file == -1)
+	{
+		g_procstatus = errno;
 		perror("Could not open output file");
+	}
 	else
 		return (o_file);
 	return (-1);
