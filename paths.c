@@ -75,7 +75,7 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 		if (i_redir > 0)
 			i_redir = setup_input(cmd, i_redir);
 		// after looking and setting up input and output, remove control chars and run command
-		trim_cmdset(cmd);
+		alt_trim_cmdset(cmd);
 		run_in_child(cmd, envp, i_redir, o_redir);
 	}
 }
@@ -146,6 +146,41 @@ int	setup_input(t_command *cmd, int i_lvl)
 //	dup2(i_file, STDIN_FILENO);
 }
 
+// NOTE target could be a single char for matching purposes...
+// DONE Make this safe for if target not found
+// To remove control parameters we find the > < character in cmd->argv
+// ...it is that position and the next that need to be removed.
+// So we copy the value +2 ahead from there to the end of the array.
+// free parts and reduce argc by 2.
+void	remove_cmd_parts(t_command *cmd, char *target)
+{
+	int	i;
+
+	i = 0;
+	while ((cmd->argv[i]) && (ft_strncmp(cmd->argv[i], target, 1) != 0))	// NOTE this matches both
+	{
+		if (i == cmd->argc)
+			return ;
+		i++;
+	}
+	while (cmd->argv[i + 2])
+	{
+		cmd->argv[i] = cmd->argv[i + 2];
+		i++;
+	}
+	cmd->argv[i] = NULL;
+//	free (cmd->argv[i + 1]);	// FIXME Invalid free
+	free (cmd->argv[i + 2]);
+	cmd->argc = cmd->argc -2;
+}
+
+// Wrap the stripping of flow control chars from cmdset
+void	alt_trim_cmdset(t_command *cmd)
+{
+	remove_cmd_parts(cmd, ">");
+	remove_cmd_parts(cmd, "<");
+}
+
 // remove the last part of the argv and argc of the passed command
 // Check that there really *is* a redirect there
 // take away the last 2 terms (filename and symbol)
@@ -153,9 +188,11 @@ int	setup_input(t_command *cmd, int i_lvl)
 // TODO Make sure the removed pieces are not needed/used elsewhere.
 // TODO Have to also trim the first pieces - different method needed?
 // TODO What happens if there is < and > in the same command??
-// FIXME One block is lost after stripping things for > >>
+// FIXME One block is lost (to valgrind) after stripping things for > >>
 // HACK Most of the input parts are commented out, fix them
 // NOTE Is it legit to have << *after* > ?
+// NOTE In bash the < and > can be anywhere: you take the control posn and the next param,
+// TODO This function has been obsoleted and can be removed.
 void	trim_cmdset(t_command *cmd)
 {
 //	int	i;
@@ -165,6 +202,7 @@ void	trim_cmdset(t_command *cmd)
 	if (ft_strncmp(cmd->argv[cmd->argc - 2], ">", 1) == 0)	// NOTE this matches both
 	{
 		free(cmd->argv[cmd->argc - 1]);	// wipe the filename
+		free(cmd->argv[cmd->argc]);	// wipe the end point
 		cmd->argv[cmd->argc - 2] = NULL;	// mark the control chars as the last point
 		cmd->argc = cmd->argc - 2;
 	}
