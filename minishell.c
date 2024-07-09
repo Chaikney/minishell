@@ -128,7 +128,7 @@ void eval(char *cmdline, char **envp)
 		if (cmd.builtin != NONE)
 			executeBuiltin(&cmd, envp);
 		else
-			run_in_child(&cmd, envp, -1, -1);
+			run_in_child(&cmd, envp, -1);
 	}
 	else
 	{	// If the control char is at posn 1 then it is input substitution <
