@@ -30,7 +30,6 @@
 // TODO Implement << stop word type input!
 // DONE Unify input and output mangling so they can both run.
 // FIXME Will need to be shorter
-// TODO Handle input redirection (file and STDIN modes)
 void	handle_complex_command_structure(t_command *cmd, char **envp)
 {
 	int	num_pipes;
@@ -63,19 +62,21 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 				remove_cmd_parts(cmd, ">");
 				break ;
 			}
-		i = -1;
-		while (i++ < cmd->argc - 1)
+		i = 0;
+//		print_cmd_parts(cmd);	// HACK for debugging
+		while (i < cmd->argc - 1)
 		{
 			if (ft_strncmp(cmd->argv[i], "<", 1) == 0)
 			{
-//				print_cmd_parts(cmd);
+//				print_cmd_parts(cmd);	// HACK for debugging
 				i_redir = 1;
 				if (ft_strncmp(cmd->argv[i], "<<", 2) == 0)
 					i_redir = 2;
 				i_redir = setup_input(cmd, i_redir);
 				remove_cmd_parts(cmd, "<");
-				break ;
+				break ;	// does this break out of the while, or only the if?
 			}
+			i++;
 		}
 //		print_cmd_parts(cmd);	// HACK for debugging
 		run_in_child(cmd, envp, i_redir, o_redir);
@@ -101,7 +102,7 @@ int	direct_output(t_command *cmd, int o_lvl)
 	else if (o_lvl == 1)
 		perms = O_WRONLY | O_CREAT | O_TRUNC;
 	o_path = cmd->argv[cmd->argc - 1];
-	printf("\nTrying to open file: %s\n", o_path);	// HACK for debugging
+//	printf("\nTrying to open file: %s\n", o_path);	// HACK for debugging
 	o_file = open(o_path, perms, 0777);
 	if (o_file == -1)
 	{
@@ -163,6 +164,7 @@ int	setup_input(t_command *cmd, int i_lvl)
 void	remove_cmd_parts(t_command *cmd, char *target)
 {
 	int	i;
+//	char	*to_free;
 
 	i = 0;
 //	print_cmd_parts(cmd);	// HACK for debugging
@@ -175,15 +177,17 @@ void	remove_cmd_parts(t_command *cmd, char *target)
 	printf("\ntarget at position %i", i);	// HACK debugging only
 	while (cmd->argv[i + 2])	// FIXME Can reach here when target not present
 	{
+//		to_free = cmd->argv[i];
 		cmd->argv[i] = cmd->argv[i + 2];
 		i++;
+//		free (to_free);
 	}
 	printf("\tending at position %i", i);	// HACK debugging only
 //	print_cmd_parts(cmd);	// HACK for debugging
-	cmd->argv[i] = NULL;
+	cmd->argc = cmd->argc - 2;
+	cmd->argv[cmd->argc] = NULL;
 	/* free (cmd->argv[i + 1]);	// FIXME Invalid free */
 	/* free (cmd->argv[i + 2]); */
-	cmd->argc = cmd->argc - 2;
 //	print_cmd_parts(cmd);	// HACK for debugging
 }
 
