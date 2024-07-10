@@ -41,17 +41,15 @@ int parseBuiltin(t_command *cmd)
     return (NONE);
 }
 
-// FIXME echo skips its 1st argument
-// FIXME Exit has to be typed twice to work?
 // TODO echo Commands into separate function
 // FIXME Too many lines in function.
 // falta por añadir que hace cada
-//  [ ] echo with -n (newline or not)
+//  [x] echo with -n (newline or not)
 //  [x] cd with only a relative or absolute path
 //  [x] pwd (no options)
-//  [ ] unset (no options)
+//  [x] unset (no options)
 //  [x] env, no options or args
-//  [ ] export
+//  [x] export
 //  [x] exit no options.
 void executeBuiltin(t_command *cmd, char **envp)
 {
@@ -129,9 +127,10 @@ void executeBuiltin(t_command *cmd, char **envp)
 // -- break when the parameter is NULL.
 // NOTE This applies variable substition where wanted.
 // FIXME Likely quote_aware_split has too many lines.
-// TODO Splitting around > type chars needs to be rethought
 // FIXME Note that in bash, >file is acceptable: matters for split!
-// FIXME Variable substitution interferes with unset builtin.
+// TODO Splitting around > type chars needs to be rethought
+// KILL Variable substitution interferes with unset builtin.
+// NOTE This is not an issue, we do the same as bash does.
 char	**quote_aware_split(const char *cmdline)
 {
 	char	**params;
@@ -179,7 +178,9 @@ char	**quote_aware_split(const char *cmdline)
 // cmdline = string from readline
 // cmd - t_command to hold tokens from cmdline and other data
 // TODO Perhaps the trim of cmdline should happen in quote_aware_split?
-// TODO Needs more consistent / clear error conditions
+// TODO Needs more consistent / clear error conditions to replace is_bg
+// FIXME Ensure that we free *all* parts of token once cmd is complete
+// TODO Give this a more descriptive name; we parse lots of things now.
 int	parse(const char *cmdline, t_command *cmd)
 {
     char	**token;
@@ -198,12 +199,11 @@ int	parse(const char *cmdline, t_command *cmd)
     {
         cmd->argv[cmd->argc] = token[cmd->argc];
         cmd->argc++;
-        if (cmd->argc >= MAXARGS - 1) {
+        if (cmd->argc >= MAXARGS - 1)
             break;
-        }
     }
     cmd->argv[cmd->argc] = NULL;
-    free(token);	// FIXME Ensure this frees *all* parts of token
+    free(token);
     if (cmd->argc == 0)
         return (1);
     cmd->builtin = parseBuiltin (cmd);
