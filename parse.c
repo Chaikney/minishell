@@ -43,8 +43,7 @@ int parseBuiltin(t_command *cmd)
 
 // FIXME echo skips its 1st argument
 // FIXME Exit has to be typed twice to work?
-// TODO Exit has to do some clean up
-// TODO Commands into separate functions, this is too long.
+// TODO echo Commands into separate function
 // FIXME Too many lines in function.
 // falta por añadir que hace cada
 //  [ ] echo with -n (newline or not)
@@ -56,78 +55,63 @@ int parseBuiltin(t_command *cmd)
 //  [x] exit no options.
 void executeBuiltin(t_command *cmd, char **envp)
 {
-    int	i;
+	int	i;
 
-    while (1) 
-    {
-        if (cmd->builtin == CD)
-        {
-            if (cmd->argc < 2) 
-                fprintf(stderr, "cd: missing argument\n");
-            else 
-            {
-                if (chdir(cmd->argv[1]) != 0) 
-                    printf("wrong address\n");
-            }
-            return;
-        } 
-        else if (cmd->builtin == EXIT)
-            ms_exit(cmd);
-        else if (cmd->builtin == ECHON)
-        {
-            i = 1;
-            while (i < cmd->argc)
-            {
-                printf("%s", cmd->argv[i]);
-                if (i < cmd->argc)
-                    printf(" ");
-                i++;
-            }
-            printf("\n");
-            return;
-        }
-        else if (cmd->builtin == ECHO)
-        {
-            i = 2;
-            while (i < cmd->argc)
-            {
-                printf("%s", cmd->argv[i]);
-                if (i < cmd->argc - 1)
-                    printf(" ");
-                i++;
-            }
-            return;
-        }
-        else if (cmd->builtin == PWD)
-        {
-            ms_pwd();
-            return ;
-        }
-        else if (cmd->builtin == EXP)
-        {
-            ms_export(cmd, envp);
-            return;
-        }
-        else if (cmd->builtin == UNSET)
-        {
-            ms_unset(cmd, envp);
-            return;
-        }
-        else if (cmd->builtin == ENV)
-        {
-            while (*envp) 
-            {
-                printf("%s\n", *envp);
-                envp++;
-            }
-            return;
-        }
-        else
-        {
-            printf("Unknown builtin command\n");
-            return;
-        }
-    }
+	if (cmd->builtin == CD)
+	{
+		if (cmd->argc < 2)
+			fprintf(stderr, "cd: missing argument\n");
+		else
+		{
+			if (chdir(cmd->argv[1]) != 0)
+				printf("wrong address\n");
+		}
+	}
+	else if (cmd->builtin == EXIT)
+		ms_exit(cmd);
+	else if (cmd->builtin == ECHON)
+	{
+		i = 1;
+		while (i < cmd->argc)
+		{
+			printf("%s", cmd->argv[i]);
+			if (i < cmd->argc)
+				printf(" ");
+			i++;
+		}
+		printf("\n");
+	}
+	else if (cmd->builtin == ECHO)
+	{
+		i = 2;
+		while (i < cmd->argc)
+		{
+			printf("%s", cmd->argv[i]);
+			if (i < cmd->argc - 1)
+				printf(" ");
+			i++;
+		}
+	}
+	else if (cmd->builtin == PWD)
+		ms_pwd();
+	else if (cmd->builtin == EXP)
+		ms_export(cmd, envp);
+	else if (cmd->builtin == UNSET)
+		ms_unset(cmd, envp);
+	else if (cmd->builtin == ENV)
+	{
+		while (*envp)
+		{
+			printf("%s\n", *envp);
+			envp++;
+		}
+		return;
+	}
+	else
+	{
+		printf("Unknown builtin command\n");
+		return;
+	}
 }
 
 // Quotation-aware command line split / tokenising
@@ -147,6 +131,7 @@ void executeBuiltin(t_command *cmd, char **envp)
 // FIXME Likely quote_aware_split has too many lines.
 // TODO Splitting around > type chars needs to be rethought
 // FIXME Note that in bash, >file is acceptable: matters for split!
+// FIXME Variable substitution interferes with unset builtin.
 char	**quote_aware_split(const char *cmdline)
 {
 	char	**params;
