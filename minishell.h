@@ -106,4 +106,5 @@ char	*search_in_path(char *cmd);
 void	goto_stop_char(const char *cmdline, int *posn);
 int		find_flow_control(t_command *cmdset);
 int		find_env_var(char **envp, const char *var);
+void	print_cmd_parts(t_command *cmd)	;
 #endif

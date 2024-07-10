@@ -54,6 +54,20 @@ int	find_flow_control(t_command *cmdset)
 	return (i);
 }
 
+// Debugging function to view the active parts of a command.
+void	print_cmd_parts(t_command *cmd)
+{
+	int	i;
+
+	i = 0;
+	printf("\nExamining command:\n");
+	while (i < cmd->argc)
+	{
+		printf("Index: %i\t%s\n", i, cmd->argv[i]);
+		i++;
+	}
+}
+
 // Moves the *posn pointer forward through a command line
 // until it reaches a stop character (which is badly named because we
 // use this to find a place to *start* parsing).
