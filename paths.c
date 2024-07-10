@@ -232,7 +232,6 @@ int	setup_input(t_command *cmd, int i_lvl)
 {
 	char	*i_path;
 	int		i_file;
-	char	*stop_word;
 
 	if (i_lvl == 2)
 	{
