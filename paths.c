@@ -63,10 +63,12 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 				remove_cmd_parts(cmd, ">");
 				break ;
 			}
-		i = 0;
-		while (i++ > 0)
+		i = -1;
+		while (i++ < cmd->argc - 1)
+		{
 			if (ft_strncmp(cmd->argv[i], "<", 1) == 0)
 			{
+//				print_cmd_parts(cmd);
 				i_redir = 1;
 				if (ft_strncmp(cmd->argv[i], "<<", 2) == 0)
 					i_redir = 2;
@@ -74,6 +76,8 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 				remove_cmd_parts(cmd, "<");
 				break ;
 			}
+		}
+//		print_cmd_parts(cmd);	// HACK for debugging
 		run_in_child(cmd, envp, i_redir, o_redir);
 	}
 }
@@ -153,13 +157,15 @@ int	setup_input(t_command *cmd, int i_lvl)
 // FIXME One block is lost (to valgrind) after stripping things for > >>
 // NOTE Is it legit to have << *after* > ?
 // NOTE In bash the < and > can be anywhere: you take the control posn and the next param,
-// FIXME IF I remove pieces fromm the start, execve later is "unaddressable bytes"
+// FIXED If I remove pieces fromm the start, execve later is "unaddressable bytes"
 // ...is this because of argv pointer confusion??
+// NOTE Fixed arrarys (as we have for argv) cannot be resized!
 void	remove_cmd_parts(t_command *cmd, char *target)
 {
 	int	i;
 
 	i = 0;
+//	print_cmd_parts(cmd);	// HACK for debugging
 	while ((cmd->argv[i]) && (ft_strncmp(cmd->argv[i], target, 1) != 0))	// NOTE this matches both
 	{
 		if (i == cmd->argc - 1)
@@ -173,10 +179,12 @@ void	remove_cmd_parts(t_command *cmd, char *target)
 		i++;
 	}
 	printf("\tending at position %i", i);	// HACK debugging only
+//	print_cmd_parts(cmd);	// HACK for debugging
 	cmd->argv[i] = NULL;
-	free (cmd->argv[i + 1]);	// FIXME Invalid free
-	free (cmd->argv[i + 2]);
-	cmd->argc = cmd->argc -2;
+	/* free (cmd->argv[i + 1]);	// FIXME Invalid free */
+	/* free (cmd->argv[i + 2]); */
+	cmd->argc = cmd->argc - 2;
+//	print_cmd_parts(cmd);	// HACK for debugging
 }
 
 // Make a child process to execute the command, putting the output in a pipe
