@@ -174,6 +174,51 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 }
 
 // DONE Check access() to i_path? open probably covers it
+// Implmentation of << "here_doc" or stop word based input
+// - open a pipe
+// - open a child process
+// - use the child process to get input into STDOUT
+// -- calls GNL and writes that output to the pipe
+// -- until it gets NULL back
+// -- then the process EXITs
+// - parent process reads from the other end of the
+// -- close the write end as uneeded
+// -- dups stdin to the read end of the pipe
+// -- waits for reader to finish
+// - returns the read end of the parent's pipe
+int	stopword_input(t_command *cmd)
+{
+	int		fd[2];
+	int		reader;
+	char	*line;
+	char	*stopword;
+
+	pipe(fd);
+	reader = fork();
+	if (reader == 0)
+	{
+		close(fd[0]);	// NOTE read end of pipe is not needed by GNL
+		stopword = cmd->argv[1];	// FIXME This is a hardcoded assumption!
+		printf("stopword is: %s", stopword);	// HACK for debugging
+		line = get_next_line(STDIN_FILENO);
+		while (line)
+		{
+			if (ft_strncmp(stopword, line, ft_strlen(stopword)) == 0)
+				exit(EXIT_SUCCESS);	// TODO Is there any cleanup to do? child copy of cmd?
+			write(fd[1], line, ft_strlen(line));
+			line = get_next_line(STDIN_FILENO);
+		}
+	}
+	else
+	{
+		close(fd[1]);
+		dup2(fd[0], STDIN_FILENO);
+		waitpid(reader, 0, 0);	// TODO Should we set g_procstatus here?
+		// hold the input
+	}
+	return (fd[0]);
+}
+
 // TODO Implement stop word / here_doc input redirection
 // NOTE That is in the format: cmd << stop_word
 // NOTE Input redir in format:  < infile grep a1
@@ -192,10 +237,7 @@ int	setup_input(t_command *cmd, int i_lvl)
 	if (i_lvl == 2)
 	{
 		// heredocs
-		perror("heredocs << not yet implemented");
-		i_file = STDIN_FILENO;	// FIXME Or is this "open the file?"
-		stop_word = cmd->argv[2];	// FIXME this should be "position after <<"
-		printf("read input until reaching %s", stop_word);	// HACK for debugging
+		i_file = stopword_input(cmd);	// FIXME Or is this "open the file?"
 	}
 	else if (i_lvl == 1)
 	{
