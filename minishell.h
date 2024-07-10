@@ -37,8 +37,8 @@
 
 extern int g_procstatus;	// global variable to hold exit codes
 
-// FIXME The name for this should be better.
-// TODO Understand what these values *should* be
+// TODO The name for this should be better.
+// TODO SHould the values include pipe, redirect info? Or elsewhere?
 typedef enum e_builtin
 {
 	NONE,
@@ -55,15 +55,6 @@ typedef enum e_builtin
 	UNSET,
 	ENV
 }	t_builtin;
-
-// Flags to indicate the quoting style to be used on the
-// input commands when parsing.
-typedef enum e_quote
-{
-	RAW,
-	WEAK,
-	STRONG
-}	t_quote;
 
 // TODO What if we flag command types - system, builtin, what?
 typedef struct s_command
