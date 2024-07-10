@@ -130,39 +130,6 @@ void executeBuiltin(t_command *cmd, char **envp)
     }
 }
 
-// Substitute a variable's value into the parameter par being prepared.
-// par is assumed to have enough space for the strlcat call.
-// And was mallocated outside of this call.
-// Returns should be the cursor position to continue reading cmdline from.
-// or to move it
-// TODO I think this is unused and can be removed. No different to the other
-// ...except that one works...
-int	var_sub(char *par, char *cmdline)
-{
-	int	i;
-	char	*var_name;
-	char	*value;
-
-	i = 0;
-	if (*cmdline == '$')
-	{
-		printf("found variable to sub:");// HACK for debugging only
-		var_name = get_var_name(cmdline);
-		printf("\t%s", var_name);// HACK for debugging only
-		if ((value = getenv(var_name)))
-		{
-			printf("\tIts value is:%s", value);// HACK for debugging only
-			ft_strlcat(par, value, ft_strlen(value) + 1);
-			printf("\nparameter is now: %s", par);	// HACK for debugging
-		}
-		i = i + ft_strlen(var_name) + 1;	// NOTE +1 for the $
-		free (var_name);
-	}
-	else
-		printf("\nOdd. Variable name not found");
-	return (i);
-}
-
 // Quotation-aware command line split / tokenising
 // 3 modes: raw, "weak" quoting and 'strong' quoting
 // RAW: stop on a space, respect \escapes, substitute variables.
