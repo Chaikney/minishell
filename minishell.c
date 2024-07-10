@@ -75,7 +75,9 @@ void	run_command(t_command *cmd, char **envp)
 {
 	char	*prog;
 
-	printf("here to run a command: %s", cmd->argv[0]);	// HACK for debugging
+	printf("about to run a command with %i args", cmd->argc);
+	print_cmd_parts(cmd);	// HACK for debugging
+//	printf("here to run a command: %s", cmd->argv[0]);	// HACK for debugging
 	if (access(cmd->argv[0], X_OK) == 0)
 		prog = cmd->argv[0];
 	else

@@ -181,6 +181,7 @@ char	**quote_aware_split(const char *cmdline)
 // TODO Needs more consistent / clear error conditions to replace is_bg
 // FIXME Ensure that we free *all* parts of token once cmd is complete
 // TODO Give this a more descriptive name; we parse lots of things now.
+// TODO Careful with the argc counting here...
 int	parse(const char *cmdline, t_command *cmd)
 {
     char	**token;
