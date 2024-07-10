@@ -1,24 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstlast.c                                       :+:      :+:    :+:   */
+/*   ft_strtoupper.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/15 15:51:18 by emedina-          #+#    #+#             */
-/*   Updated: 2023/05/17 19:18:47 by emedina-         ###   ########.fr       */
+/*   Created: 2023/08/24 15:00:09 by chaikney          #+#    #+#             */
+/*   Updated: 2023/10/16 10:38:38 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-
-t_list	*ft_lstlast(t_list *lst)
+// Alters the string passed to it, making chars uppercase.
+void	ft_strtoupper(char *str)
 {
-	if (lst == NULL)
-		return (NULL);
-	while (lst->next != NULL)
+	while (*str != '\0')
 	{
-		lst = lst->next;
+		if ((*str >= 97) && (*str <= 122))
+			*str = (*str - 32);
+		str++;
 	}
-	return (lst);
 }

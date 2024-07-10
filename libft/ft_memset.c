@@ -3,26 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/21 20:51:19 by emedina-          #+#    #+#             */
-/*   Updated: 2023/05/17 19:39:46 by emedina-         ###   ########.fr       */
+/*   Created: 2023/04/19 12:53:23 by chaikney          #+#    #+#             */
+/*   Updated: 2023/04/24 14:50:32 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	*ft_memset(void *b, int c, size_t len)
+// Copies char c to position dest, len times
+void	*ft_memset(void *dest, int c, size_t len)
 {
-	unsigned char	*ptr;
-	size_t			i;
+	unsigned char	*s;
 
-	ptr = b;
-	i = 0;
-	while (i < len)
+	s = (unsigned char *) dest;
+	while (len > 0)
 	{
-		ptr[i] = c;
-		i++;
+		*s = c;
+		s++;
+		len--;
 	}
-	return (ptr);
+	return (dest);
 }

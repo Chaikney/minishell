@@ -3,54 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   ft_isascii.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/04 17:22:12 by emedina-          #+#    #+#             */
-/*   Updated: 2023/04/21 20:50:13 by emedina-         ###   ########.fr       */
+/*   Created: 2023/04/18 11:45:14 by chaikney          #+#    #+#             */
+/*   Updated: 2023/04/24 14:02:36 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-
+// Tests for an ASCII character, i.e. between 0 and octal 0177 inclusive.
+// Returns 1 if true, 0 if false.
 int	ft_isascii(int c)
 {
-	if (c >= 0 && c <= 127)
-	{
-		return (1);
-	}
-	else
-	{
-		return (0);
-	}
-}
-/*
-int	main(void)
-{
-	char	c1;
-	char	c2;
-	char	c3;
-	char	c4;
+	int	retcode;
 
-    c1 = 100;
-    c2 = 50;
-    c3 = 241;
-    c4 = 233;
-    if (ft_isascii(c1))
-        write(1, "es ASCII\n", 9);
-    else
-        write(1, "no es ASCII\n", 12);
-    if (ft_isascii(c2))
-        write(1, "es ASCII\n", 9);
-    else
-        write(1, "no es ASCII\n", 12);
-    if (ft_isascii(c3))
-        write(1, "es ASCII\n", 9);
-    else
-        write(1, "no es ASCII\n", 12);
-    if (ft_isascii(c4))
-        write(1, "es ASCII\n", 9);
-    else
-        write(1, "no es ASCII\n", 12);
-    return (0);
+	retcode = 0;
+	if ((c >= 0) && (c <= 127))
+		retcode = 1;
+	return (retcode);
 }
-*/

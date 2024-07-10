@@ -3,45 +3,59 @@
 /*                                                        :::      ::::::::   */
 /*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/01 19:01:13 by emedina-          #+#    #+#             */
-/*   Updated: 2023/05/16 12:31:54 by emedina-         ###   ########.fr       */
+/*   Created: 2023/03/08 15:30:06 by chaikney          #+#    #+#             */
+/*   Updated: 2023/04/25 14:03:13 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_atoi(const char *str)
+/* The string may begin with an arbitrary amount of white space
+   (as determined by isspace(3)) followed by
+   a single optional `+' or `-' sign.
+ */
+
+static int	ft_array_to_int(int *arr, int numdigits)
 {
+	int	total;
 	int	i;
-	int	result;
-	int	minus;
 
 	i = 0;
-	result = 0;
-	minus = 1;
-	while (str[i] == ' ' || str[i] == '\n' || str[i] == '\t' || str[i] == '\r'
-		|| str[i] == '\v' || str[i] == '\f')
+	total = 0;
+	numdigits--;
+	while (i <= numdigits)
 	{
+		total += ft_powerof10 (i) * (arr[(numdigits - i)]);
 		i++;
 	}
-	if (str[i] == '-')
-	{
-		minus = -1;
-		i++;
-	}
-	else if (str[i] == '+')
-		i++;
-	while (str[i] >= '0' && str[i] <= '9')
-	{
-		result = result * 10 + (str[i] - '0');
-		i++;
-	}
-	return (result * minus);
+	return (total);
 }
-/* int main (void)
+
+int	ft_atoi(const char *str)
 {
-	char new_str = ft_atoi("\n");
-	printf("%d\n", new_str);
-} */
+	int	signcount;
+	int	nodigits;
+	int	digits[10];
+
+	nodigits = 0;
+	signcount = 1;
+	while (*str == 32 || (*str <= 13 && *str >= 9))
+		str++;
+	if ((*str == '-') || (*str == '+') || (*str == '0'))
+	{
+		if (*str == '-')
+			signcount = -1;
+		str++;
+		while (*str == '0')
+			str++;
+	}
+	while (ft_isdigit(*str) == 1)
+	{
+		digits[nodigits] = (*str - 48);
+		nodigits++;
+		str++;
+	}
+	return (ft_array_to_int(digits, nodigits) * signcount);
+}

@@ -3,33 +3,47 @@
 /*                                                        :::      ::::::::   */
 /*   ft_substr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/13 17:06:20 by emedina-          #+#    #+#             */
-/*   Updated: 2023/05/16 12:39:47 by emedina-         ###   ########.fr       */
+/*   Created: 2023/04/28 11:10:14 by chaikney          #+#    #+#             */
+/*   Updated: 2023/05/16 14:28:29 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+/*
+s: The string from which to create the substring.
+start: The start index of the substring in the string ’s’.
+len: The maximum length of the substring.
+Return: The substring.  or NULL if the allocation fails.
+
+Allocates (with malloc(3)) and returns a substring from the string ’s’.
+The substring begins at index ’start’ and is of maximum size ’len’.
+*/
 
 #include "libft.h"
 
-char	*ft_substr(const char *s, unsigned int start, size_t len)
+char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
-	size_t	s_len;
-	size_t	sub_len;
-	char	*result;
+	char		*sub;
+	size_t		howbig;
+	const char	*startpoint;
 
-	if (s == NULL)
+	howbig = 0;
+	if (start < ft_strlen(s))
+	{
+		startpoint = &s[start];
+		if ((ft_strlen(s) - start) < len)
+			howbig = (ft_strlen(s) - start);
+		else
+			howbig = (len);
+	}
+	else
+		startpoint = &s[0];
+	sub = malloc((howbig + 1) * sizeof(char));
+	if (sub == NULL)
 		return (NULL);
-	s_len = ft_strlen(s);
-	if (start >= s_len || len == 0)
-		return (ft_strdup(""));
-	sub_len = len;
-	if (start + len > s_len)
-		sub_len = s_len - start;
-	result = malloc(sizeof(char) * (sub_len + 1));
-	if (result == NULL)
-		return (NULL);
-	ft_memcpy(result, s + start, sub_len);
-	result[sub_len] = '\0';
-	return (result);
+	if (howbig != 0)
+		ft_strlcpy(sub, startpoint, howbig + 1);
+	else
+		sub[0] = '\0';
+	return (sub);
 }

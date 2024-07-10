@@ -3,36 +3,51 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/22 11:46:53 by emedina-          #+#    #+#             */
-/*   Updated: 2023/05/16 12:36:24 by emedina-         ###   ########.fr       */
+/*   Created: 2023/05/02 13:46:20 by chaikney          #+#    #+#             */
+/*   Updated: 2023/05/03 11:54:41 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+/*
+Copies len bytes from string src to string dst.
+The two strings may overlap;
+the copy is always done in a non-destructive manner.
+
+Returns the original value of dst.
+[no crash]: your memmove does not segfault when null params is sent
+	musl lib has a check that dst and src are not already the same...
+	also a check for overlap that is src+len <= dst (and vice versa)
+	without that overlap, a straight memcpy is safe.
+	Otherwise, you choose forward or back (BSD source the clearest here)
+	NB The increment positions are *vital* here, I must understand why.
+*/
 
 #include "libft.h"
 
 void	*ft_memmove(void *dst, const void *src, size_t len)
 {
-	size_t	i;
+	char		*marker;
+	const char	*s;
 
-	if (!dst && !src)
+	marker = dst;
+	s = src;
+	if (marker == s)
+		return (dst);
+	if ((s + len <= marker) || (marker + len <= s))
+		marker = ft_memcpy(marker, s, len);
+	else if (s < marker)
 	{
-		return (NULL);
-	}
-	if (dst > src)
-	{
+		s += len;
+		marker += len;
 		while (len-- > 0)
-			((char *)dst)[len] = ((char *)src)[len];
+			*--marker = *--s;
 	}
 	else
 	{
-		i = 0;
-		while (i < len)
-		{
-			((char *)dst)[i] = ((char *)src)[i];
-			i++;
-		}
+		while (len-- > 0)
+			*marker++ = *s++;
 	}
 	return (dst);
 }

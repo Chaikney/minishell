@@ -3,51 +3,47 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlcpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/18 18:55:23 by emedina-          #+#    #+#             */
-/*   Updated: 2023/05/16 11:17:34 by emedina-         ###   ########.fr       */
+/*   Created: 2023/04/17 15:36:46 by chaikney          #+#    #+#             */
+/*   Updated: 2023/05/12 11:51:25 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+/*
+copies up to dstsize - 1 characters from the string src to dst,
+NUL-terminating the result if dstsize is not 0.
+The strlcpy() and strlcat() functions return the total length of the string 
+they tried to create.  For strlcpy() that means the length of src.
+ * FIXED:	writing the final \0 (l38?) causes heap buffer overflows elsewhere.
+ * FIXED: doesn't write the first char? No, it overwrote it.
+ * 	added a break out of the loop as soon as we have copied a null from src
+*/
 
 #include "libft.h"
 
 size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 {
-	size_t	i;
-	size_t	aux;
+	size_t		srclen;
+	size_t		charsleft;
+	char		*d;
+	const char	*s;
 
-	i = 0;
-	aux = 0;
-	while (src[aux])
+	d = dst;
+	s = src;
+	charsleft = dstsize;
+	srclen = ft_strlen(src);
+	if ((charsleft != 0))
 	{
-		aux++;
+		while (--charsleft != 0)
+		{
+			*d = *s;
+			if (*s == '\0')
+				break ;
+			s++;
+			d++;
+		}
 	}
-	if (dstsize < 1)
-	{
-		return (aux);
-	}
-	while (src[i] != '\0' && i < dstsize - 1)
-	{
-		dst[i] = src[i];
-		i++;
-	}
-	dst[i] = '\0';
-	return (aux);
+	if ((charsleft == 0) && (dstsize != 0))
+		*d = '\0';
+	return (srclen);
 }
-
-/* int	main(void)
-{
-	char	destino[10];
-	char	*origen;
-	size_t	num_copied;
-
-	origen = "Hola, mundo!";
-
-	num_copied = ft_strlcpy(destino, origen, sizeof(destino));
-	
-	printf("La cadena de origen es: %s\n", origen);
-	printf("La cadena de destino es: %s\n", destino);
-	printf("Se copiaron %zu caracteres\n", num_copied);
-	return (0);
-} */

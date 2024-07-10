@@ -1,26 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstsize.c                                       :+:      :+:    :+:   */
+/*   ft_stackpeek.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/15 14:46:08 by emedina-          #+#    #+#             */
-/*   Updated: 2023/05/17 19:29:09 by emedina-         ###   ########.fr       */
+/*   Created: 2023/11/29 11:46:21 by chaikney          #+#    #+#             */
+/*   Updated: 2023/11/29 11:46:27 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_lstsize(t_list *lst)
+// Return the content (assumed to be int) at the top of a stack.
+// If the stack is empty return null char.
+int	ft_stackpeek(t_list *stack)
 {
-	int	count;
-
-	count = 0;
-	while (lst != NULL)
-	{
-		count++;
-		lst = lst->next;
-	}
-	return (count);
+	if (stack != NULL)
+		return ((long) stack->content);
+	else
+		return ('\0');
 }

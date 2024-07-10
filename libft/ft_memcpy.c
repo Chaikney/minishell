@@ -3,30 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/22 11:03:52 by emedina-          #+#    #+#             */
-/*   Updated: 2023/05/17 19:39:31 by emedina-         ###   ########.fr       */
+/*   Created: 2023/04/19 13:17:59 by chaikney          #+#    #+#             */
+/*   Updated: 2023/05/17 11:02:12 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
+// Copies n bytes from memory area src to memory area dst.
+// If dst and src overlap, behavior is undefined.
+// The memcpy() function returns the original value of dst.
 void	*ft_memcpy(void *dst, const void *src, size_t n)
 {
-	unsigned const char	*str;
-	unsigned char		*dest;
-	size_t				i;
+	unsigned char		*d;
+	const unsigned char	*s;
 
-	str = src;
-	dest = dst;
-	i = 0;
-	if (dst == 0 && src == 0)
-		return (0);
-	while (i < n)
+	d = dst;
+	s = src;
+	if ((d == NULL) && (s == NULL))
+		return (dst);
+	while (n > 0)
 	{
-		dest[i] = str[i];
-		i++;
+		*d++ = *s++;
+		n--;
 	}
-	return (dest);
+	return (dst);
 }

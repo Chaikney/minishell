@@ -3,52 +3,58 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlcat.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/18 18:56:49 by emedina-          #+#    #+#             */
-/*   Updated: 2023/04/19 13:44:32 by emedina-         ###   ########.fr       */
+/*   Created: 2023/04/17 15:49:40 by chaikney          #+#    #+#             */
+/*   Updated: 2023/05/12 11:06:43 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+/* strlcat() appends string src to the end of dst.
+* It will append at most dstsize - strlen(dst) - 1 characters.
+* It will then NUL-terminate, unless dstsize is 0 or 
+	the original dst string was longer than dstsize
+	(in practice this should not happen as it means that either 
+	dstsize is incorrect or that dst is not a proper string).
+
+* Take the full size of the destination buffer and guarantee NUL-termination
+if there is room.  Note that room for the NUL should be included in dstsize.
+If the src and dst strings overlap, the behavior is undefined.
+
+* Return the total length of the string they tried to create.
+For strlcat() that means the initial length of dst plus the length of src.
+	origsize = (d - dst);
+	// need to ID what this does in BSD because why not strlen call? Speed?
+	// more show-offy pointer arithmetic
+*/
 
 #include "libft.h"
 
 size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
 {
-	size_t	i;
-	size_t	j;
-	size_t	dst_len;
-	size_t	src_len;
+	size_t		origsize;
+	size_t		lefttoadd;
+	char		*d;
+	const char	*s;
 
-	dst_len = ft_strlen(dst);
-	src_len = ft_strlen(src);
-	j = 0;
-	i = 0;
-	while (dst[j])
-		j++;
-	dst_len = j;
-	src_len = ft_strlen(src);
-	if (dstsize == 0 || dstsize <= dst_len)
-		return (dstsize + src_len);
-	while (src[i] && i < dstsize - dst_len - 1)
+	d = dst;
+	s = src;
+	lefttoadd = dstsize;
+	while ((*d != '\0') && (lefttoadd-- != 0))
+		d++;
+	origsize = (d - dst);
+	lefttoadd = (dstsize - origsize);
+	if (lefttoadd == 0)
+		return (origsize + ft_strlen(src));
+	while (*s != '\0')
 	{
-		dst[j] = src[i];
-		i++;
-		j++;
+		if (lefttoadd != 1)
+		{
+			*d++ = *s;
+			lefttoadd--;
+		}
+		s++;
 	}
-	dst[j] = '\0';
-	return (dst_len + src_len);
+	*d = '\0';
+	return (origsize + ft_strlen(src));
 }
-/*
-int	main(void)
-{
-	char	dest[100];
-	char	src[];
-
-	dest[100] = "Hello";
-	src[] = " World!";
-	//size_t str1_len = ft_strlcat(str1, str2, sizeof(str1));
-	ft_strlcat(dest, src, 0);
-	printf("%s\n", dest);
-	return (0);
-}
-*/

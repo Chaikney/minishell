@@ -1,31 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strchr.c                                        :+:      :+:    :+:   */
+/*   strchr.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/24 21:23:59 by emedina-          #+#    #+#             */
-/*   Updated: 2023/05/17 19:43:13 by emedina-         ###   ########.fr       */
+/*   Created: 2023/04/19 14:25:40 by chaikney          #+#    #+#             */
+/*   Updated: 2023/04/27 16:37:48 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
+// Return a pointer to the first occurence of c in string s
+// or NULL if the character does not appear in the string.
+// NOTE The terminating null character is considered to be part of the string;
+// therefore if c is `\0', the functions locate the terminating `\0'.
 char	*ft_strchr(const char *s, int c)
 {
-	while (*s)
+	const char	*retvalue;
+
+	c = (char) c;
+	retvalue = NULL;
+	while ((*s != '\0') && (*s != c))
 	{
-		if (*s != (char)c)
-		{
-			s++;
-		}
-		else
-		{
-			return ((char *)s);
-		}
+		s++;
 	}
-	if (*s == (char)c)
-		return ((char *)s);
-	return (NULL);
+	if (*s == c)
+		retvalue = s;
+	return ((char *)(retvalue));
 }

@@ -3,25 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   ft_bzero.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/22 11:03:44 by emedina-          #+#    #+#             */
-/*   Updated: 2023/05/17 19:16:18 by emedina-         ###   ########.fr       */
+/*   Created: 2023/04/19 13:11:19 by chaikney          #+#    #+#             */
+/*   Updated: 2023/04/24 12:57:35 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
+// Overwrites an area with NULL
+// Starts at s and runs for n characters.
 void	ft_bzero(void *s, size_t n)
 {
-	unsigned char	*ptr;
-	size_t			i;
+	unsigned char	*str;
 
-	ptr = s;
-	i = 0;
-	while (i < n)
+	if (!n)
+		return ;
+	str = (unsigned char *) s;
+	while (n > 0)
 	{
-		ptr[i] = 0;
-		i++;
+		*str = '\0';
+		str++;
+		n--;
 	}
+	return ;
 }

@@ -1,31 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstclear.c                                      :+:      :+:    :+:   */
+/*   ft_stackpop.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/16 12:15:38 by emedina-          #+#    #+#             */
-/*   Updated: 2023/05/18 16:11:33 by emedina-         ###   ########.fr       */
+/*   Created: 2023/11/29 11:46:35 by chaikney          #+#    #+#             */
+/*   Updated: 2023/11/29 11:46:39 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_lstclear(t_list **lst, void (*del)(void *))
+// Remove the top item from a stack / linked list
+// NOTE the node is freed.
+void	ft_stackpop(t_list *stack)
 {
-	t_list	*current;
-	t_list	*next;
+	t_list	*tmp;
 
-	if (!lst || !del)
+	if (stack == NULL)
 		return ;
-	current = *lst;
-	while (current)
+	else
 	{
-		next = current->next;
-		del(current->content);
-		free(current);
-		current = next;
+		tmp = stack;
+		stack = stack->next;
+		free (tmp);
 	}
-	*lst = NULL;
 }

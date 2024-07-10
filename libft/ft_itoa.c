@@ -3,71 +3,85 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/06 12:22:15 by emedina-          #+#    #+#             */
-/*   Updated: 2023/05/18 10:59:44 by emedina-         ###   ########.fr       */
+/*   Created: 2023/04/27 10:16:53 by chaikney          #+#    #+#             */
+/*   Updated: 2023/05/16 16:45:41 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
+Parameters n: the integer to convert.
+Return value The string representing the integer.
+NULL if the allocation fails.
+External functs. malloc
+Description Allocates (with malloc(3)) and returns a string
+representing the integer received as an argument.
+Negative numbers must be handled
+ * NB -- this can be done much more neatly with strjoin and recursion :(
+ * MIN_INT = *-1, but if you do that for a signed int, you overflow MAX
+ * ZERO, the only prob is getting digit number.
+ * MAX_INT:	2147483647	(needs 11 bytes)
+ * MIN_INT:	-2147483648	(needs 12 bytes)
+*/
+
 #include "libft.h"
 
-static int	absolute_value(int n)
+static char	digit_as_char(int i)
 {
-	if (n < 0)
-		return (-n);
-	else
-		return (n);
+	char	c;
+
+	c = '\0';
+	if ((i >= 0) && (i <= 9))
+		c = (i + 48);
+	return (c);
 }
 
-static int	get_len(int n)
+static char	*ft_makestring(int n, int nd, int sign, int size)
 {
-	int	len;
+	int		digit;
+	char	*retstr;
+	int		i;
 
-	len = 0;
-	if (n < 0)
-		len++;
-	else if (n == 0)
-		len++;
-	while (n != 0)
+	digit = 0;
+	i = 0;
+	retstr = (char *)ft_calloc (size, sizeof(char));
+	if (retstr == NULL)
+		return (NULL);
+	if (sign == -1)
 	{
-		n = n / 10;
-		len++;
+		retstr[i] = '-';
+		i++;
 	}
-	return (len);
+	while ((nd > 0) && (i < size))
+	{
+		digit = n / ft_powerof10(nd - 1);
+		n = n % ft_powerof10(nd - 1);
+		retstr[i] = digit_as_char(digit);
+		i++;
+		nd--;
+	}
+	retstr[i] = '\0';
+	return (retstr);
 }
 
 char	*ft_itoa(int n)
 {
-	int		i;
-	int		len;
-	char	*result;
+	int		sign;
+	int		numdigits;
+	int		array_size;
 
-	i = 0;
-	len = get_len(n);
-	result = malloc(sizeof(char) * (len + 1));
-	if (!result)
-		return (NULL);
+	numdigits = 0;
+	sign = 1;
 	if (n < 0)
-	{
-		result[i++] = '-';
-		n = -n;
-	}
-	else if (n == 0)
-		result[i++] = '0';
-	while (n != 0)
-	{
-		result[--len] = absolute_value(n % 10) + '0';
-		n = n / 10;
-		i++;
-	}
-	result[i] = '\0';
-	return (result);
+		sign = -1;
+	if (n == INT_MIN)
+		return (ft_strdup("-2147483648"));
+	else if (n < 0)
+		n = (n * -1);
+	numdigits = ft_get_digits(n, 10);
+	array_size = (numdigits + 1);
+	if (sign == -1)
+		array_size++;
+	return (ft_makestring(n, numdigits, sign, array_size));
 }
-
-/* int main()
-{
-	int n=-155;
-	
-	printf("%s",ft_itoa(n));
-} */

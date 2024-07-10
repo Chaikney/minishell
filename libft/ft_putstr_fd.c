@@ -3,34 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/06 17:00:14 by emedina-          #+#    #+#             */
-/*   Updated: 2023/05/19 18:07:17 by emedina-         ###   ########.fr       */
+/*   Created: 2023/04/17 14:47:38 by chaikney          #+#    #+#             */
+/*   Updated: 2023/04/21 13:26:30 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
+// NOTE the fd check here is inconsistent with that in putchar
+// Output string s to file descriptor fd.
 void	ft_putstr_fd(char *s, int fd)
 {
-	int	i;
-
-	i = 0;
-	if (s)
+	if ((fd >= 0) && (fd <= 1023))
 	{
-		while (s[i] != '\0')
+		while (*s != '\0')
 		{
-			write(fd, &s[i], 1);
-			i++;
+			ft_putchar_fd(*s, fd);
+			s++;
 		}
 	}
 }
-
-/* int main (void)
-{
-	char *s = NULL;
-	int fd = 1;
-	ft_putstr_fd(s, fd);
-	return (0);
-} */

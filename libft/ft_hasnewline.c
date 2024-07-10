@@ -1,32 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstadd_back.c                                   :+:      :+:    :+:   */
+/*   ft_hasnewline.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/16 12:15:46 by emedina-          #+#    #+#             */
-/*   Updated: 2023/05/16 12:34:26 by emedina-         ###   ########.fr       */
+/*   Created: 2023/08/21 14:00:31 by chaikney          #+#    #+#             */
+/*   Updated: 2023/08/21 14:00:40 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_lstadd_back(t_list **lst, t_list *new)
+// Returns 1 if newline present, 0 if absent or s is empty
+// NOTE requires a NT'd string, can I protect it better?
+int	ft_hasnewline(char *s)
 {
-	t_list	*last;
+	int	i;
 
-	if (!lst || !new)
-		return ;
-	if (!*lst)
+	if (!s)
+		return (0);
+	i = 0;
+	while (s[i] != '\0')
 	{
-		*lst = new;
+		if (s[i] == '\n')
+			return (1);
+		i++;
 	}
-	else
-	{
-		last = *lst;
-		while (last->next)
-			last = last->next;
-		last->next = new;
-	}
+	return (0);
 }

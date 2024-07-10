@@ -3,126 +3,121 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/13 15:04:40 by emedina-          #+#    #+#             */
-/*   Updated: 2023/05/20 16:18:12 by emedina-         ###   ########.fr       */
+/*   Created: 2023/05/02 10:46:46 by chaikney          #+#    #+#             */
+/*   Updated: 2023/05/18 13:38:20 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
+s: The string to be split.
+c: The delimiter character.
+Return: The array of new strings resulting from the split.
+NULL if the allocation fails.
+
+Plan:
+*  count words, allocate outer / main array
+*  fill that with substrings
+* * that means pass it STRING, START and LENGTH
+	what would I do if c is the NULL character?
+* 1: allocate an array of pointers	-- this is the number of words 
+* 2: allocate sub-arrays	-- this is the words
+* 3: store the addresses of sub-arrays in the array of pointers
+* 		-- implies remembering the substring address (returned by substr?)
+*/
+
 #include "libft.h"
 
-static void	*free_split(char **array, int j)
+static char	*chop_this(char const *s, size_t len)
 {
-	int	i;
+	char	*sub;
+	size_t	i;
 
 	i = 0;
-	while (i < j)
-		free(array[i++]);
-	free(array);
-	return (NULL);
-}
-
-static char	*word_dupe(const char *str, char c)
-{
-	int		i;
-	int		len;
-	char	*word;
-
-	i = 0;
-	len = 0;
-	while (str[len] != '\0' && str[len] != c)
-		++len;
-	word = malloc(sizeof(char) * (len + 1));
-	if (word == NULL)
+	if (len == 0)
 		return (NULL);
-	word[len] = '\0';
-	while (i < len)
-	{
-		word[i] = str[i];
-		++i;
-	}
-	return (word);
-}
-
-static char	**fill_words(char **array, const char *str, char c)
-{
-	int			word_index;
-	const char	*ptr;
-
-	word_index = 0;
-	ptr = str;
-	while (*ptr != '\0')
-	{
-		while (*ptr == c)
-			++ptr;
-		if (*ptr != '\0')
-		{
-			array[word_index] = word_dupe(ptr, c);
-			if (array[word_index] == NULL)
-				return (free_split(array, word_index));
-			++word_index;
-		}
-		while (*ptr != '\0' && *ptr != c)
-			++ptr;
-	}
-	return (array);
-}
-
-static int	count_words(const char *str, char c)
-{
-	int	num_words;
-	int	i;
-
-	num_words = 0;
-	i = 0;
-	while (str[i] != '\0')
-	{
-		if (str[i] != c)
-		{
-			++num_words;
-			while (str[i] != '\0' && str[i] != c)
-				++i;
-		}
-		else
-			++i;
-	}
-	return (num_words);
-}
-
-char	**ft_split(char const *s, char c)
-{
-	int		num_words;
-	char	**array;
-
-	if (s == NULL)
+	sub = malloc((len + 1) * sizeof(char));
+	if (sub == NULL)
 		return (NULL);
-	num_words = count_words(s, c);
-	array = malloc(sizeof(char *) * (num_words + 1));
-	if (array == NULL)
-		return (NULL);
-	array = fill_words(array, s, c);
-	if (array == NULL)
-		return (NULL);
-	array[num_words] = NULL;
-	return (array);
-}
-
-/* int	main(int ac, char **av)
-{
-	if (ac == 3)
+	while (i < (len))
 	{
-			char **esplit = ft_split(NULL, av[2][0]);
-	int i = 0;
-	while (esplit && esplit[i])
-	{
-		printf("%s\n", esplit[i]);
-		free(esplit[i]);
+		sub[i] = s[i];
 		i++;
 	}
-	free(esplit);
+	sub[len] = '\0';
+	return (sub);
+}
 
-	return (0);
+static int	getnumberofwords(char const *s, char c)
+{
+	int	words;
+	int	i;
+
+	words = 0;
+	i = 0;
+	while (s[i] != '\0')
+	{
+		while (s[i] == c)
+			i++;
+		if (s[i] != '\0')
+			words++;
+		while ((s[i] != '\0') && (s[i] != c))
+			i++;
 	}
+	return (words);
+}
 
-} */
+void	tidy_up(char **arr, int n)
+{
+	while (--n >= 0)
+	{
+		free (arr[n]);
+	}
+}
+
+int	add_word(const char *str, int len, int wordtoadd, char **retstrings)
+{
+	char	*word;
+
+	word = chop_this(str, len);
+	if (word == NULL)
+	{
+		free (word);
+		return (tidy_up (retstrings, wordtoadd), -1);
+	}
+	else
+		retstrings[wordtoadd] = word;
+	return (wordtoadd + 1);
+}
+
+// Allocates and returns an array of strings obtained
+// by splitting ’s’ using the character ’c’ as a delimiter.
+// The array must end with a NULL pointer.
+char	**ft_split(char const *s, char c)
+{
+	char	**retstrings;
+	int		i;
+	int		j;
+	int		wordtoadd;
+
+	wordtoadd = 0;
+	i = 0;
+	retstrings = malloc((getnumberofwords(s, c) + 1) * sizeof(char *));
+	if (!retstrings)
+		return (NULL);
+	while ((s[i] != '\0'))
+	{
+		while (s[i] == c)
+			i++;
+		j = i;
+		while ((s[i] != '\0') && (s[i] != c))
+			i++;
+		if (i > j)
+			wordtoadd = add_word((s + j), (i - j), wordtoadd, retstrings);
+		if (wordtoadd == -1)
+			return (free(retstrings), NULL);
+	}
+	retstrings[wordtoadd] = NULL;
+	return (retstrings);
+}

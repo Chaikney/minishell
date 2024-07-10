@@ -3,32 +3,35 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strdup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/17 19:43:20 by emedina-          #+#    #+#             */
-/*   Updated: 2023/05/17 19:43:22 by emedina-         ###   ########.fr       */
+/*   Created: 2023/04/27 18:46:04 by chaikney          #+#    #+#             */
+/*   Updated: 2023/05/17 10:43:51 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+/*
+Allocates sufficient memory for a copy of the string s1, does the copy,
+and returns a pointer to it.
+The pointer may subsequently be used as an argument to the function free(3).
+If insufficient memory is available, NULL is returned and errno is set to ENOMEM.
+ * (This variable and associated constants require errno.h)
+*/
 
 #include "libft.h"
+#include <errno.h>
 
 char	*ft_strdup(const char *s1)
 {
 	size_t	len;
-	char	*newstr;
+	char	*newstring;
 
-	len = ft_strlen(s1);
-	newstr = malloc(len + 1);
-	if (newstr == NULL)
-		return (NULL);
-	ft_strlcpy(newstr, s1, len + 1);
-	return (newstr);
+	len = ft_strlen(s1) + 1;
+	newstring = (char *)malloc(len * sizeof(char));
+	if (newstring == NULL)
+	{
+		errno = ENOMEM;
+		return (newstring);
+	}
+	ft_strlcpy(newstring, s1, len);
+	return (newstring);
 }
-/* 
-int main (void)
-{
-	char *newstr = ft_strdup(NULL);
-	printf("%s\n", newstr);
-	free(newstr);
-	return (0);
-} */

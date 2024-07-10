@@ -1,25 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstadd_front.c                                  :+:      :+:    :+:   */
+/*   ft_lstiter.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/15 12:50:26 by emedina-          #+#    #+#             */
-/*   Updated: 2023/05/16 12:34:38 by emedina-         ###   ########.fr       */
+/*   Created: 2023/10/20 10:49:05 by chaikney          #+#    #+#             */
+/*   Updated: 2023/10/20 10:49:09 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_lstadd_front(t_list **lst, t_list *new)
+// lst: address to a pointer to a node
+// f: address of the function to apply to the lst.
+// Apply function f to content of each node in lst.
+void	ft_lstiter(t_list *lst, void (*f)(void*))
 {
-	if (!lst || !new)
+	if (!lst || !f)
 		return ;
-	new->next = *lst;
-	*lst = new;
+	while (lst)
+	{
+		(*f)(lst->content);
+		lst = lst->next;
+	}
 }
-/* int main (void)
-{
-
-} */

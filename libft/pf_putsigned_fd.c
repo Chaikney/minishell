@@ -1,27 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstiter.c                                       :+:      :+:    :+:   */
+/*   pf_putsigned_fd.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/16 12:21:21 by emedina-          #+#    #+#             */
-/*   Updated: 2023/05/18 19:46:55 by emedina-         ###   ########.fr       */
+/*   Created: 2023/10/16 10:36:54 by chaikney          #+#    #+#             */
+/*   Updated: 2023/10/16 10:37:00 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_lstiter(t_list *lst, void (*f)(void *))
+// Takes signed int, puts a "-" if needed then calls pf_put_unsigned_fd.
+int	pf_put_signed_fd(int nbr, int fd)
 {
-	t_list	*current;
+	int	put;
 
-	if (!lst || !f)
-		return ;
-	current = lst;
-	while (current)
+	put = 0;
+	if (nbr < 0)
 	{
-		f(current->content);
-		current = current->next;
+		put += pf_putchar_fd('-', fd);
+		nbr *= -1;
 	}
+	put += pf_put_unsigned_fd(nbr, fd);
+	return (put);
 }

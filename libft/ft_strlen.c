@@ -3,26 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/21 20:51:06 by emedina-          #+#    #+#             */
-/*   Updated: 2023/04/21 21:04:11 by emedina-         ###   ########.fr       */
+/*   Created: 2023/04/17 15:10:18 by chaikney          #+#    #+#             */
+/*   Updated: 2023/04/21 14:48:06 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-// NOTE Added protection against empty strings
-size_t	ft_strlen(const char *s)
+// return the length of a string, NOT including its NULL byte.
+// NOTE this is not protected against non-NT'd strings.
+size_t	ft_strlen(const char *str)
 {
-	size_t	i;
-	i = 0;
-	
-	if (!s)
-		return (0);
-	while (s[i] != '\0')
-	{
-		i++;
-	}
-	return (i);
+	size_t	length;
+
+	length = 0;
+	if (!str)
+		return (length);
+	while (str[length] != '\0')
+		length++;
+	return (length);
 }

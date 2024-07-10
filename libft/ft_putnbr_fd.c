@@ -3,43 +3,43 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/09 10:34:52 by emedina-          #+#    #+#             */
-/*   Updated: 2023/05/20 16:15:46 by emedina-         ###   ########.fr       */
+/*   Created: 2023/04/17 14:45:16 by chaikney          #+#    #+#             */
+/*   Updated: 2023/05/16 17:13:55 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
+ * DONE: reduce scope, use other functions.
+ * 	...ike this should just turn the number into a string for ft_putstr_fd
+ * 	...implies use of ft_itoa, no??	EXCEPT that raised leaks, so moved the 
+ * 	logic of it in here.
+ * STEPS
+ * * deal with INT_MIN
+ * * deaal with negative numbers (print - and go absolute)
+ * * next time around pass in a div by 10
+ * * * (when you return from that, print the mod (i.e. lower digit)
+ * * * (rememmeber that we're unwinding this as we recurse!)
+ * * once we've reached a digit between 0 and 9 we can just print it.
+ */
+
 #include "libft.h"
 
-void	ft_putnbr_fd(int n, int fd)
+void	ft_putnbr_fd(int nbr, int fd)
 {
-	char	str[12];
-	int		i;
-
-	i = 0;
-	if (n == 0)
-		write(fd, "0", 1);
-	if (n == INT_MIN)
+	if (nbr == INT_MIN)
+		ft_putstr_fd("-2147483648", fd);
+	else if (nbr < 0)
 	{
-		write(fd, "-2147483648", 11);
-		return ;
+		ft_putchar_fd('-', fd);
+		ft_putnbr_fd((nbr * -1), fd);
 	}
-	if (n < 0)
+	else if (nbr >= 10)
 	{
-		write(fd, "-", 1);
-		n = -n;
+		ft_putnbr_fd(nbr / 10, fd);
+		ft_putchar_fd((nbr % 10) + 48, fd);
 	}
-	while (n > 0)
-	{
-		str[i++] = n % 10 + '0';
-		n /= 10;
-	}
-	while (--i >= 0)
-		write(fd, &str[i], 1);
+	else
+		ft_putchar_fd(nbr + 48, fd);
 }
-
-/* int main (void)
-{
-	ft_putnbr_fd(5, 2);
-}  */
