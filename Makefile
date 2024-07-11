@@ -13,7 +13,7 @@
 NAME	= minishell
 
 SRC		= minishell.c paths.c parse.c builtins.c substitute.c tokens.c \
-		helpers.c
+		helpers.c pipes.c
 
 OBJ		= $(SRC:.c=.o)
 

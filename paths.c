@@ -46,7 +46,8 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 			num_pipes++;
 	if (num_pipes > 0)	// HACK refuse to handle commands with pipes
 	{
-		printf("\nmore than one (%i) command to run!\nNot implemented yet", num_pipes);
+		print_cmd_parts(split_pipe(cmd));
+	//	printf("\nmore than one (%i) command to run!\nNot implemented yet", num_pipes);
 	}
 	else	// we can handle the other redir types
 	{
@@ -115,7 +116,6 @@ int	direct_output(t_command *cmd, int o_lvl)
 }
 
 // DONE Check access() to i_path? open probably covers it
-// FIXME < does not work; trim_cmd issue I think.
 // TODO Implement stop word / here_doc input redirection
 // NOTE That is in the format: cmd << stop_word
 // NOTE Input redir in format:  < infile grep a1
@@ -160,7 +160,7 @@ int	setup_input(t_command *cmd, int i_lvl)
 // NOTE In bash the < and > can be anywhere: you take the control posn and the next param,
 // FIXED If I remove pieces fromm the start, execve later is "unaddressable bytes"
 // ...is this because of argv pointer confusion??
-// NOTE Fixed arrarys (as we have for argv) cannot be resized!
+// NOTE Fixed arrays (as we have for argv) cannot be resized!
 void	remove_cmd_parts(t_command *cmd, char *target)
 {
 	int	i;
