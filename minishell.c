@@ -105,7 +105,7 @@ void	run_command(t_command *cmd, char **envp)
 // TODO We also need to catch if running in a pipe or not.
 // TODO Decide if run_command / cmd should be a pointer
 // TODO rename the bg variable to say what it does (what does it do?)
-// DONE Recognise and handle the simple case.
+// TODO Restructure so that builtins can also run in complex structures
 void eval(char *cmdline, char **envp)
 {
     int			bg;
