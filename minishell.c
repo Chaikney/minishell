@@ -153,8 +153,8 @@ char	*get_prompt(void)
 // TODO Implement signals handling.
 // TODO Implement an exit routine that frees allocated memory.
 // DONE? Add cmdline to readline history after we receive it.
-// TODO Implement a global variable to handle process status.
-// TODO Can we configure the readline history to be friendlier?
+// KILL Can we configure the readline history to be friendlier?
+// ....This is a terminal emulator thing
 int main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;
@@ -171,7 +171,7 @@ int main(int argc, char **argv, char **envp)
 			signal(SIGINT, manipule_sigint);
 			prompt = get_prompt();
 			cmdline = readline(prompt);
-			if (cmdline == NULL)
+			if (cmdline == NULL)	// FIXME we return from pipes with cmdline NULL and boom
 				ms_exit(NULL);
 			if (cmdline[0] != '\0')
 			{

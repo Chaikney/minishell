@@ -51,6 +51,13 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 		cmdlist = make_cmd_list(cmd, num_pipes);
 		printf("\nmore than one (%i) command to run!\nNot implemented yet. But if you see this I didn't crash while list making!!!!", num_pipes);
 		print_cmd_parts(cmdlist);
+		while (cmdlist->next != NULL)
+		{
+			run_in_child_with_pipe(cmdlist, envp);
+			cmdlist = cmdlist->next;
+		}
+		// FIXME Last cmd in pipe line causes segfualt downstream; handle exit properly
+		run_in_child(cmdlist, envp, i_redir, o_redir);
 	}
 	else	// we can handle the other redir types
 	{

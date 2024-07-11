@@ -6,10 +6,9 @@
 // (assumed to be present).
 // No worrying about redirects; copy as-is.
 // NOTE No allocation needed for t_command, but maybe for the args?
-// TODO Wrap this in a loop
+// DONE Wrap this in a loop
 // DONE Check to see what cmd->builtin should be
-// NOTE The builtin check is hardcoded to 0 and needs to be updated
-// FIXME Static to keep track of position in argv, but when do we reset it?
+// FIXED Static to keep track of position in argv, but when do we reset it?
 t_command	*split_pipe(t_command *cmd)
 {
 	static int		i;
