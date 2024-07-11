@@ -12,33 +12,33 @@
 
 #include "minishell.h"
 
-// Read the first command argument and if it matches a builtin, set the flag.
-// TODO What do we look at in case of input redirection?
-// The third parameter, argv[2], would be the one to read.
-int parseBuiltin(t_command *cmd)
+// Read the given command argument and if it matches a builtin, set the flag.
+// (posn will be 0 except when there is input redirection)
+// FIXME Lines are too long for norminette
+t_builtin parse_builtin(t_command *cmd, int posn)
 {
-    if (cmd->argc == 0) 
-        return (NONE);
-    if ((ft_strncmp(cmd->argv[0], "cd", 2) == 0) && (ft_strlen(cmd->argv[0]) == 2))
-        return (CD);
-    else if ((ft_strncmp(cmd->argv[0], "exit", 4) == 0) && (ft_strlen(cmd->argv[0]) == 4) && (cmd->argv[1] == NULL))
-        return (EXIT);
-    else if ((ft_strncmp(cmd->argv[0], "echo", 4) == 0)&& (ft_strlen(cmd->argv[0]) == 4) && (cmd->argv[1] != NULL))
-    {
-        if ((ft_strncmp(cmd->argv[1], "-n", 2) == 0)&& (ft_strlen(cmd->argv[1]) == 2))
-            return (ECHO);
-        else
-            return (ECHON);
-    }
-    else if ((ft_strncmp(cmd->argv[0], "pwd", 3) == 0) && (ft_strlen(cmd->argv[0]) == 3) && (cmd->argv[1] == NULL))
-        return (PWD);
-    else if ((ft_strncmp(cmd->argv[0], "export", 6) == 0)&& (ft_strlen(cmd->argv[0]) == 6) && (cmd->argv[1] != NULL))
-        return (EXP);
-    else if ((ft_strncmp(cmd->argv[0], "unset", 5) == 0)&& (ft_strlen(cmd->argv[0]) == 5))
-        return (UNSET);
-    else if ((ft_strncmp(cmd->argv[0], "env", 3) == 0)&& (ft_strlen(cmd->argv[0]) == 3) && (cmd->argv[1] == NULL) )
-        return (ENV);
-    return (NONE);
+	if (cmd->argc == 0)
+		return (NONE);
+	if ((ft_strncmp(cmd->argv[posn], "cd", 2) == 0) && (ft_strlen(cmd->argv[posn]) == 2))
+		return (CD);
+	else if ((ft_strncmp(cmd->argv[posn], "exit", 4) == 0) && (ft_strlen(cmd->argv[posn]) == 4) && (cmd->argv[posn + 1] == NULL))
+		return (EXIT);
+	else if ((ft_strncmp(cmd->argv[posn], "echo", 4) == 0)&& (ft_strlen(cmd->argv[posn]) == 4) && (cmd->argv[posn + 1] != NULL))
+	{
+		if ((ft_strncmp(cmd->argv[posn + 1], "-n", 2) == 0)&& (ft_strlen(cmd->argv[posn + 1]) == 2))
+			return (ECHO);
+		else
+			return (ECHON);
+	}
+	else if ((ft_strncmp(cmd->argv[posn], "pwd", 3) == 0) && (ft_strlen(cmd->argv[posn]) == 3) && (cmd->argv[posn + 1] == NULL))
+		return (PWD);
+	else if ((ft_strncmp(cmd->argv[posn], "export", 6) == 0)&& (ft_strlen(cmd->argv[posn]) == 6) && (cmd->argv[posn + 1] != NULL))
+		return (EXP);
+	else if ((ft_strncmp(cmd->argv[posn], "unset", 5) == 0)&& (ft_strlen(cmd->argv[posn]) == 5))
+		return (UNSET);
+	else if ((ft_strncmp(cmd->argv[posn], "env", 3) == 0)&& (ft_strlen(cmd->argv[posn]) == 3) && (cmd->argv[posn + 1] == NULL) )
+		return (ENV);
+	return (NONE);
 }
 
 // TODO echo Commands into separate function
@@ -207,7 +207,7 @@ int	parse(const char *cmdline, t_command *cmd)
     free(token);
     if (cmd->argc == 0)
         return (1);
-    cmd->builtin = parseBuiltin (cmd);
+    cmd->builtin = parse_builtin (cmd, 0);	// HACK Hardcoding; should ensure no redirection present.
     free (cmd_trim);
     return (is_bg);
 }

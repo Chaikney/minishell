@@ -86,7 +86,7 @@ int		ms_pwd(void);
 void	ms_export(t_command *cmd, char **envp);
 void	ms_unset(t_command *cmd, char **envp);
 void	ms_exit(t_command *cmd);
-int		parseBuiltin(t_command *cmd);
+t_builtin	parse_builtin(t_command *cmd, int posn);
 
 // parse.c - functions to read and interpret user input
 int		parse(const char *cmdline, t_command *cmd);
