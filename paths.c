@@ -50,7 +50,7 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 	{
 		cmdlist = make_cmd_list(cmd, num_pipes);
 		printf("\nmore than one (%i) command to run!\nNot implemented yet. But if you see this I didn't crash while list making!!!!", num_pipes);
-		(void) cmdlist;
+		print_cmd_parts(cmdlist);
 	}
 	else	// we can handle the other redir types
 	{

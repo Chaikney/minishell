@@ -18,13 +18,13 @@ t_command	*split_pipe(t_command *cmd)
 
 	j = 0;
 	printf("\nAttempting to split a command starting at posn: %i\n", i);	// HACK for debugging
-	print_cmd_parts(cmd);	// HACK for debugging
+//	print_cmd_parts(cmd);	// HACK for debugging
 	new_cmd = malloc(sizeof(t_command));
 	new_cmd->argc = 0;
-	printf("\nI can't crash here! this is %s", cmd->argv[i]);	// HACK for debugging
+//	printf("\nI can't crash here! this is %s", cmd->argv[i]);	// HACK for debugging
 	while ((cmd->argv[i]) && (ft_strncmp(cmd->argv[i], "|", 1) != 0))
 	{
-		printf("copying: %s\t", cmd->argv[i]);	// HACK for debugging
+//		printf("copying: %s\t", cmd->argv[i]);	// HACK for debugging
 		new_cmd->argv[j] = cmd->argv[i];
 		new_cmd->argc++;
 		i++;
@@ -35,7 +35,7 @@ t_command	*split_pipe(t_command *cmd)
 		i = 0;
 	else
 		i++;	// step over the pipe char
-	print_cmd_parts(new_cmd);	// HACK for debugging
+//	print_cmd_parts(new_cmd);	// HACK for debugging
 	if (ft_isalpha(new_cmd->argv[0][1]) == 1)	// test that we aren't starting with a control char
 		new_cmd->builtin = parse_builtin(new_cmd, 0);
 	else

@@ -56,10 +56,22 @@ int	find_flow_control(t_command *cmdset)
 }
 
 // Debugging function to view the active parts of a command.
+// If there is a list in the command, it prints all commands
 void	print_cmd_parts(t_command *cmd)
 {
 	int	i;
 
+	while (cmd->next != NULL)
+	{
+		i = 0;
+		printf("\nExamining command with argc of %i:\n", cmd->argc);
+		while (i < cmd->argc)
+		{
+			printf("Index: %i\t%s\n", i, cmd->argv[i]);
+			i++;
+		}
+		cmd = cmd->next;
+	}
 	i = 0;
 	printf("\nExamining command with argc of %i:\n", cmd->argc);
 	while (i < cmd->argc)
