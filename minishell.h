@@ -23,7 +23,6 @@
 # endif
 
 # include <stdio.h>	// perror
-# include <stdlib.h>
 # include <readline/readline.h>	// readline input
 # include <readline/history.h>	// readline history
 # include <stdlib.h>	// malloc and free
