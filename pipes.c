@@ -65,6 +65,7 @@ t_command	*make_cmd_list(t_command *to_split, int n)
 		next_cmd = split_pipe(to_split);
 		cmd_ptr->next = next_cmd;
 		i++;
+		cmd_ptr = cmd_ptr->next;
 	}
 	return (cmd_head);
 }
