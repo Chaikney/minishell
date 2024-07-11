@@ -26,7 +26,8 @@
 // 1 - input from file
 // 2 - input from STDIN with stop word.
 // TODO Split into identification and routing parts (is too long)
-// TODO Implement pipe handling - split commands and run in order
+// DONE Implement pipe handling - split commands
+// TODO Implement pipe handling - run in order
 // TODO Implement << stop word type input!
 // DONE Unify input and output mangling so they can both run.
 // FIXME Will need to be shorter
@@ -36,6 +37,7 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 	int	i;
 	int	o_redir;
 	int	i_redir;
+	t_command	*cmdlist;
 
 	num_pipes = 0;
 	i = 0;
@@ -44,10 +46,11 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 	while (i < cmd->argc)
 		if (ft_strncmp(cmd->argv[i++], "|", 1) == 0)
 			num_pipes++;
-	if (num_pipes > 0)	// HACK refuse to handle commands with pipes
+	if (num_pipes > 0)
 	{
-		print_cmd_parts(split_pipe(cmd));
-	//	printf("\nmore than one (%i) command to run!\nNot implemented yet", num_pipes);
+		cmdlist = make_cmd_list(cmd, num_pipes);
+		printf("\nmore than one (%i) command to run!\nNot implemented yet. But if you see this I didn't crash while list making!!!!", num_pipes);
+		(void) cmdlist;
 	}
 	else	// we can handle the other redir types
 	{

@@ -116,6 +116,7 @@ void eval(char *cmdline, char **envp)
     bg = parse(cmdline, &cmd);
 	(void) bg;
 //    printf("Found command %s\n", cmd.argv[0]);	// HACK For debugging, remove later
+	print_cmd_parts(&cmd);	// HACK for debugging
 	con_loc = find_flow_control(&cmd);
 	if (con_loc == -1)
 	{

@@ -58,6 +58,7 @@ typedef enum e_builtin
 // TODO What if we flag command types - system, builtin, what?
 typedef struct s_command
 {
+	struct s_command	*next;
 	int			argc;
 	char		*argv[MAXARGS];
 	t_builtin	builtin;
@@ -110,4 +111,5 @@ void	print_cmd_parts(t_command *cmd)	;
 
 // pipes.c
 t_command	*split_pipe(t_command *cmd);
+t_command	*make_cmd_list(t_command *to_split, int n);
 #endif

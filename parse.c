@@ -207,6 +207,8 @@ int	parse(const char *cmdline, t_command *cmd)
     free(token);
     if (cmd->argc == 0)
         return (1);
+    cmd->next = NULL;	// NOTE Without this setup, segfaults all over.
+    print_cmd_parts(cmd);	// HACK for debugging
     cmd->builtin = parse_builtin (cmd, 0);	// HACK Hardcoding; should ensure no redirection present.
     free (cmd_trim);
     return (is_bg);

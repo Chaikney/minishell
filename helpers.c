@@ -29,6 +29,7 @@ int	find_env_var(char **envp, const char *var)
 // flow control parameters: | > < >> or <<
 // They would be separate from commands either side.
 // (locates, it is up to the outer loop to re-identify what the thing is)
+// FIXME Segfault if cmdset (or any part of it) is null
 int	find_flow_control(t_command *cmdset)
 {
 	int	i;
