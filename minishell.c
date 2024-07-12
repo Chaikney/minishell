@@ -14,6 +14,13 @@
 
 int g_procstatus;
 
+// this is to disable CRTL-D and the apparent EOF we get
+// after a pipe ends
+void	handle_sigquit()
+{
+	return ;
+}
+
 // catch CTRL-c / SIGINT
 // TODO This should return to the normal prompt / readline call
 // ...I think this leads to duplicated prompt message.
@@ -169,6 +176,7 @@ int main(int argc, char **argv, char **envp)
 	cmdline = NULL;
 	if (argc == 1)
 	{
+		signal(SIGQUIT, handle_sigquit);	// This works to supress ctrl-d but not the cmdline breakage
 		while (1)
 		{
 //			g_procstatus = 0;
