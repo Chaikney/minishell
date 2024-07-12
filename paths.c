@@ -321,14 +321,14 @@ void	run_in_child(t_command *cmd, char **envp, int i_file, int o_file)
 			dup2(o_file, STDOUT_FILENO);
 		if (i_file > 0)
 			dup2(i_file, STDIN_FILENO);	// TODO I have no idea if this works!
-		close(i_file);
+	//	close(i_file);
 		run_command(cmd, envp);
 	}
 	else
 	{
 //		printf("waiting for child process: %i", child);	// HACK for debugging
 //		close(o_file);	// This makes sense if we are writing to a file *and* have access to it.
-		close(i_file);
+//		close(i_file);	// NOTE If this file is closed, shell never returns
 		ret_val = waitpid(child, &g_procstatus, 0);
 		if (ret_val == -1)
 			printf("error in child process");
