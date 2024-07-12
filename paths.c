@@ -38,10 +38,8 @@ int	determine_output(t_command *cmd)
 			if (ft_strncmp(cmd->argv[i], ">>", 2) == 0)
 				o_redir = 2;
 			o_fd = direct_output(cmd, o_redir);
-//			remove_cmd_parts(cmd, ">");
 		}
 	}
-	// FIXME This appears twice and I don't know why!
 	printf("Checked output for '%s'. fd will be: %i", cmd->argv[0], o_fd);
 	return (o_fd);
 }
@@ -71,7 +69,6 @@ int	determine_input(t_command *cmd)
 			if (ft_strncmp(cmd->argv[i], "<<", 2) == 0)
 				i_redir = 2;
 			i_fd = setup_input(cmd, i_redir);
-			remove_cmd_parts(cmd, "<");
 		}
 		i++;
 	}
@@ -83,14 +80,15 @@ int	determine_input(t_command *cmd)
 // execution function(s)
 // TODO Shorter (but still descriptive!) name needed.
 // TODO Function will need to be shorter once it is working
-// DONE Implement pipe handling - split commands
-// DONE Implement pipe handling - run in order
 // TODO Implement << stop word type input!
 // DONE Unify input and output mangling so they can both run.
 // DONE Unify pipes and i/o redirection
 // TODO Ensure that after pipes we still have a working shell input!
-// FIXME test < less failed with "text file busy" - unclosed fd?
-// FIXME ls | rev | tac | rev displays reversed debug. Does that mean bad setup?
+// TODO Must be able to handle BUILTINS here as well.
+// FIXME Output redirection no longer works
+// FIXME < test | rev | rev triggered a crash
+// FIXED test < less failed with "text file busy" - unclosed fd?
+// FIXED ls | rev | tac | rev displays reversed debug. Does that mean bad setup?
 void	handle_complex_command_structure(t_command *cmd, char **envp)
 {
 	int	num_pipes;
@@ -107,14 +105,14 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 	i_redir = determine_input(cmd);
 	o_redir = determine_output(cmd);
 	// HACK Next few lines debugging statements to remove
-	printf("Command before excision");
-	print_cmd_parts(cmd);
+	/* printf("Command before excision"); */
+	/* print_cmd_parts(cmd); */
 	remove_cmd_parts(cmd, ">");
 	remove_cmd_parts(cmd, "<");
-	printf("Command after excision");
-	print_cmd_parts(cmd);
+	/* printf("Command after excision"); */
+	/* print_cmd_parts(cmd); */
 	printf("\tOutput to: %i\tInput to: %i", o_redir, i_redir);
-	// FIXME something does not return and shell loses control.
+	// FIXED something does not return and shell loses control.
 	if (num_pipes > 0)
 	{
 		cmdlist = make_cmd_list(cmd, num_pipes);
@@ -138,34 +136,6 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 	}
 	else	// we can handle the other redir types
 	{
-		// Identify if input or redirection is needed, and its type.
-/* 		i = cmd->argc; */
-/* 		while (i-- > 0) */
-/* 			if (ft_strncmp(cmd->argv[i], ">", 1) == 0) */
-/* 			{ */
-/* 				o_redir = 1; */
-/* 				if (ft_strncmp(cmd->argv[i], ">>", 2) == 0) */
-/* 					o_redir = 2; */
-/* 				o_redir = direct_output(cmd, o_redir); */
-/* 				remove_cmd_parts(cmd, ">"); */
-/* 				break ; */
-/* 			} */
-/* 		i = 0; */
-/* //		print_cmd_parts(cmd);	// HACK for debugging */
-/* 		while (i < cmd->argc - 1) */
-/* 		{ */
-/* 			if (ft_strncmp(cmd->argv[i], "<", 1) == 0) */
-/* 			{ */
-/* //				print_cmd_parts(cmd);	// HACK for debugging */
-/* 				i_redir = 1; */
-/* 				if (ft_strncmp(cmd->argv[i], "<<", 2) == 0) */
-/* 					i_redir = 2; */
-/* 				i_redir = setup_input(cmd, i_redir); */
-/* 				remove_cmd_parts(cmd, "<"); */
-/* 				break ;	// does this break out of the while, or only the if? */
-/* 			} */
-/* 			i++; */
-/* 		} */
 		print_cmd_parts(cmd);	// HACK for debugging
 		run_in_child(cmd, envp, i_redir, o_redir);
 	}
@@ -330,6 +300,8 @@ void	run_in_child_with_pipe(t_command *cmd, char **envp, int *i_file)
 // FIXME This no longer works for the simple output redirection case
 // (Though alone pipes are happy)
 // FIXME output redirection at the end of pipes does not work.
+// TODO rename to "run_last" or similar
+// TODO Do I need a pipe in this one as well?
 void	run_in_child(t_command *cmd, char **envp, int i_file, int o_file)
 {
 	pid_t	child;

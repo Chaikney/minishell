@@ -192,7 +192,7 @@ int main(int argc, char **argv, char **envp)
 			{
 				add_history((const char *) cmdline);
 				eval(cmdline, envp);
-				printf("evaluation finished; if that was a pipe i will now crash");
+//				printf("evaluation finished; if that was a pipe i will now crash");
 			}
 		}
 	}
