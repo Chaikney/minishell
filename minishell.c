@@ -46,18 +46,22 @@ void	exit_and_free(char **args, int fd_in, int fd_out)
 	exit(EXIT_FAILURE);
 }
 
-// Free the memory allocated to a t_command
+// Free the memory allocated to one single t_command
 // Mainly (only?) in the args part.
-// TODO Ensure that this is protected against empty cmds
+// DONE Ensure that this is protected against empty cmds
+// TODO Does this clear every part of a t_command?
 void	clear_t_command(t_command *cmd)
 {
 	int	i;
 
-	i = 0;
-	while (cmd->argv[i])	// FIXED Segfault here.
-		free(cmd->argv[i++]);
-	free(cmd->argv[cmd->argc]);
+	if (cmd)
+	{
+		i = 0;
+		while (cmd->argv[i])	// FIXED Segfault here.
+			free(cmd->argv[i++]);
+		free(cmd->argv[cmd->argc]);
 //	free (*cmd->argv);	// NOTE Invalid free
+	}
 }
 
 // Take a command (currently assumed argv[0])
@@ -174,8 +178,8 @@ int main(int argc, char **argv, char **envp)
 			// NOTE I think this below is a EOF getting stuck into readline.
 			// Need to catch it before?
 			// Or does it indicate a broken pipe?
-			/* if (cmdline == NULL)	// FIXME we return from pipes with cmdline NULL and boom */
-			/* 	ms_exit(NULL); */
+			if (cmdline == NULL)	// FIXME we return from pipes with cmdline NULL and boom
+				ms_exit(NULL);
 			if ((cmdline[0] != '\0'))
 			{
 				add_history((const char *) cmdline);
