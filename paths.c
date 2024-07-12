@@ -17,6 +17,10 @@
 // Wrap everything needed to work out where the output comes from,
 // and return the fd to it.
 // FIXED Returns STDOUT no matter what
+// NOTE Flags for o_redir:
+// 0 - no output redirection
+// 1 - create file mode
+// 2 - append file mode
 int	determine_output(t_command *cmd)
 {
 	int	i;
@@ -45,6 +49,10 @@ int	determine_output(t_command *cmd)
 // Wrap everything needed to work out where the input comes from,
 // and return the fd to it.
 // FIXED Returns STDIN no matter what
+// Similar with input redir:
+// 0 - no special input
+// 1 - input from file
+// 2 - input from STDIN with stop word.
 int	determine_input(t_command *cmd)
 {
 	int	i;
@@ -67,29 +75,22 @@ int	determine_input(t_command *cmd)
 		}
 		i++;
 	}
-	printf("Checked output for '%s'. fd will be: %i", cmd->argv[0], i_fd);
+	printf("Checked input for '%s'. fd will be: %i\n", cmd->argv[0], i_fd);
 	return (i_fd);
 }
 
 // When there is a control character present, guide it to the correct
 // execution function(s)
 // TODO Shorter (but still descriptive!) name needed.
-// NOTE Flags for o_redir:
-// 0 - no output redirection
-// 1 - create file mode
-// 2 - append file mode
-// Similar with input redir:
-// 0 - no special input
-// 1 - input from file
-// 2 - input from STDIN with stop word.
-// TODO Split into identification and routing parts (is too long)
+// TODO Function will need to be shorter once it is working
 // DONE Implement pipe handling - split commands
-// TODO Implement pipe handling - run in order
+// DONE Implement pipe handling - run in order
 // TODO Implement << stop word type input!
 // DONE Unify input and output mangling so they can both run.
-// TODO Unify pipes and i/o redirection
+// DONE Unify pipes and i/o redirection
 // TODO Ensure that after pipes we still have a working shell input!
-// FIXME Will need to be shorter
+// FIXME test < less failed with "text file busy" - unclosed fd?
+// FIXME ls | rev | tac | rev displays reversed debug. Does that mean bad setup?
 void	handle_complex_command_structure(t_command *cmd, char **envp)
 {
 	int	num_pipes;
@@ -119,17 +120,21 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 		cmdlist = make_cmd_list(cmd, num_pipes);
 		print_cmd_parts(cmdlist);
 		// set input file to be STDIN, if needed.
+//		dup2(i_redir, STDIN_FILENO);
 		// close input file descriptor
+//		close(i_redir);	// TODO Understand if this closes STDIN after above
 		while (cmdlist->next != NULL)
 		{
-			run_in_child_with_pipe(cmdlist, envp);
+			run_in_child_with_pipe(cmdlist, envp, &i_redir);
 			cmdlist = cmdlist->next;
 		}
 		// output file becomes STDOUT
-		// close output fd/
+		dup2(o_redir, STDOUT_FILENO);
+		// close output fd
+//		close(o_redir);
 		// run final command - in piex this is without a pipe but here
 		// we need a child process, for sure.
-		run_in_child(cmdlist, envp, -1, -1);	// FIXME These -1 may be the problem!
+		run_in_child(cmdlist, envp, i_redir, o_redir);	// FIXME These -1 may be the problem!
 	}
 	else	// we can handle the other redir types
 	{
@@ -285,7 +290,8 @@ void	remove_cmd_parts(t_command *cmd, char *target)
 // DONE Can I use the output from this to measure state?
 // TODO The exit_and_free should be unified with ms_exit, or renamed.
 // ...don't want to leave the entire shell for fork/pipe errors.
-void	run_in_child_with_pipe(t_command *cmd, char **envp)
+// Now takes an input file pointer to connect to the previous command in pipe.
+void	run_in_child_with_pipe(t_command *cmd, char **envp, int *i_file)
 {
 	pid_t	child;
 	int		tube[2];
@@ -299,16 +305,20 @@ void	run_in_child_with_pipe(t_command *cmd, char **envp)
 	{
 		close(tube[0]);
 		dup2(tube[1], STDOUT_FILENO);
-		run_command(cmd, envp);
 		close(tube[1]);	// NOTE Probably only called if run_command has failed
+		// "redirect stdin to prevpipe"
+		dup2(*i_file, STDIN_FILENO);
+		close(*i_file);
+		run_command(cmd, envp);
 	}
 	else
 	{
 		close(tube[1]);
 		// NOTE: commenting out this line leads to endless loop or non-returning process
-		dup2(tube[0], STDIN_FILENO);	// NOTE do not mess with shell / parent fds
+//		dup2(tube[0], STDIN_FILENO);	// NOTE do not mess with shell / parent fds
 		waitpid(child, &g_procstatus, 0);
-		close(tube[0]);
+		*i_file = tube[0];	// Keep hold of the read end of this pipe for the next run.
+//		close(tube[0]);
 		printf("process %s finished with code: %i\n", cmd->argv[0], g_procstatus); // HACK for debugging
 	}
 }
