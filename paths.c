@@ -15,39 +15,76 @@
 // FIXME Too many functions in file.
 
 // Wrap everything needed to work out where the output comes from,
-// and return the fd to it.
-// FIXED Returns STDOUT no matter what
-// NOTE Flags for o_redir:
-// 0 - no output redirection
-// 1 - create file mode
-// 2 - append file mode
+// open the file with appropriate perms and return the fd to it.
+// - Find the marker.
+// - Set file perms for level (create or append)
+// - find file name
+// - check access to file, open it
 int	determine_output(t_command *cmd)
 {
 	int	i;
 	int	o_fd;
-	int	o_redir;
+	int	perms;
+	char	*o_path;
 
 	i = cmd->argc;
 	o_fd = STDOUT_FILENO;
-	o_redir = 0;
+	perms = 0;
 	while ((i-- > 0))
 	{
 		if (ft_strncmp(cmd->argv[i], ">", 1) == 0)
 		{
-			o_redir = 1;
+			perms = O_WRONLY | O_CREAT | O_TRUNC;
 			if (ft_strncmp(cmd->argv[i], ">>", 2) == 0)
-				o_redir = 2;
-			o_fd = direct_output(cmd, o_redir);
+				perms = O_WRONLY | O_CREAT | O_APPEND;
+			o_path = cmd->argv[i + 1];
+			o_fd = open(o_path, perms, 0777);
+			if (o_fd == -1)
+			{
+				g_procstatus = errno;
+				perror("Could not open output file");
+			}
 		}
 	}
 	printf("Checked output for '%s'. fd will be: %i", cmd->argv[0], o_fd);
 	return (o_fd);
 }
 
+// Unified setup of output-to-file
+// - Set file perms for level (create or append)
+// - find file name (final cmd parameter)
+// - check access to file, open it
+// NOTE DO we also have to slice off the > and after? Would be bad param for command...
+// TODO If no redir is needed, then should we return STDOUT_FILENO?
+// DONE Potential to merge with determine_output
+// TODO Potentially obsolete and removable
+int	direct_output(t_command *cmd, int o_lvl)
+{
+	int		perms;
+	char	*o_path;
+	int		o_file;
+
+	if (o_lvl == 2)
+		perms = O_WRONLY | O_CREAT | O_APPEND;
+	else if (o_lvl == 1)
+		perms = O_WRONLY | O_CREAT | O_TRUNC;
+	o_path = cmd->argv[cmd->argc - 1];
+//	printf("\nTrying to open file: %s\n", o_path);	// HACK for debugging
+	o_file = open(o_path, perms, 0777);
+	if (o_file == -1)
+	{
+		g_procstatus = errno;
+		perror("Could not open output file");
+	}
+	else
+		return (o_file);
+	return (-1);
+}
+
 // Wrap everything needed to work out where the input comes from,
 // and return the fd to it.
 // FIXED Returns STDIN no matter what
-// Similar with input redir:
+// Flags for input redir:
 // 0 - no special input
 // 1 - input from file
 // 2 - input from STDIN with stop word.
@@ -83,10 +120,9 @@ int	determine_input(t_command *cmd)
 // TODO Implement << stop word type input!
 // DONE Unify input and output mangling so they can both run.
 // DONE Unify pipes and i/o redirection
-// TODO Ensure that after pipes we still have a working shell input!
+// DONE Ensure that after pipes we still have a working shell input!
 // TODO Must be able to handle BUILTINS here as well.
-// FIXME Output redirection no longer works
-// FIXME < test | rev | rev triggered a crash
+// FIXME < test | rev | rev triggered a crash - note that form is invalid!
 // FIXED test < less failed with "text file busy" - unclosed fd?
 // FIXED ls | rev | tac | rev displays reversed debug. Does that mean bad setup?
 void	handle_complex_command_structure(t_command *cmd, char **envp)
@@ -141,39 +177,6 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 	}
 }
 
-// Unified setup of output-to-file
-// - Set file perms for level (create or append)
-// - find file name (final cmd parameter)
-// - check access to file, open it
-// - set fd of file to be STDOUT
-// NOTE DO we also have to slice off the > and after? Would be bad param for command...
-// NOTE Of course, *input* may also need to be handled; so this is uncomplete.
-// DONE? If this fails it should set the g_procstatus variable
-// TODO If no redir is needed, then should we return STDOUT_FILENO?
-// TODO Potential to merge with determine_output
-int	direct_output(t_command *cmd, int o_lvl)
-{
-	int		perms;
-	char	*o_path;
-	int		o_file;
-
-	if (o_lvl == 2)
-		perms = O_WRONLY | O_CREAT | O_APPEND;
-	else if (o_lvl == 1)
-		perms = O_WRONLY | O_CREAT | O_TRUNC;
-	o_path = cmd->argv[cmd->argc - 1];
-//	printf("\nTrying to open file: %s\n", o_path);	// HACK for debugging
-	o_file = open(o_path, perms, 0777);
-	if (o_file == -1)
-	{
-		g_procstatus = errno;
-		perror("Could not open output file");
-	}
-	else
-		return (o_file);
-	return (-1);
-}
-
 // DONE Check access() to i_path? open probably covers it
 // TODO Implement stop word / here_doc input redirection
 // NOTE That is in the format: cmd << stop_word
@@ -183,7 +186,7 @@ int	direct_output(t_command *cmd, int o_lvl)
 // If it succeeds, bash uses the file descriptor
 // of the opened file as the stdin file descriptor for the command.
 // TODO If no redir is needed, then should we return STDIN_FILENO?
-// TODO Potential to merge with determine_output
+// TODO Potential to merge with determine_input - not until heredoc done.
 int	setup_input(t_command *cmd, int i_lvl)
 {
 	char	*i_path;
