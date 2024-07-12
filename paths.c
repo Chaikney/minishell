@@ -46,18 +46,24 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 	while (i < cmd->argc)
 		if (ft_strncmp(cmd->argv[i++], "|", 1) == 0)
 			num_pipes++;
+	// FIXME something does not return and shell loses control.
 	if (num_pipes > 0)
 	{
 		cmdlist = make_cmd_list(cmd, num_pipes);
 		printf("\nmore than one (%i) command to run!\nNot implemented yet. But if you see this I didn't crash while list making!!!!", num_pipes);
 		print_cmd_parts(cmdlist);
+		// set input file to be STDIN, if needed.
+		// close input file descriptor
 		while (cmdlist->next != NULL)
 		{
 			run_in_child_with_pipe(cmdlist, envp);
 			cmdlist = cmdlist->next;
 		}
-		// FIXME Last cmd in pipe line causes segfualt downstream; handle exit properly
-		run_in_child(cmdlist, envp, i_redir, o_redir);
+		// output file becomes STDOUT
+		// close output fd/
+		// run final command - in piex this is without a pipe but here
+		// we need a child process, for sure.
+		run_in_child(cmdlist, envp, -1, -1);
 	}
 	else	// we can handle the other redir types
 	{
@@ -207,8 +213,6 @@ void	remove_cmd_parts(t_command *cmd, char *target)
 // - wait for it to come back
 // NOTE child == 0 means we are in the child process!
 // DONE Can I use the output from this to measure state?
-// TODO This needs an outer loop / function calling it with the correct cmd parts
-// FIXME Looks like function is getting too long...
 // TODO The exit_and_free should be unified with ms_exit, or renamed.
 // ...don't want to leave the entire shell for fork/pipe errors.
 void	run_in_child_with_pipe(t_command *cmd, char **envp)
@@ -226,15 +230,16 @@ void	run_in_child_with_pipe(t_command *cmd, char **envp)
 		close(tube[0]);
 		dup2(tube[1], STDOUT_FILENO);
 		run_command(cmd, envp);
-		close(tube[1]);
+		close(tube[1]);	// NOTE Probably only called if run_command has failed
 	}
 	else
 	{
 		close(tube[1]);
-		dup2(tube[0], STDIN_FILENO);
+		// NOTE: commenting out this line leads to endless loop or non-returning process
+		dup2(tube[0], STDIN_FILENO);	// NOTE do not mess with shell / parent fds
 		waitpid(child, &g_procstatus, 0);
 		close(tube[0]);
-		printf("process finished with code: %i", g_procstatus); // HACK for debugging
+		printf("process %s finished with code: %i\n", cmd->argv[0], g_procstatus); // HACK for debugging
 	}
 }
 

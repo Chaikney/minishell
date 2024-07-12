@@ -89,7 +89,7 @@ void	run_command(t_command *cmd, char **envp)
 		free(prog);
 //		exit_and_free(cmd, -1, -1);
 	}
-	if (execve(prog, cmd->argv, envp) == -1)
+	if (execve(prog, cmd->argv, envp) == -1)	// if successful, execve does not return
 	{
 		g_procstatus = errno;
 		perror("Failed to execute program");
@@ -147,12 +147,12 @@ char	*get_prompt(void)
     return("what should i do? > ");
 }
 
-// NOTE feof is forbidden - find another way to catch EOF signal.
 // FIXME Not clear what cmdline == NULL attempts, i can't trigger it.
 // ...readline man page says this what it returns on EOF on an empty line.
-// TODO Implement signals handling.
+// TODO Implement signals handling SIGINT - needs fixed
+// TODO Implement signals handling CTRL-D
+// TODO Implement signals handling CTRL-\ uncontrolled quit
 // TODO Implement an exit routine that frees allocated memory.
-// DONE? Add cmdline to readline history after we receive it.
 // KILL Can we configure the readline history to be friendlier?
 // ....This is a terminal emulator thing
 int main(int argc, char **argv, char **envp)
@@ -171,12 +171,16 @@ int main(int argc, char **argv, char **envp)
 			signal(SIGINT, manipule_sigint);
 			prompt = get_prompt();
 			cmdline = readline(prompt);
-			if (cmdline == NULL)	// FIXME we return from pipes with cmdline NULL and boom
-				ms_exit(NULL);
-			if (cmdline[0] != '\0')
+			// NOTE I think this below is a EOF getting stuck into readline.
+			// Need to catch it before?
+			// Or does it indicate a broken pipe?
+			/* if (cmdline == NULL)	// FIXME we return from pipes with cmdline NULL and boom */
+			/* 	ms_exit(NULL); */
+			if ((cmdline[0] != '\0'))
 			{
 				add_history((const char *) cmdline);
 				eval(cmdline, envp);
+				printf("evaluation finished; if that was a pipe i will now crash");
 			}
 		}
 	}
