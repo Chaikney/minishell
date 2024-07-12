@@ -9,6 +9,9 @@
 // DONE Wrap this in a loop
 // DONE Check to see what cmd->builtin should be
 // FIXED Static to keep track of position in argv, but when do we reset it?
+// FIXME < test | rev causes a segfault in this. Because input is piped NOT a cmd...
+// NOTE Also this is an invalid pipe (though seems OK) - no command before it!
+// So really should just fail gracefully, Make sure | is not the first char?
 t_command	*split_pipe(t_command *cmd)
 {
 	static int		i;
@@ -17,9 +20,14 @@ t_command	*split_pipe(t_command *cmd)
 
 	j = 0;
 	printf("\nAttempting to split a command starting at posn: %i\n", i);	// HACK for debugging
-//	print_cmd_parts(cmd);	// HACK for debugging
+	print_cmd_parts(cmd);	// HACK for debugging
+
+	if (ft_strncmp(cmd->argv[0], "|", 1) == 0)
+		perror("bad command format");	// TODO Throw appropriate error here.
 	new_cmd = malloc(sizeof(t_command));
 	new_cmd->argc = 0;
+	new_cmd->builtin = NONE;
+	new_cmd->next = NULL;
 //	printf("\nI can't crash here! this is %s", cmd->argv[i]);	// HACK for debugging
 	while ((cmd->argv[i]) && (ft_strncmp(cmd->argv[i], "|", 1) != 0))
 	{
@@ -34,12 +42,12 @@ t_command	*split_pipe(t_command *cmd)
 		i = 0;
 	else
 		i++;	// step over the pipe char
-//	print_cmd_parts(new_cmd);	// HACK for debugging
-	if (ft_isalpha(new_cmd->argv[0][1]) == 1)	// test that we aren't starting with a control char
+	printf("\nSplit a coomand to:");
+	print_cmd_parts(new_cmd);	// HACK for debugging
+	if ((cmd->argv[0]) && (ft_isalpha(new_cmd->argv[0][1]) == 1))	// FIXME Segfault is here.test that we aren't starting with a control char
 		new_cmd->builtin = parse_builtin(new_cmd, 0);
 	else
 		new_cmd->builtin = parse_builtin(new_cmd, 2);
-	new_cmd->next = NULL;
 	return (new_cmd);
 }
 
