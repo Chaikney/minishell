@@ -14,6 +14,63 @@
 
 // FIXME Too many functions in file.
 
+// Wrap everything needed to work out where the output comes from,
+// and return the fd to it.
+// FIXED Returns STDOUT no matter what
+int	determine_output(t_command *cmd)
+{
+	int	i;
+	int	o_fd;
+	int	o_redir;
+
+	i = cmd->argc;
+	o_fd = STDOUT_FILENO;
+	o_redir = 0;
+	while ((i-- > 0))
+	{
+		if (ft_strncmp(cmd->argv[i], ">", 1) == 0)
+		{
+			o_redir = 1;
+			if (ft_strncmp(cmd->argv[i], ">>", 2) == 0)
+				o_redir = 2;
+			o_fd = direct_output(cmd, o_redir);
+//			remove_cmd_parts(cmd, ">");
+		}
+	}
+	// FIXME This appears twice and I don't know why!
+	printf("Checked output for '%s'. fd will be: %i", cmd->argv[0], o_fd);
+	return (o_fd);
+}
+
+// Wrap everything needed to work out where the input comes from,
+// and return the fd to it.
+// FIXED Returns STDIN no matter what
+int	determine_input(t_command *cmd)
+{
+	int	i;
+	int	i_fd;
+	int	i_redir;
+
+	i = 0;
+	i_redir = 0;
+	i_fd = STDIN_FILENO;
+	while (i < cmd->argc - 1)
+	{
+		if (ft_strncmp(cmd->argv[i], "<", 1) == 0)
+		{
+//				print_cmd_parts(cmd);	// HACK for debugging
+			i_redir = 1;
+			if (ft_strncmp(cmd->argv[i], "<<", 2) == 0)
+				i_redir = 2;
+			i_fd = setup_input(cmd, i_redir);
+			remove_cmd_parts(cmd, "<");
+		}
+		i++;
+	}
+	printf("Checked output for '%s'. fd will be: %i", cmd->argv[0], i_fd);
+	return (i_fd);
+}
+
 // When there is a control character present, guide it to the correct
 // execution function(s)
 // TODO Shorter (but still descriptive!) name needed.
@@ -30,6 +87,8 @@
 // TODO Implement pipe handling - run in order
 // TODO Implement << stop word type input!
 // DONE Unify input and output mangling so they can both run.
+// TODO Unify pipes and i/o redirection
+// TODO Ensure that after pipes we still have a working shell input!
 // FIXME Will need to be shorter
 void	handle_complex_command_structure(t_command *cmd, char **envp)
 {
@@ -41,16 +100,23 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 
 	num_pipes = 0;
 	i = 0;
-	o_redir = 0;
-	i_redir = 0;
 	while (i < cmd->argc)
 		if (ft_strncmp(cmd->argv[i++], "|", 1) == 0)
 			num_pipes++;
+	i_redir = determine_input(cmd);
+	o_redir = determine_output(cmd);
+	// HACK Next few lines debugging statements to remove
+	printf("Command before excision");
+	print_cmd_parts(cmd);
+	remove_cmd_parts(cmd, ">");
+	remove_cmd_parts(cmd, "<");
+	printf("Command after excision");
+	print_cmd_parts(cmd);
+	printf("\tOutput to: %i\tInput to: %i", o_redir, i_redir);
 	// FIXME something does not return and shell loses control.
 	if (num_pipes > 0)
 	{
 		cmdlist = make_cmd_list(cmd, num_pipes);
-		printf("\nmore than one (%i) command to run!\nNot implemented yet. But if you see this I didn't crash while list making!!!!", num_pipes);
 		print_cmd_parts(cmdlist);
 		// set input file to be STDIN, if needed.
 		// close input file descriptor
@@ -63,39 +129,39 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 		// close output fd/
 		// run final command - in piex this is without a pipe but here
 		// we need a child process, for sure.
-		run_in_child(cmdlist, envp, -1, -1);
+		run_in_child(cmdlist, envp, -1, -1);	// FIXME These -1 may be the problem!
 	}
 	else	// we can handle the other redir types
 	{
 		// Identify if input or redirection is needed, and its type.
-		i = cmd->argc;
-		while (i-- > 0)
-			if (ft_strncmp(cmd->argv[i], ">", 1) == 0)
-			{
-				o_redir = 1;
-				if (ft_strncmp(cmd->argv[i], ">>", 2) == 0)
-					o_redir = 2;
-				o_redir = direct_output(cmd, o_redir);
-				remove_cmd_parts(cmd, ">");
-				break ;
-			}
-		i = 0;
-//		print_cmd_parts(cmd);	// HACK for debugging
-		while (i < cmd->argc - 1)
-		{
-			if (ft_strncmp(cmd->argv[i], "<", 1) == 0)
-			{
-//				print_cmd_parts(cmd);	// HACK for debugging
-				i_redir = 1;
-				if (ft_strncmp(cmd->argv[i], "<<", 2) == 0)
-					i_redir = 2;
-				i_redir = setup_input(cmd, i_redir);
-				remove_cmd_parts(cmd, "<");
-				break ;	// does this break out of the while, or only the if?
-			}
-			i++;
-		}
-//		print_cmd_parts(cmd);	// HACK for debugging
+/* 		i = cmd->argc; */
+/* 		while (i-- > 0) */
+/* 			if (ft_strncmp(cmd->argv[i], ">", 1) == 0) */
+/* 			{ */
+/* 				o_redir = 1; */
+/* 				if (ft_strncmp(cmd->argv[i], ">>", 2) == 0) */
+/* 					o_redir = 2; */
+/* 				o_redir = direct_output(cmd, o_redir); */
+/* 				remove_cmd_parts(cmd, ">"); */
+/* 				break ; */
+/* 			} */
+/* 		i = 0; */
+/* //		print_cmd_parts(cmd);	// HACK for debugging */
+/* 		while (i < cmd->argc - 1) */
+/* 		{ */
+/* 			if (ft_strncmp(cmd->argv[i], "<", 1) == 0) */
+/* 			{ */
+/* //				print_cmd_parts(cmd);	// HACK for debugging */
+/* 				i_redir = 1; */
+/* 				if (ft_strncmp(cmd->argv[i], "<<", 2) == 0) */
+/* 					i_redir = 2; */
+/* 				i_redir = setup_input(cmd, i_redir); */
+/* 				remove_cmd_parts(cmd, "<"); */
+/* 				break ;	// does this break out of the while, or only the if? */
+/* 			} */
+/* 			i++; */
+/* 		} */
+		print_cmd_parts(cmd);	// HACK for debugging
 		run_in_child(cmd, envp, i_redir, o_redir);
 	}
 }
@@ -108,6 +174,8 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 // NOTE DO we also have to slice off the > and after? Would be bad param for command...
 // NOTE Of course, *input* may also need to be handled; so this is uncomplete.
 // DONE? If this fails it should set the g_procstatus variable
+// TODO If no redir is needed, then should we return STDOUT_FILENO?
+// TODO Potential to merge with determine_output
 int	direct_output(t_command *cmd, int o_lvl)
 {
 	int		perms;
@@ -139,6 +207,8 @@ int	direct_output(t_command *cmd, int o_lvl)
 // bash quits with error and doesn’t run the command.
 // If it succeeds, bash uses the file descriptor
 // of the opened file as the stdin file descriptor for the command.
+// TODO If no redir is needed, then should we return STDIN_FILENO?
+// TODO Potential to merge with determine_output
 int	setup_input(t_command *cmd, int i_lvl)
 {
 	char	*i_path;
@@ -161,7 +231,7 @@ int	setup_input(t_command *cmd, int i_lvl)
 			g_procstatus = errno;
 	}
 	else
-		i_file = -1;
+		i_file = STDIN_FILENO;
 	return (i_file);
 }
 
@@ -246,8 +316,7 @@ void	run_in_child_with_pipe(t_command *cmd, char **envp)
 // Simplest command runner.
 // Forks, sets up input and output for one child process
 // and waits for it to complete.
-// NOTE This is the one we use for simple commands.
-// DONE do something with error status here.
+// NOTE This is the one we use for simple commands. Should work with redirect.
 void	run_in_child(t_command *cmd, char **envp, int i_file, int o_file)
 {
 	pid_t	child;

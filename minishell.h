@@ -70,6 +70,8 @@ void	clear_t_command(t_command *cmd);
 void	run_command(t_command *cmd, char **envp);
 void	eval(char *cmdline, char **envp);
 char	*get_prompt(void);
+int		determine_output(t_command *cmd);
+int		determine_input(t_command *cmd);
 
 // substitute.c - variable substitution
 char	*ms_strsub(char *str, char *remove, char *replace);
