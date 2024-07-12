@@ -327,6 +327,9 @@ void	run_in_child_with_pipe(t_command *cmd, char **envp, int *i_file)
 // Forks, sets up input and output for one child process
 // and waits for it to complete.
 // NOTE This is the one we use for simple commands. Should work with redirect.
+// FIXME This no longer works for the simple output redirection case
+// (Though alone pipes are happy)
+// FIXME output redirection at the end of pipes does not work.
 void	run_in_child(t_command *cmd, char **envp, int i_file, int o_file)
 {
 	pid_t	child;
@@ -346,11 +349,14 @@ void	run_in_child(t_command *cmd, char **envp, int i_file, int o_file)
 			dup2(o_file, STDOUT_FILENO);
 		if (i_file > 0)
 			dup2(i_file, STDIN_FILENO);	// TODO I have no idea if this works!
+		close(i_file);
 		run_command(cmd, envp);
 	}
 	else
 	{
 //		printf("waiting for child process: %i", child);	// HACK for debugging
+//		close(o_file);	// This makes sense if we are writing to a file *and* have access to it.
+		close(i_file);
 		ret_val = waitpid(child, &g_procstatus, 0);
 		if (ret_val == -1)
 			printf("error in child process");
