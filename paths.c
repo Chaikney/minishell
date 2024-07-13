@@ -152,23 +152,19 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 	if (num_pipes > 0)
 	{
 		cmdlist = make_cmd_list(cmd, num_pipes);
-		print_cmd_parts(cmdlist);
-		// set input file to be STDIN, if needed.
-//		dup2(i_redir, STDIN_FILENO);
-		// close input file descriptor
-//		close(i_redir);	// TODO Understand if this closes STDIN after above
+//		print_cmd_parts(cmdlist);
 		while (cmdlist->next != NULL)
 		{
 			run_in_child_with_pipe(cmdlist, envp, &i_redir);
 			cmdlist = cmdlist->next;
 		}
-		// output file becomes STDOUT
-		dup2(o_redir, STDOUT_FILENO);
+		// NOTE Should not act on both parts only the last child output file becomes STDOUT
+//		dup2(o_redir, STDOUT_FILENO);
 		// close output fd
 //		close(o_redir);
-		// run final command - in piex this is without a pipe but here
-		// we need a child process, for sure.
-		run_in_child(cmdlist, envp, i_redir, o_redir);	// FIXME Does not give expected result, whatever that is
+		// run final command - in pipex this is without forking but here
+		// we need a child process to keep the shell alive
+		run_in_child(cmdlist, envp, i_redir, o_redir);
 	}
 	else	// we can handle the other redir types
 	{
@@ -238,7 +234,7 @@ void	remove_cmd_parts(t_command *cmd, char *target)
 			return ;
 		i++;
 	}
-	printf("\ntarget at position %i", i);	// HACK debugging only
+//	printf("\ntarget at position %i", i);	// HACK debugging only
 	while (cmd->argv[i + 2])	// FIXME Can reach here when target not present
 	{
 //		to_free = cmd->argv[i];
@@ -246,7 +242,7 @@ void	remove_cmd_parts(t_command *cmd, char *target)
 		i++;
 //		free (to_free);
 	}
-	printf("\tending at position %i", i);	// HACK debugging only
+//	printf("\tending at position %i", i);	// HACK debugging only
 //	print_cmd_parts(cmd);	// HACK for debugging
 	cmd->argc = cmd->argc - 2;
 	cmd->argv[cmd->argc] = NULL;
@@ -302,7 +298,7 @@ void	run_in_child_with_pipe(t_command *cmd, char **envp, int *i_file)
 // NOTE This is the one we use for simple commands. Should work with redirect.
 // FIXME output redirection at the end of pipes does not work.
 // TODO rename to "run_last" or similar
-// TODO Do I need a pipe in this one as well?
+// KILL Do I need a pipe in this one as well? NO, the parent / shell has only to keep running.
 void	run_in_child(t_command *cmd, char **envp, int i_file, int o_file)
 {
 	pid_t	child;
@@ -318,19 +314,24 @@ void	run_in_child(t_command *cmd, char **envp, int i_file, int o_file)
 	}
 	if (child == 0)
 	{
-		if (o_file > 0)
-			dup2(o_file, STDOUT_FILENO);
-		if (i_file > 0)
-			dup2(i_file, STDIN_FILENO);	// TODO I have no idea if this works!
-	//	close(i_file);
+		if (o_file != STDOUT_FILENO)	// Detect whether redirection is *needed*
+		{
+			dup2(o_file, STDOUT_FILENO); // Although if these are equal, nothing happens.
+			close (o_file);	// if o_file was set as STDOUT before, closing would be dangerous as they are the *same* fd, not like dup (new fd pointing to same resource)
+		}
+		dup2(i_file, STDIN_FILENO);	// Expect this to be the same as with pipe
+		close(i_file);
 		run_command(cmd, envp);
 	}
 	else
 	{
-//		printf("waiting for child process: %i", child);	// HACK for debugging
-//		close(o_file);	// This makes sense if we are writing to a file *and* have access to it.
-//		close(i_file);	// NOTE If this file is closed, shell never returns
 		ret_val = waitpid(child, &g_procstatus, 0);
+//		dup2(o_file, STDOUT_FILENO); // NOTE BAD this closes the shell's STDOUT!
+//		printf("waiting for child process: %i", child);	// HACK for debugging
+		if (o_file != STDOUT_FILENO)	// Make sure we don't close STDOUT if no redirection was given.
+			close(o_file);	// This makes sense if we are writing to a file *and* have access to it.
+		if (i_file != STDIN_FILENO)
+			close(i_file);	// NOTE If this file is closed, shell never returns
 		if (ret_val == -1)
 			printf("error in child process");
 		printf("process finished with code: %i\n", g_procstatus); // HACK for debugging
