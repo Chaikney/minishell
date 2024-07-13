@@ -20,6 +20,9 @@
 // - Set file perms for level (create or append)
 // - find file name
 // - check access to file, open it
+// TODO Can we take the exec permission away from the created file?
+// ...a file with the same name as a program in the wd is attemtped to be run
+// nbecause it has the X bit set!
 int	determine_output(t_command *cmd)
 {
 	int	i;
@@ -200,6 +203,7 @@ int	stopword_input(t_command *cmd)
 		stopword = cmd->argv[1];	// FIXME This is a hardcoded assumption!
 		printf("stopword is: %s", stopword);	// HACK for debugging
 		line = get_next_line(STDIN_FILENO);
+		// FIXME what if line returns null? reader process never ends!
 		while (line)
 		{
 			if (ft_strncmp(stopword, line, ft_strlen(stopword)) == 0)
@@ -211,7 +215,7 @@ int	stopword_input(t_command *cmd)
 	else
 	{
 		close(fd[1]);
-		dup2(fd[0], STDIN_FILENO);
+//		dup2(fd[0], STDIN_FILENO);	// does not exist in _with_pipe...
 		waitpid(reader, 0, 0);	// TODO Should we set g_procstatus here?
 		// hold the input
 	}

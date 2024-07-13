@@ -105,7 +105,7 @@ void	run_command(t_command *cmd, char **envp)
 		g_procstatus = errno;
 		perror("Failed to execute program");
         free (prog);
-		ms_exit(cmd);	// TODO Determine proper free-ing needs here.
+//		ms_exit(cmd);	// TODO Determine proper free-ing needs here.
 //		exit_and_free(args, -1, -1);
 	}
 }
