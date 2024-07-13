@@ -117,14 +117,10 @@ int	determine_input(t_command *cmd)
 // execution function(s)
 // TODO Shorter (but still descriptive!) name needed.
 // TODO Function will need to be shorter once it is working
-// TODO Implement << stop word type input!
-// DONE Unify input and output mangling so they can both run.
-// DONE Unify pipes and i/o redirection
-// DONE Ensure that after pipes we still have a working shell input!
 // TODO Must be able to handle BUILTINS here as well.
 // FIXME < test | rev | rev triggered a crash - note that form is invalid!
-// FIXED test < less failed with "text file busy" - unclosed fd?
-// FIXED ls | rev | tac | rev displays reversed debug. Does that mean bad setup?
+// FIXME << stopword less causes the shell to exit
+// FIXME << stopword less | rev also causes the shell to exit
 void	handle_complex_command_structure(t_command *cmd, char **envp)
 {
 	int	num_pipes;
@@ -186,6 +182,9 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 // -- dups stdin to the read end of the pipe
 // -- waits for reader to finish
 // - returns the read end of the parent's pipe
+// TODO This has to act a way analogous to the other parts - close, dup etc.
+// FIXME pipe is endless loop now?
+// TODO Try and dup to the pipe like later?
 int	stopword_input(t_command *cmd)
 {
 	int		fd[2];
@@ -219,14 +218,14 @@ int	stopword_input(t_command *cmd)
 	return (fd[0]);
 }
 
-// TODO Implement stop word / here_doc input redirection
+// DONE Implement stop word / here_doc input redirection
 // NOTE That is in the format: cmd << stop_word
 // NOTE Input redir in format:  < infile grep a1
 // If opening the file fails,
 // bash quits with error and doesn’t run the command.
 // If it succeeds, bash uses the file descriptor
 // of the opened file as the stdin file descriptor for the command.
-// TODO If no redir is needed, then should we return STDIN_FILENO?
+// DONE If no redir is needed, then should we return STDIN_FILENO?
 // TODO Potential to merge with determine_input - not until heredoc done.
 int	setup_input(t_command *cmd, int i_lvl)
 {
@@ -235,8 +234,7 @@ int	setup_input(t_command *cmd, int i_lvl)
 
 	if (i_lvl == 2)
 	{
-		// heredocs
-		i_file = stopword_input(cmd);	// FIXME Or is this "open the file?"
+		i_file = stopword_input(cmd);
 	}
 	else if (i_lvl == 1)
 	{
@@ -339,7 +337,6 @@ void	run_in_child_with_pipe(t_command *cmd, char **envp, int *i_file)
 // NOTE This is the one we use for simple commands. Should work with redirect.
 // FIXME output redirection at the end of pipes does not work.
 // TODO rename to "run_last" or similar
-// KILL Do I need a pipe in this one as well? NO, the parent / shell has only to keep running.
 void	run_in_child(t_command *cmd, char **envp, int i_file, int o_file)
 {
 	pid_t	child;
