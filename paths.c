@@ -168,7 +168,7 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 //		close(o_redir);
 		// run final command - in piex this is without a pipe but here
 		// we need a child process, for sure.
-		run_in_child(cmdlist, envp, i_redir, o_redir);	// FIXME These -1 may be the problem!
+		run_in_child(cmdlist, envp, i_redir, o_redir);	// FIXME Does not give expected result, whatever that is
 	}
 	else	// we can handle the other redir types
 	{
@@ -278,15 +278,15 @@ void	run_in_child_with_pipe(t_command *cmd, char **envp, int *i_file)
 	{
 		close(tube[0]);
 		dup2(tube[1], STDOUT_FILENO);
-		close(tube[1]);	// NOTE Probably only called if run_command has failed
+		close(tube[1]);		// NOTE This reference to the file is not needed we use STDOUTs now
 		// "redirect stdin to prevpipe"
-		dup2(*i_file, STDIN_FILENO);
-		close(*i_file);
-		run_command(cmd, envp);
+		dup2(*i_file, STDIN_FILENO);// closes STDIN, uses its ref to point to i_file (last processes' pipe read end)
+		close(*i_file);		// discard extra reference to the pipe read end.
+		run_command(cmd, envp);	// asfter this all fds of the child are released.
 	}
 	else
 	{
-		close(tube[1]);
+		close(tube[1]);	// Shell will not write to the pipe
 		// NOTE: commenting out this line leads to endless loop or non-returning process
 //		dup2(tube[0], STDIN_FILENO);	// NOTE do not mess with shell / parent fds
 		waitpid(child, &g_procstatus, 0);
@@ -300,8 +300,6 @@ void	run_in_child_with_pipe(t_command *cmd, char **envp, int *i_file)
 // Forks, sets up input and output for one child process
 // and waits for it to complete.
 // NOTE This is the one we use for simple commands. Should work with redirect.
-// FIXME This no longer works for the simple output redirection case
-// (Though alone pipes are happy)
 // FIXME output redirection at the end of pipes does not work.
 // TODO rename to "run_last" or similar
 // TODO Do I need a pipe in this one as well?
@@ -335,6 +333,6 @@ void	run_in_child(t_command *cmd, char **envp, int i_file, int o_file)
 		ret_val = waitpid(child, &g_procstatus, 0);
 		if (ret_val == -1)
 			printf("error in child process");
-		printf("process finished with code: %i", g_procstatus); // HACK for debugging
+		printf("process finished with code: %i\n", g_procstatus); // HACK for debugging
 	}
 }
