@@ -101,7 +101,6 @@ void	handle_complex_command_structure(t_command *cmd, char **envp);
 // paths.c - find and direct programs in PATH
 void	run_in_child(t_command *cmd, char **envp, int i_file, int o_file);
 void	run_in_child_with_pipe(t_command *cmd, char **envp, int *i_file);
-int		direct_output(t_command *cmd, int o_lvl);
 int		setup_input(t_command *cmd, int i_lvl);
 void	remove_cmd_parts(t_command *cmd, char *target);
 

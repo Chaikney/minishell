@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-// FIXME Too many functions in file.
+// FIXME FAR too many functions in this file, refactor out
 
 // Wrap everything needed to work out where the output comes from,
 // open the file with appropriate perms and return the fd to it.
@@ -51,37 +51,6 @@ int	determine_output(t_command *cmd)
 	}
 	printf("Checked output for '%s'. fd will be: %i", cmd->argv[0], o_fd);
 	return (o_fd);
-}
-
-// Unified setup of output-to-file
-// - Set file perms for level (create or append)
-// - find file name (final cmd parameter)
-// - check access to file, open it
-// NOTE DO we also have to slice off the > and after? Would be bad param for command...
-// TODO If no redir is needed, then should we return STDOUT_FILENO?
-// DONE Potential to merge with determine_output
-// TODO Potentially obsolete and removable
-int	direct_output(t_command *cmd, int o_lvl)
-{
-	int		perms;
-	char	*o_path;
-	int		o_file;
-
-	if (o_lvl == 2)
-		perms = O_WRONLY | O_CREAT | O_APPEND;
-	else if (o_lvl == 1)
-		perms = O_WRONLY | O_CREAT | O_TRUNC;
-	o_path = cmd->argv[cmd->argc - 1];
-//	printf("\nTrying to open file: %s\n", o_path);	// HACK for debugging
-	o_file = open(o_path, perms, 0777);
-	if (o_file == -1)
-	{
-		g_procstatus = errno;
-		perror("Could not open output file");
-	}
-	else
-		return (o_file);
-	return (-1);
 }
 
 // Wrap everything needed to work out where the input comes from,
