@@ -1,9 +1,19 @@
-#include "minishell.h"
-#include <stdio.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtins.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/16 19:05:18 by chaikney          #+#    #+#             */
+/*   Updated: 2024/07/16 19:05:26 by chaikney         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-//TODO Add 42 header
+#include "minishell.h"
 
 // Some shell builtin functions, may split later.
+// TODO Can we merge the functions that are very similar?
 
 // Minishell builtin, our version of pwd.
 // Calls getcwd, displays wd then frees the variable.
@@ -24,6 +34,7 @@ int ms_pwd(void)
 // - free cmd
 // - anything else?
 // TODO If this is called from main, we have a char* to free
+// TODO need exit routines for failures: in minishell, child processes and builtins
 void	ms_exit(t_command *cmd)
 {
 	printf("Agurrrr....\n");
@@ -31,22 +42,21 @@ void	ms_exit(t_command *cmd)
 	exit(EXIT_SUCCESS);
 }
 
-// Set a new variable in env.
-// If the variable name already exists, change it. (remove existing and then add?)
-// ....this is basically the same functionality as UNSET ?!
-// If the variable does not already exist, add it.
-// NOTE I think we have to distinguish between the variable's NAME and VALUE
-// FIXME This has variables defined in-line at time of use.
-void ms_unset_export(char *unset_var, char **envp) {
-    int var_index = 0; 
-    var_index = find_env_var(envp, unset_var);
+// FIXED This has variables defined in-line at time of use.
+// A version of unset to be called by our export function.
+// TODO Document the assumptions and intention here
+void ms_unset_export(char *unset_var, char **envp)
+{
+    int	var_index;
+    int	i;
 
-    if (var_index >= 0) 
+    var_index = find_env_var(envp, unset_var);
+    if (var_index >= 0)
     {
         // Liberar la memoria de la variable de entorno
 
         // Eliminar la variable de entorno del arreglo envp
-        int i = var_index;
+        i = var_index;
         while (envp[i] != NULL) 
         {
             envp[i] = envp[i + 1];
@@ -64,15 +74,21 @@ void ms_unset_export(char *unset_var, char **envp) {
 // ....this is basically the same functionality as UNSET ?!
 // If the variable does not already exist, add it.
 // NOTE I think we have to distinguish between the variable's NAME and VALUE
-// FIXME This has variables defined in-line at time of use.
+// FIXED This has variables defined in-line at time of use.
+// FIXME Too many variables, merge some of the counters like i and j?
 void ms_export(t_command *cmd, char **envp) 
 {
-    char *var;
-    char *new_var;
-    int len_unset;
-    char *unset_var;
+    char	*var;
+    char	*new_var;
+    int	len_unset;
+    char	*unset_var;
+    size_t	env_len;
+    char	**new_envp;
+    size_t	i;
+    int	j;
+
     len_unset = 0;
-    int j = 0;
+    j = 0;
     if (cmd->argc < 2) 
     {
         printf("export: missing argument\n");
@@ -90,20 +106,20 @@ void ms_export(t_command *cmd, char **envp)
     
         printf("\n\n\n-----%s------\n\n\n",unset_var);
         ms_unset_export(unset_var,envp);
-        size_t env_len = 0;
+        env_len = 0;
         while (envp[env_len] != NULL) 
         {
             env_len++;
         }
 
-        char **new_envp = malloc(sizeof(char *) * (env_len + 2));
+        new_envp = malloc(sizeof(char *) * (env_len + 2));
         if (new_envp == NULL) 
         {
             perror("malloc");
             return;
         }
 
-        size_t i = 0;
+        i = 0;
         while (i < env_len) 
         {
             new_envp[i] = envp[i];
@@ -131,26 +147,33 @@ void ms_export(t_command *cmd, char **envp)
 }
 
 
-// Remove the variable in cmd from ENV, if present.
-// If not present, take no action.
-// FIXME This causes an endless loop, I guess in the while(envp[i])
-// FIXME Also cause a segfault!
-void ms_unset(t_command *cmd, char **envp) {
+// The *standalone* version of the UNSET builtin.
+// Removes the variable in cmd from ENV, if present.
+// If not present, takes no action.
+// FIXED? This causes an endless loop, I guess in the while(envp[i])
+// FIXED? Also cause a segfault!
+// NOTE Would this be more robust if the var name to unset was
+// passed directly not within cmd?
+// FIXED Variables defined inline, against the Norm
+void ms_unset(t_command *cmd, char **envp)
+{
+    char	*var;
+    int	var_index;
+    int	i;
+
     if (cmd->argc < 2) 
     {
         printf("unset: missing argument\n");
         return;
     }
-    char *var = cmd->argv[1];
-    int var_index = find_env_var(envp, var);
-
-    if (var_index >= 0) 
+    var = cmd->argv[1];
+    var_index = find_env_var(envp, var);
+    if (var_index >= 0)
     {
         // Liberar la memoria de la variable de entorno
         free(envp[var_index]);
-
         // Eliminar la variable de entorno del arreglo envp
-        int i = var_index;
+        i = var_index;
         while (envp[i] != NULL) 
         {
             envp[i] = envp[i + 1];
@@ -158,15 +181,25 @@ void ms_unset(t_command *cmd, char **envp) {
         }
     } 
     else 
-    {
         printf("unset: variable %s not found\n", var);
-    }
 }
 
-void ms_export_cd(t_command *cmd, char **envp) {
+// Our builtin version of cd command
+// NOTE The actual change of directory happened in parse.c
+// This updates the OLDPWD values
+// - unset OLDPWD
+// - measure the length of the env (number of lines?)
+// - allocate length + 3 to store __ ?
+// create a new OLDPWD line using strjoin from libft
+// FIXME Too many variables
+// FIXME We cannot use for loops, against the Norm
+// FIXME Variables defined in-line, norm will be unhappy.
+void ms_export_cd(t_command *cmd, char **envp)
+{
     char *var_pwd = "PWD=";
     int h;
     char *wd = NULL;
+
     (void)cmd;
     h = 0;
     wd = getcwd(wd, 0);
