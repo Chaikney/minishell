@@ -11,7 +11,6 @@
 int ms_pwd(void)
 {
 	char    *wd;
-
 	wd = NULL;
 	wd = getcwd(wd, 0);
 	if (!wd)
@@ -162,4 +161,69 @@ void ms_unset(t_command *cmd, char **envp) {
     {
         printf("unset: variable %s not found\n", var);
     }
+}
+
+void ms_export_cd(t_command *cmd, char **envp) {
+    char *var_pwd = "PWD=";
+    int h;
+    char *wd = NULL;
+    (void)cmd;
+    h = 0;
+    wd = getcwd(wd, 0);
+    if (!wd)
+        return;
+
+    // Unset OLD_PWD
+    ms_unset_export("OLDPWD", envp);
+    // Update PWD and OLDPWD
+    size_t env_len = 0;
+    while (envp[env_len] != NULL) {
+        env_len++;
+    }
+
+    char **new_envp = malloc(sizeof(char *) * (env_len + 3));
+    if (new_envp == NULL) {
+        perror("malloc");
+        free(wd);
+        return;
+    }
+
+    size_t i = 0;
+    for (i = 0; i < env_len; i++) {
+        new_envp[i] = envp[i];
+    }
+
+    // Set OLDPWD to current PWD
+    h = find_env_var(envp,"PWD");
+    char *oldpwd = ft_strjoin("OLD", new_envp[h]);
+    printf("%s", oldpwd);
+    if (oldpwd == NULL) {
+        perror("ft_strjoin");
+        free(new_envp);
+        free(wd);
+        return;
+    }
+    new_envp[i++] = oldpwd;
+
+    // Set PWD to new working directory
+    char *new_pwd = ft_strjoin(var_pwd, wd);
+    if (new_pwd == NULL) {
+        perror("ft_strjoin");
+        free(new_envp);
+        free(wd);
+        free(oldpwd);
+        return;
+    }
+    new_envp[i++] = new_pwd;
+
+    new_envp[i] = NULL;
+    free(wd);
+
+    // Update original envp
+    for (size_t j = 0; j < i; j++) {
+        envp[j] = new_envp[j];
+    }
+    envp[i] = NULL;
+    ms_unset_export("PWD",envp);
+    free(new_envp);
 }

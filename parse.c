@@ -63,6 +63,8 @@ void executeBuiltin(t_command *cmd, char **envp)
 		{
 			if (chdir(cmd->argv[1]) != 0)
 				printf("wrong address\n");
+			else
+				ms_export_cd(cmd,envp);
 		}
 	}
 	else if (cmd->builtin == EXIT)

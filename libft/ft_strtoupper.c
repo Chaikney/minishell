@@ -11,6 +11,9 @@
 /* ************************************************************************** */
 
 // Alters the string passed to it, making chars uppercase.
+
+#include "libft.h"
+
 void	ft_strtoupper(char *str)
 {
 	while (*str != '\0')

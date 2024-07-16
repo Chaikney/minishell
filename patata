@@ -1,0 +1,10 @@
+about to run a command with 7 args
+Examining command with argc of 7:
+Index: 0	echo
+Index: 1	-n
+Index: 2	patata
+Index: 3	>
+Index: 4	patata1
+Index: 5	>
+Index: 6	patata2
+patata > patata1 > patata2

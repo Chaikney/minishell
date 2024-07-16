@@ -27,28 +27,18 @@ Method
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {
-	size_t	howbig;
-	char	*newstr;
-	int		i;
-	int		j;
+	size_t	len1;
+	size_t	len2;
+	char	*str;
 
-	i = 0;
-	j = 0;
-	howbig = (ft_strlen(s1) + ft_strlen(s2) + 1);
-	newstr = malloc(howbig * sizeof(char));
-	if (newstr != NULL)
-	{
-		while (s1[i] != '\0')
-		{
-			newstr[i] = s1[i];
-			i++;
-		}
-		while (s2[j] != '\0')
-		{
-			newstr[i + j] = s2[j];
-			j++;
-		}
-		newstr[i + j] = '\0';
-	}
-	return (newstr);
+	if (!s1 || !s2)
+		return (NULL);
+	len1 = ft_strlen(s1);
+	len2 = ft_strlen(s2);
+	str = malloc(len1 + len2 + 1);
+	if (!str)
+		return (NULL);
+	ft_memcpy(str, s1, len1);
+	ft_memcpy(str + len1, s2, len2 + 1);
+	return (str);
 }
