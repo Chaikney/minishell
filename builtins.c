@@ -196,7 +196,6 @@ void ms_export_cd(t_command *cmd, char **envp) {
     // Set OLDPWD to current PWD
     h = find_env_var(envp,"PWD");
     char *oldpwd = ft_strjoin("OLD", new_envp[h]);
-    printf("%s", oldpwd);
     if (oldpwd == NULL) {
         perror("ft_strjoin");
         free(new_envp);
