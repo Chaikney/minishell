@@ -1,15 +1,25 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   helpers.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/16 17:55:44 by chaikney          #+#    #+#             */
+/*   Updated: 2024/07/16 17:55:49 by chaikney         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 // Various finders and helper functions.
-
-// TODO Add 42 header
 
 // Returns the line index number of PATH for the requested var string
 // If not found, returns -1
 int	find_env_var(char **envp, const char *var)
 {
 	size_t	len;
-	int	i;
+	int		i;
 
 	len = 0;
 	i = 0;
@@ -29,7 +39,7 @@ int	find_env_var(char **envp, const char *var)
 // flow control parameters: | > < >> or <<
 // They would be separate from commands either side.
 // (locates, it is up to the outer loop to re-identify what the thing is)
-// FIXME Segfault if cmdset (or any part of it) is null
+// FIXME Segfaults if cmdset (or any part of it) is null, add protection
 int	find_flow_control(t_command *cmdset)
 {
 	int	i;
@@ -47,7 +57,6 @@ int	find_flow_control(t_command *cmdset)
 			break ;
 		else if (ft_strncmp(cmdset->argv[i], "|", 1) == 0)
 			break ;
-//        printf("nothing in %i", i);	// HACK Debugging only remove later
 		i++;
 	}
 	if (i == cmdset->argc)
