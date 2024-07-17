@@ -18,9 +18,8 @@ int	find_env_var(char **envp, const char *var)
 	{
 		if (ft_strncmp(envp[i], var, len) == 0 && envp[i][len] == '=')
 			return (i);
-		if(ft_strncmp(envp[i], var, len) == 0 && envp[i][len] != '=')
+		else if(ft_strncmp(envp[i], var, len) == 0 && envp[i][len] != '=')
 			return(i);
-		printf("%s",var);
 		i++;
 	}
 	return (-1);
