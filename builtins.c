@@ -72,6 +72,7 @@ void ms_export(t_command *cmd, char **envp)
     int len_unset;
     char *unset_var;
     len_unset = 0;
+    int len = 0;
     int j = 0;
     if (cmd->argc < 2) 
     {
@@ -82,7 +83,7 @@ void ms_export(t_command *cmd, char **envp)
     while (cmd->argv[1][len_unset] != '=')
             len_unset++;
     unset_var = malloc(sizeof(char) * len_unset + 1);
-    while (j <= len_unset -1 )
+    while (j <= len_unset - 1)
     {
         unset_var[j] = var[j];
         j++;
@@ -111,6 +112,11 @@ void ms_export(t_command *cmd, char **envp)
         }
 
         new_var = ft_strdup(var);
+        len = ft_strlen(new_var);
+        if(new_var[len - 1] == '=')
+        {
+            new_var = ft_strjoin(new_var,"\"\"");
+        }
         if (new_var == NULL) 
         {
             perror("ft_strdup");
@@ -169,6 +175,7 @@ void ms_export_cd(t_command *cmd, char **envp) {
     char *wd = NULL;
     (void)cmd;
     h = 0;
+    size_t j = 0;
     wd = getcwd(wd, 0);
     if (!wd)
         return;
@@ -189,8 +196,10 @@ void ms_export_cd(t_command *cmd, char **envp) {
     }
 
     size_t i = 0;
-    for (i = 0; i < env_len; i++) {
+    while (i < env_len) 
+    {
         new_envp[i] = envp[i];
+        i++;
     }
 
     // Set OLDPWD to current PWD
@@ -219,8 +228,10 @@ void ms_export_cd(t_command *cmd, char **envp) {
     free(wd);
 
     // Update original envp
-    for (size_t j = 0; j < i; j++) {
+    while (j < i) 
+    {
         envp[j] = new_envp[j];
+        j++;
     }
     envp[i] = NULL;
     ms_unset_export("PWD",envp);
