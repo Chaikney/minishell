@@ -119,45 +119,37 @@ char	*ms_strsub(char *str, char *old_sub, char *new_sub)
 	return (cptr);
 }
 
-// Acts on the input as a whole:
-// Substitute a variable into its position in the command:
+// Receives a string cmd and substitutes the value for any $VARIABLE
 // - find position of a variable
-// - read the name of that variable
+// - read the name of that variable using ms_strsub and its length
 // - fetch the value of the variable
-// - put the value into the command
+// - put the value into the command using ms_strsub
 // - run again / recurse until we have no more things to sub
-// NOTE cmd is assumed to be the unsplit input from readline
-// FIXME Function has too many lines
-// TODO Also have to handle $? / ? as a var name, shows the exit status.
-// TODO Not sure if this is even useful any more.
+// NOTE variable length and name do *not* include the $
 char	*substitute_variables(char *cmd)
 {
-	int		sub_pos;
-	int		sub_len;
+	int		s_pos;
+	int		s_len;
 	char	*var_name;
 	char	*val;
 	char	*new_cmd;
 
-	sub_pos = needs_sub(cmd);
+	s_pos = needs_sub(cmd);
 	new_cmd = NULL;
-	while (sub_pos != -1)	
+	while (s_pos != -1)
 	{
-		sub_pos++;	// NOTE Start the count *after* the $
-		sub_len = 0;
-		while ((cmd[sub_pos + sub_len] != '\0')
-			&& (cmd[sub_pos + sub_len] != ' '))
-			sub_len++;
-		var_name = ft_substr(cmd, sub_pos, (sub_len));
+		s_pos++;
+		s_len = 0;
+		while ((cmd[s_pos + s_len] != '\0') && (cmd[s_pos + s_len] != ' '))
+			s_len++;
+		var_name = ft_substr(cmd, s_pos, (s_len));
 		if (ft_strncmp(var_name, "?", 1) == 0)
 			val = ft_itoa(g_procstatus);
-//		var_name = get_var_name(&cmd[sub_pos]);	// FIXME This should work but segfaults.
-//		printf("searching for %s in env", var_name);	// HACK for debugging
 		else
 			val = getenv(var_name);
-		printf("\tfound: %s", val);	// HACK for debugging
 		new_cmd = ms_strsub(cmd, var_name, val);
 		free(var_name);
-		sub_pos = needs_sub(new_cmd);
+		s_pos = needs_sub(new_cmd);
 		cmd = new_cmd;
 	}
 	return (cmd);
