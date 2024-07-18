@@ -135,3 +135,28 @@ char	*search_in_path(char *cmd)
 	free(pathparts);
 	return (goodpath);
 }
+
+// Checks to see if the string is a valid shell variable name
+// 1 - YES is a valid name
+// 0 - NO the name is not valid
+// Rules are:
+// - allowed chars are alphanumeric and _ underscore
+// - does not start with a digit
+int	is_legal_name(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (!str)
+		return (0);
+	if (ft_isdigit(str[0]) == 1)
+		return (0);
+	while (str[i] != '\0')
+	{
+		if ((ft_isalnum(str[i]) == 1) || (str[i] == '_'))
+			i++;
+		else
+			return (0);
+	}
+	return (1);
+}

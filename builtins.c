@@ -63,7 +63,7 @@ void	ms_unset_export(char *unset_var, char **envp)
 // TODO If var name is not followed by = do not change env
 // TODO Variable values must not split if commas are used
 // TODO export (no args) should print the env like declare -x NAME="VALUE"
-// TODO we need to check for permitted variable names
+// TODO Add checks for permitted variable names using is_legal_name function
 // Test cases and expected (bash) behaviour:
 // [x] export MS_TEST=hola				Add variable (visible with env)
 // [ ] export MS_TEST="hola que tal"	Add 1 variable with spaces	FAIL adds 3 vars
