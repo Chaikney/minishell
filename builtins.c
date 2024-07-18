@@ -31,33 +31,26 @@ void	ms_exit(t_command *cmd)
 	exit(EXIT_SUCCESS);
 }
 
-// Set a new variable in env.
-// If the variable name already exists, change it. (remove existing and then add?)
-// ....this is basically the same functionality as UNSET ?!
-// If the variable does not already exist, add it.
-// NOTE I think we have to distinguish between the variable's NAME and VALUE
-// FIXME This has variables defined in-line at time of use.
-void ms_unset_export(char *unset_var, char **envp) 
+// UNSET used internally by other minishell functions (cd, export)
+// This takes the name of a variable to be unset,
+// whereas user-facing ms_export takes a t_command.
+// NOTE Potential to unify these!
+void	ms_unset_export(char *unset_var, char **envp)
 {
-    int var_index = 0; 
-    var_index = find_env_var(envp, unset_var);
+	int	var_index;
 
-    if (var_index >= 0) 
-    {
-        // Liberar la memoria de la variable de entorno
-
-        // Eliminar la variable de entorno del arreglo envp
-
-        while (envp[var_index] != NULL) 
-        {
-            envp[var_index] = envp[var_index + 1];
-            var_index++;
-        }
-    } 
-    else 
-    {
-        printf("unset: variable %s not found\n", unset_var);
-    }
+	var_index = 0;
+	var_index = find_env_var(envp, unset_var);
+	if (var_index >= 0)
+	{
+		while (envp[var_index] != NULL)
+		{
+			envp[var_index] = envp[var_index + 1];
+			var_index++;
+		}
+	}
+	else
+		printf("unset: variable %s not found\n", unset_var);
 }
 
 // Set a variable in env.
