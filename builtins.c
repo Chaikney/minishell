@@ -62,14 +62,16 @@ void	ms_unset_export(char *unset_var, char **envp)
 // FIXME ms_export does not conform to bash behaviour, see below
 // TODO If var name is not followed by = do not change env
 // TODO Variable values must not split if commas are used
+// TODO export (no args) should print the env like declare -x NAME="VALUE"
+// TODO we need to check for permitted variable names
 // Test cases and expected (bash) behaviour:
 // [x] export MS_TEST=hola				Add variable (visible with env)
 // [ ] export MS_TEST="hola que tal"	Add 1 variable with spaces	FAIL adds 3 vars
-// [ ] export MS_TEST hola				No change to env			FAIL adds 2 vars without =
-// [ ] export hola que tal				No change to env			FAIL as above
+// [ ] export MS_TEST hola				adds 2 vars without =
+// [ ] export hola que tal				as above
 // [ ] export MS_TEST=					Add blank "" variable		FAIL env then shows "", unlike bash
 // [ ] export MS_TEST					No change to env			FAIL adds "blank" variable without =
-// [ ] ...hay más?
+// [ ] export							displays all vars in specific format.
 void ms_export(t_command *cmd, char **envp) 
 {
     char	*var;

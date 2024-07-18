@@ -43,6 +43,7 @@ t_builtin parse_builtin(t_command *cmd, int posn)
 
 // TODO echo Commands into separate function
 // FIXME Too many lines in function.
+// TODO env should not display empty variables, unlike export.
 // falta por añadir que hace cada
 //  [x] echo with -n (newline or not)
 //  [x] cd with only a relative or absolute path
