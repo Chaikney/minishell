@@ -167,40 +167,47 @@ void ms_export(t_command *cmd, char **envp)
 }
 
 
+// This is UNSET as called directly by the user.
 // Remove the variable in cmd from ENV, if present.
 // If not present, take no action.
-void ms_unset(t_command *cmd, char **envp)
+// TEST cases and expected (bash) behaviour:
+// [x] unset a variable that we set previously using export
+// [x] unset a variable that was inherited
+// FIXED ms_unset should not segfault
+// TODO Use perror not printf when cmd fails?
+// TODO If this fails, should we set g_procstatus?
+// TODO Do we need to free memory for var_name?
+// FIXME ms_unset has too many lines
+void	ms_unset(t_command *cmd, char **envp)
 {
-    int i;
+	int	i;
+	int	var_index;
+	char	*var_name;
 
-    i = 0;
-    if (cmd->argc < 2) 
-    {
-        printf("unset: missing argument\n");
-        return;
-    }
-    i = ft_strlen(cmd->argv[1]);
-    char *var = malloc(sizeof (char *) * i);
-    var = cmd->argv[1];
-    int var_index = find_env_var(envp, var);
-
-    if (var_index >= 0) 
-    {
-        // Liberar la memoria de la variable de entorno
-        free(envp[var_index]);
-
-        // Eliminar la variable de entorno del arreglo envp
-        int i = var_index;
-        while (envp[i] != NULL) 
-        {
-            envp[i] = envp[i + 1];
-            i++;
-        }
-    } 
-    else 
-    {
-        printf("unset: variable %s not found\n", var);
-    }
+	i = 0;
+	if (cmd->argc < 2)
+	{
+		printf("unset: missing argument\n");
+		return ;
+	}
+	i = ft_strlen(cmd->argv[1]);
+	var_name = malloc(sizeof (char *) * i);	// TODO Do we need to have + 1 for null-termination here?
+	var_name = cmd->argv[1];
+	var_index = find_env_var(envp, var_name);
+	if (var_index >= 0)
+	{
+		// Liberar la memoria de la variable de entorno
+//        free(envp[var_index]);	// NOTE Segfault caused here - this is invalid when we did not allocate the var
+		// Eliminar la variable de entorno del arreglo envp
+		i = var_index;
+		while (envp[i] != NULL)
+		{
+			envp[i] = envp[i + 1];
+			i++;
+		}
+	}
+	else
+		printf("unset: variable %s not found\n", var_name);
 }
 
 void ms_export_cd(t_command *cmd, char **envp) {
