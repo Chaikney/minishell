@@ -203,13 +203,34 @@ void	ms_unset(t_command *cmd, char **envp)
 		printf("unset: variable %s not found\n", var_name);
 }
 
+// After cd is issued, this updates the PWD and OLDPWD variables.
+// (cd happens in executeBuiltin when chdir is called)
+// - unset existing $OLDPWD
+// - update $PWD and $OLDPWD
+// - - how? Looks like copying the entire envp?
+// FIXME Too many variables
+// FIXME Variables defined and set in line
+// FIXME Too many lines in function, needs refactor
+// Tests and edge cases we have to handle.
+// [x] cd [directory that exists]			move to that place
+// [x] cd [directory that does not exist]	"no such file or directory"
+// [x] cd ..								move up one level
+// [x] cd ../..							move up two levels
+// [x] cd ../other_folder					Move to sibling folder
 void ms_export_cd(t_command *cmd, char **envp) {
-    char *var_pwd = "PWD=";
-    int h;
-    char *wd = NULL;
+    char	*var_pwd = "PWD=";
+    int	h;
+    char	*wd = NULL;
+    char	**new_envp;	// NOTE This is malloc'd, has to be freed.
+    size_t	j;
+    size_t	env_len;
+    size_t	i;
+    char	*oldpwd;
+    char	*new_pwd;
+
     (void)cmd;
     h = 0;
-    size_t j = 0;
+    j = 0;
     wd = getcwd(wd, 0);
     if (!wd)
         return;
@@ -217,19 +238,19 @@ void ms_export_cd(t_command *cmd, char **envp) {
     // Unset OLD_PWD
     ms_unset_export("OLDPWD", envp);
     // Update PWD and OLDPWD
-    size_t env_len = 0;
+    env_len = 0;
     while (envp[env_len] != NULL) {
         env_len++;
     }
 
-    char **new_envp = malloc(sizeof(char *) * (env_len + 3));
+    new_envp = malloc(sizeof(char *) * (env_len + 3));
     if (new_envp == NULL) {
         perror("malloc");
         free(wd);
         return;
     }
 
-    size_t i = 0;
+    i = 0;
     while (i < env_len) 
     {
         new_envp[i] = envp[i];
@@ -238,7 +259,7 @@ void ms_export_cd(t_command *cmd, char **envp) {
 
     // Set OLDPWD to current PWD
     h = find_env_var(envp,"PWD");
-    char *oldpwd = ft_strjoin("OLD", new_envp[h]);
+    oldpwd = ft_strjoin("OLD", new_envp[h]);
     if (oldpwd == NULL) {
         perror("ft_strjoin");
         free(new_envp);
@@ -248,7 +269,7 @@ void ms_export_cd(t_command *cmd, char **envp) {
     new_envp[i++] = oldpwd;
 
     // Set PWD to new working directory
-    char *new_pwd = ft_strjoin(var_pwd, wd);
+    new_pwd = ft_strjoin(var_pwd, wd);
     if (new_pwd == NULL) {
         perror("ft_strjoin");
         free(new_envp);
