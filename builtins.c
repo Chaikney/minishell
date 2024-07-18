@@ -1,7 +1,16 @@
-#include "minishell.h"
-#include <stdio.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtins.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/18 19:47:34 by chaikney          #+#    #+#             */
+/*   Updated: 2024/07/18 19:47:39 by chaikney         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-//TODO Add 42 header
+#include "minishell.h"
 
 // Some shell builtin functions, may split later.
 
