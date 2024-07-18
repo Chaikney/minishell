@@ -71,7 +71,6 @@ void	run_command(t_command *cmd, char **envp);
 void	eval(char *cmdline, char **envp);
 char	*get_prompt(void);
 int		determine_output(t_command *cmd);
-int		determine_input(t_command *cmd);
 
 // substitute.c - variable substitution
 char	*ms_strsub(char *str, char *remove, char *replace);
@@ -98,10 +97,14 @@ void	executeBuiltin(t_command *cmd, char **envp);
 char	**quote_aware_split(const char *cmdline);
 void	handle_complex_command_structure(t_command *cmd, char **envp);
 
+// input.c - functions for redirecting input
+int		stopword_input(t_command *cmd);
+int		setup_input(t_command *cmd, int i_lvl);
+int		determine_input(t_command *cmd);
+
 // paths.c - find and direct programs in PATH
 void	run_in_child(t_command *cmd, char **envp, int i_file, int o_file);
 void	run_in_child_with_pipe(t_command *cmd, char **envp, int *i_file);
-int		setup_input(t_command *cmd, int i_lvl);
 void	remove_cmd_parts(t_command *cmd, char *target);
 
 // helpers.c - finder and helper functions
