@@ -55,7 +55,6 @@ int	determine_output(t_command *cmd)
 
 // Wrap everything needed to work out where the input comes from,
 // and return the fd to it.
-// FIXED Returns STDIN no matter what
 // Flags for input redir:
 // 0 - no special input
 // 1 - input from file
@@ -91,8 +90,6 @@ int	determine_input(t_command *cmd)
 // TODO Function will need to be shorter once it is working
 // TODO Must be able to handle BUILTINS here as well.
 // FIXME < test | rev | rev triggered a crash - note that form is invalid!
-// FIXME << stopword less causes the shell to exit
-// FIXME << stopword less | rev also causes the shell to exit
 void	handle_complex_command_structure(t_command *cmd, char **envp)
 {
 	int	num_pipes;
@@ -108,40 +105,22 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 			num_pipes++;
 	i_redir = determine_input(cmd);
 	o_redir = determine_output(cmd);
-	// HACK Next few lines debugging statements to remove
-	/* printf("Command before excision"); */
-	/* print_cmd_parts(cmd); */
 	remove_cmd_parts(cmd, ">");
 	remove_cmd_parts(cmd, "<");
-	/* printf("Command after excision"); */
-	/* print_cmd_parts(cmd); */
-	printf("\tOutput to: %i\tInput to: %i", o_redir, i_redir);
-	// FIXED something does not return and shell loses control.
 	if (num_pipes > 0)
 	{
 		cmdlist = make_cmd_list(cmd, num_pipes);
-//		print_cmd_parts(cmdlist);
 		while (cmdlist->next != NULL)
 		{
 			run_in_child_with_pipe(cmdlist, envp, &i_redir);
 			cmdlist = cmdlist->next;
 		}
-		// NOTE Should not act on both parts only the last child output file becomes STDOUT
-//		dup2(o_redir, STDOUT_FILENO);
-		// close output fd
-//		close(o_redir);
-		// run final command - in pipex this is without forking but here
-		// we need a child process to keep the shell alive
 		run_in_child(cmdlist, envp, i_redir, o_redir);
 	}
-	else	// we can handle the other redir types
-	{
-		print_cmd_parts(cmd);	// HACK for debugging
+	else
 		run_in_child(cmd, envp, i_redir, o_redir);
-	}
 }
 
-// DONE Check access() to i_path? open probably covers it
 // Implmentation of << "here_doc" or stop word based input
 // - open a pipe
 // - open a child process
@@ -154,9 +133,11 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 // -- dups stdin to the read end of the pipe
 // -- waits for reader to finish
 // - returns the read end of the parent's pipe
-// TODO This has to act a way analogous to the other parts - close, dup etc.
-// FIXME pipe is endless loop now?
-// TODO Try and dup to the pipe like later?
+// TODO	stopword = cmd->argv[1] is a hardcoded assumption, is it safe?
+// TODO Is there any cleanup to do in reader fork? child copy of cmd?
+// TODO Should we set g_procstatus here?
+// FIXME Protect against if first call to line returns null
+// 		reader process never would never end!
 int	stopword_input(t_command *cmd)
 {
 	int		fd[2];
@@ -169,14 +150,13 @@ int	stopword_input(t_command *cmd)
 	if (reader == 0)
 	{
 		close(fd[0]);	// NOTE read end of pipe is not needed by GNL
-		stopword = cmd->argv[1];	// FIXME This is a hardcoded assumption!
-		printf("stopword is: %s", stopword);	// HACK for debugging
+		stopword = cmd->argv[1];
+//		printf("stopword is: %s", stopword);	// HACK for debugging
 		line = get_next_line(STDIN_FILENO);
-		// FIXME what if line returns null? reader process never ends!
 		while (line)
 		{
 			if (ft_strncmp(stopword, line, ft_strlen(stopword)) == 0)
-				exit(EXIT_SUCCESS);	// TODO Is there any cleanup to do? child copy of cmd?
+				exit(EXIT_SUCCESS);
 			write(fd[1], line, ft_strlen(line));
 			line = get_next_line(STDIN_FILENO);
 		}
@@ -184,21 +164,17 @@ int	stopword_input(t_command *cmd)
 	else
 	{
 		close(fd[1]);
-//		dup2(fd[0], STDIN_FILENO);	// does not exist in _with_pipe...
-		waitpid(reader, 0, 0);	// TODO Should we set g_procstatus here?
-		// hold the input
+		waitpid(reader, 0, 0);
 	}
 	return (fd[0]);
 }
 
-// DONE Implement stop word / here_doc input redirection
 // NOTE That is in the format: cmd << stop_word
 // NOTE Input redir in format:  < infile grep a1
 // If opening the file fails,
 // bash quits with error and doesn’t run the command.
 // If it succeeds, bash uses the file descriptor
 // of the opened file as the stdin file descriptor for the command.
-// DONE If no redir is needed, then should we return STDIN_FILENO?
 // TODO Potential to merge with determine_input - not until heredoc done.
 int	setup_input(t_command *cmd, int i_lvl)
 {
@@ -222,7 +198,6 @@ int	setup_input(t_command *cmd, int i_lvl)
 }
 
 // NOTE target could be a single char for matching purposes...
-// DONE Make this safe for if target not found
 // To remove control parameters we find the > < character in cmd->argv
 // ...it is that position and the next that need to be removed.
 // So we copy the value +2 ahead from there to the end of the array.
@@ -230,8 +205,6 @@ int	setup_input(t_command *cmd, int i_lvl)
 // FIXME One block is lost (to valgrind) after stripping things for > >>
 // NOTE Is it legit to have << *after* > ?
 // NOTE In bash the < and > can be anywhere: you take the control posn and the next param,
-// FIXED If I remove pieces fromm the start, execve later is "unaddressable bytes"
-// ...is this because of argv pointer confusion??
 // NOTE Fixed arrays (as we have for argv) cannot be resized!
 void	remove_cmd_parts(t_command *cmd, char *target)
 {
@@ -268,7 +241,6 @@ void	remove_cmd_parts(t_command *cmd, char *target)
 // - run command
 // - wait for it to come back
 // NOTE child == 0 means we are in the child process!
-// DONE Can I use the output from this to measure state?
 // TODO The exit_and_free should be unified with ms_exit, or renamed.
 // ...don't want to leave the entire shell for fork/pipe errors.
 // Now takes an input file pointer to connect to the previous command in pipe.
@@ -308,7 +280,6 @@ void	run_in_child_with_pipe(t_command *cmd, char **envp, int *i_file)
 // Forks, sets up input and output for one child process
 // and waits for it to complete.
 // NOTE This is the one we use for simple commands. Should work with redirect.
-// FIXME output redirection at the end of pipes does not work.
 // TODO rename to "run_last" or similar
 void	run_in_child(t_command *cmd, char **envp, int i_file, int o_file)
 {
