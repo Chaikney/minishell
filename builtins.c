@@ -60,28 +60,47 @@ void ms_unset_export(char *unset_var, char **envp)
     }
 }
 
-// Set a new variable in env.
-// If the variable name already exists, change it. (remove existing and then add?)
-// ....this is basically the same functionality as UNSET ?!
+// Set a variable in env.
 // If the variable does not already exist, add it.
-// NOTE I think we have to distinguish between the variable's NAME and VALUE
-// FIXME This has variables defined in-line at time of use.
+// If the variable name already exists, change it
+// 	TODO add notes here to say how we do that: remove existing and then add?
+// FIXME ms_export Will have to be shortened to pass Norm
+// FIXME ms_export Too many variables for Norm: merge some counters?
+// FIXME ms_export does not conform to bash behaviour, see below
+// TODO If var name is not followed by = do not change env
+// TODO Variable values must not split if commas are used
+// Test cases and expected (bash) behaviour:
+// [x] export MS_TEST=hola				Add variable (visible with env)
+// [ ] export MS_TEST="hola que tal"	Add 1 variable with spaces	FAIL adds 3 vars
+// [ ] export MS_TEST hola				No change to env			FAIL adds 2 vars without =
+// [ ] export hola que tal				No change to env			FAIL as above
+// [ ] export MS_TEST=					Add blank "" variable		FAIL env then shows "", unlike bash
+// [ ] export MS_TEST					No change to env			FAIL adds "blank" variable without =
+// [ ] ...hay más?
 void ms_export(t_command *cmd, char **envp) 
 {
-    char *var;
-    char *new_var;
-    int len_unset;
-    char *unset_var;
+    char	*var;
+    char	*new_var;
+    int	len_unset;
+    char	*unset_var;	// NOTE Uses malloc, ensure freed later.
+    int	len1;
+    char	*var2;
+    int	len;
+    int	j;
+    int	h;
+    size_t	env_len;
+    size_t	i;
+    char	**new_envp;	// NOTE Uses malloc, ensure freed later.
+
+    len = 0;
+    len1 = 0;
+    j = 0;
+    h = 1;
     len_unset = 0;
-    int len1 = 0;
-    char *var2;
-    int len = 0;
-    int j = 0;
-    int h = 1;
     if (cmd->argc < 2) 
     {
         printf("export: missing argument\n");
-        return;
+        return ;
     }
     while(cmd->argv[h] != NULL)
     {
@@ -103,61 +122,54 @@ void ms_export(t_command *cmd, char **envp)
             j++;
         }
         unset_var[j] = '\0';
-            printf("\n\n\n-----%s------\n\n\n",unset_var);
-            ms_unset_export(unset_var,envp);
-            size_t env_len = 0;
-            while (envp[env_len] != NULL) 
-            {
-                env_len++;
-            }
+        printf("\n\n\n-----%s------\n\n\n",unset_var);
+        ms_unset_export(unset_var,envp);
+        env_len = 0;
+        while (envp[env_len] != NULL)
+            env_len++;
+        new_envp = malloc(sizeof(char *) * (env_len + 2));
+        if (new_envp == NULL)
+        {
+            perror("malloc");
+            return;
+        }
 
-            char **new_envp = malloc(sizeof(char *) * (env_len + 2));
-            if (new_envp == NULL) 
-            {
-                perror("malloc");
-                return;
-            }
+        i = 0;
+        while (i < env_len)
+        {
+            new_envp[i] = envp[i];
+            i++;
+        }
 
-            size_t i = 0;
-            while (i < env_len) 
-            {
-                new_envp[i] = envp[i];
-                i++;
-            }
-
-            new_var = ft_strdup(var);
-            len = ft_strlen(new_var);
-            if(new_var[len - 1] == '=')
-                new_var = ft_strjoin(new_var,"\"\"");
-            if (new_var == NULL) 
-            {
-                perror("ft_strdup");
-                free(new_envp);
-                return;
-            }
-            new_envp[env_len] = new_var;
-            new_envp[env_len + 1] = NULL;
-            i = 0;
-            while (i < env_len + 1) 
-            {
-                envp[i] = new_envp[i];
-                i++;
-            }
-            envp[env_len + 1] = NULL;
-
+        new_var = ft_strdup(var);
+        len = ft_strlen(new_var);
+        if(new_var[len - 1] == '=')
+            new_var = ft_strjoin(new_var,"\"\"");
+        if (new_var == NULL)
+        {
+            perror("ft_strdup");
             free(new_envp);
-            h++;
+            return;
+        }
+        new_envp[env_len] = new_var;
+        new_envp[env_len + 1] = NULL;
+        i = 0;
+        while (i < env_len + 1)
+        {
+            envp[i] = new_envp[i];
+            i++;
+        }
+        envp[env_len + 1] = NULL;
+
+        free(new_envp);
+        h++;
     }
-    
-        
 }
 
 
 // Remove the variable in cmd from ENV, if present.
 // If not present, take no action.
-// FIXME This causes an endless loop, I guess in the while(envp[i])
-// FIXME Also cause a segfault!
-void ms_unset(t_command *cmd, char **envp) 
+void ms_unset(t_command *cmd, char **envp)
 {
     int i;
 
