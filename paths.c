@@ -18,14 +18,14 @@
 // - Set file perms for level (create or append)
 // - find file name
 // - check access to file, open it
-// TODO Can we take the exec permission away from the created file?
-// ...a file with the same name as a program in the wd is attemtped to be run
-// nbecause it has the X bit set!
+// NOTE The file mode has no exec permission to avoid that...
+// ...a file with the same name as a program in the wd is attempted to be run
+// because it has the X bit set!
 int	determine_output(t_command *cmd)
 {
-	int	i;
-	int	o_fd;
-	int	perms;
+	int		i;
+	int		o_fd;
+	int		perms;
 	char	*o_path;
 
 	i = cmd->argc;
@@ -39,7 +39,7 @@ int	determine_output(t_command *cmd)
 			if (ft_strncmp(cmd->argv[i], ">>", 2) == 0)
 				perms = O_WRONLY | O_CREAT | O_APPEND;
 			o_path = cmd->argv[i + 1];
-			o_fd = open(o_path, perms, 0777);
+			o_fd = open(o_path, perms, 0666);
 			if (o_fd == -1)
 			{
 				g_procstatus = errno;
@@ -47,7 +47,6 @@ int	determine_output(t_command *cmd)
 			}
 		}
 	}
-	printf("Checked output for '%s'. fd will be: %i", cmd->argv[0], o_fd);
 	return (o_fd);
 }
 
