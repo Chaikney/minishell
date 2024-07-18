@@ -55,6 +55,7 @@ int	determine_output(t_command *cmd)
 // TODO Shorter (but still descriptive!) name needed.
 // TODO Function will need to be shorter once it is working
 // TODO Must be able to handle BUILTINS here as well.
+// FIXME Naive addtion of builtins does not work.
 // FIXME < test | rev | rev triggered a crash - note that form is invalid!
 void	handle_complex_command_structure(t_command *cmd, char **envp)
 {
@@ -78,10 +79,16 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 		cmdlist = make_cmd_list(cmd, num_pipes);
 		while (cmdlist->next != NULL)
 		{
-			run_in_child_with_pipe(cmdlist, envp, &i_redir);
+			if (cmd->builtin == NONE)
+				run_in_child_with_pipe(cmdlist, envp, &i_redir);
+			else
+				executeBuiltin(cmdlist, envp);
 			cmdlist = cmdlist->next;
 		}
-		run_in_child(cmdlist, envp, i_redir, o_redir);
+		if (cmd->builtin == NONE)
+			run_in_child(cmdlist, envp, i_redir, o_redir);
+		else
+			executeBuiltin(cmdlist, envp);
 	}
 	else
 		run_in_child(cmd, envp, i_redir, o_redir);
