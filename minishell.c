@@ -110,39 +110,29 @@ void	run_command(t_command *cmd, char **envp)
 	}
 }
 
-// Sends cmdline to parse functtion to get a t_command
-// If cmd is BUILTIN, run there
-// Otherwise, try and run a system command
-// TODO We also need to catch if running in a pipe or not.
-// TODO Decide if run_command / cmd should be a pointer
+// Sends cmdline to parse function to get a t_command
+// If the return has no control characters, send it to run.
+// If there are control characters, pass it to the complex function
+// Clear the command struct on return.
 // TODO rename the bg variable to say what it does (what does it do?)
-// TODO Restructure so that builtins can also run in complex structures
 void eval(char *cmdline, char **envp)
 {
     int			bg;
     t_command	cmd;
 	int			con_loc;
 
-//    printf("Evaluating '%s'\n", cmdline);	// HACK For debugging, remove later
     bg = parse(cmdline, &cmd);
 	(void) bg;
-//    printf("Found command %s\n", cmd.argv[0]);	// HACK For debugging, remove later
-	print_cmd_parts(&cmd);	// HACK for debugging
 	con_loc = find_flow_control(&cmd);
 	if (con_loc == -1)
 	{
-//		printf("simple case");	// HACK for debugging
 		if (cmd.builtin != NONE)
 			executeBuiltin(&cmd, envp);
 		else
 			run_in_child(&cmd, envp, -1, -1);
 	}
 	else
-	{
-//		printf("flow control needed");	// HACK for debugging
-//		printf("\nI found control instructions at: %i\nand my command is at: %i (%s)", con_loc, cmd_loc, cmd.argv[cmd_loc]);	// HACK for debugging
 		handle_complex_command_structure(&cmd, envp);
-	}
 	/* if (bg == -1)	// TODO Do we still need this, what is it for? */
 	/* 	return; */
 	clear_t_command(&cmd);

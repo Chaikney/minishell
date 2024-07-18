@@ -58,10 +58,10 @@ int	determine_output(t_command *cmd)
 // FIXME < test | rev | rev triggered a crash - note that form is invalid!
 void	handle_complex_command_structure(t_command *cmd, char **envp)
 {
-	int	num_pipes;
-	int	i;
-	int	o_redir;
-	int	i_redir;
+	int			num_pipes;
+	int			i;
+	int			o_redir;
+	int			i_redir;
 	t_command	*cmdlist;
 
 	num_pipes = 0;
