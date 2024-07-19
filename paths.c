@@ -79,19 +79,22 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 		cmdlist = make_cmd_list(cmd, num_pipes);
 		while (cmdlist->next != NULL)
 		{
-			if (cmd->builtin == NONE)
+			if (cmdlist->builtin == NONE)
 				run_in_child_with_pipe(cmdlist, envp, &i_redir);
 			else
 				executeBuiltin(cmdlist, envp);
 			cmdlist = cmdlist->next;
 		}
-		if (cmd->builtin == NONE)
+		if (cmdlist->builtin == NONE)
 			run_in_child(cmdlist, envp, i_redir, o_redir);
 		else
 			executeBuiltin(cmdlist, envp);
 	}
 	else
-		run_in_child(cmd, envp, i_redir, o_redir);
+		if (cmd->builtin == NONE)
+			run_in_child(cmd, envp, i_redir, o_redir);
+		else
+			executeBuiltin(cmd, envp);
 }
 
 // NOTE target could be a single char for matching purposes...
