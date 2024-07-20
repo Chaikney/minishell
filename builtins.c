@@ -151,10 +151,15 @@ void ms_export(t_command *cmd, char **envp)
             env_len++;
         new_envp = malloc(sizeof(char *) * (env_len + 2));
         if (new_envp == NULL)
-        {
-            perror("malloc");
-            return;
-        }
+            {
+                perror("malloc");
+                free(new_envp);
+                m = 0;
+                while (m <= k)
+                    free(unset_var[m++]);
+                free(unset_var);
+                return;
+            }
 
         i = 0;
         while (i < env_len)
@@ -164,15 +169,29 @@ void ms_export(t_command *cmd, char **envp)
         }
 
         new_var = ft_strdup(var);
+        if (new_var == NULL)
+            {
+                perror("strdup");
+                free(new_envp);
+                int m = 0;
+                while (m <= k)
+                    free(unset_var[m++]);
+                free(unset_var);
+                return;
+            }
         len = ft_strlen(new_var);
         if(new_var[len - 1] == '=')
             new_var = ft_strjoin(new_var,"\"\"");
-        if (new_var == NULL)
-        {
-            perror("ft_strdup");
-            free(new_envp);
-            return;
-        }
+       if (new_var == NULL)
+            {
+                perror("ft_strjoin");
+                free(new_envp);
+                m = 0;
+                while (m <= k)
+                    free(unset_var[m++]);
+                free(unset_var);
+                return;
+            }
         new_envp[env_len] = new_var;
         new_envp[env_len + 1] = NULL;
         i = 0;
