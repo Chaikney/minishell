@@ -86,17 +86,20 @@ void ms_export(t_command *cmd, char **envp)
     char	*var;
     char	*new_var;
     int	len_unset;
-    char	*unset_var;	// NOTE Uses malloc, ensure freed later.
+    char	**unset_var;	// NOTE Uses malloc, ensure freed later.
     int	len1;
     char	*var2;
     int	len;
     int	j;
+    int k;
     int	h;
     size_t	env_len;
     size_t	i;
     char	**new_envp;	// NOTE Uses malloc, ensure freed later.
 
     len = 0;
+    int m = 0;
+    k= 0;
     len1 = 0;
     j = 0;
     h = 1;
@@ -105,6 +108,12 @@ void ms_export(t_command *cmd, char **envp)
     {
         printf("export: missing argument\n");
         return ;
+    }
+    unset_var = malloc((cmd->argc - 1) * sizeof(char *));
+    if (unset_var == NULL) 
+    {
+        perror("malloc");
+        return;
     }
     while(cmd->argv[h] != NULL)
     {
@@ -117,18 +126,27 @@ void ms_export(t_command *cmd, char **envp)
             h++;
         }
         var = cmd->argv[h];
-        while (cmd->argv[1][len_unset] != '=' && cmd->argv[1][len_unset] != '\0')
+        while (cmd->argv[h][len_unset] != '=' && cmd->argv[h][len_unset] != '\0')
             len_unset++;
-        unset_var = malloc(sizeof(char) * len_unset + 1);
+        unset_var[k] = malloc(sizeof(char ) * len_unset + 1);
+        if (unset_var[k] == NULL) 
+        {
+            perror("malloc");
+            while (m < k)
+                free(unset_var[m++]);
+            free(unset_var);
+            return;
+        }
         while (j <= len_unset - 1)
         {
-            unset_var[j] = var[j];
+            unset_var[k][j] = var[j];
             j++;
         }
-        unset_var[j] = '\0';
-        printf("\n\n\n-----%s------\n\n\n",unset_var);
-        ms_unset_export(unset_var,envp);
+        unset_var[k][len_unset] = '\0';
+        ms_unset_export(unset_var[k],envp);
         env_len = 0;
+        j = 0;
+        k++;
         while (envp[env_len] != NULL)
             env_len++;
         new_envp = malloc(sizeof(char *) * (env_len + 2));
@@ -167,6 +185,7 @@ void ms_export(t_command *cmd, char **envp)
 
         free(new_envp);
         h++;
+        len_unset = 0;
     }
 }
 
