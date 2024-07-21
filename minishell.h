@@ -85,6 +85,7 @@ void	ms_unset(t_command *cmd, char **envp);
 void	ms_exit(t_command *cmd);
 void	ms_export_cd(t_command *cmd,char **envp);
 t_builtin	parse_builtin(t_command *cmd, int posn);
+void	ms_echo(t_command *cmd);
 
 // parse.c - functions to read and interpret user input
 int		parse(const char *cmdline, t_command *cmd);

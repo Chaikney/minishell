@@ -41,7 +41,7 @@ t_builtin parse_builtin(t_command *cmd, int posn)
 	return (NONE);
 }
 
-// TODO echo Commands into separate function
+// DONE echo Commands into separate function
 // FIXME Too many lines in function.
 // TODO env should not display empty variables, unlike export.
 // falta por añadir que hace cada
@@ -54,8 +54,6 @@ t_builtin parse_builtin(t_command *cmd, int posn)
 //  [x] exit no options.
 void executeBuiltin(t_command *cmd, char **envp)
 {
-	int	i;
-
 	if (cmd->builtin == CD)
 	{
 		if (cmd->argc < 2)
@@ -70,29 +68,8 @@ void executeBuiltin(t_command *cmd, char **envp)
 	}
 	else if (cmd->builtin == EXIT)
 		ms_exit(cmd);
-	else if (cmd->builtin == ECHON)
-	{
-		i = 1;
-		while (i < cmd->argc)
-		{
-			printf("%s", cmd->argv[i]);
-			if (i < cmd->argc)
-				printf(" ");
-			i++;
-		}
-		printf("\n");
-	}
-	else if (cmd->builtin == ECHO)
-	{
-		i = 2;
-		while (i < cmd->argc)
-		{
-			printf("%s", cmd->argv[i]);
-			if (i < cmd->argc - 1)
-				printf(" ");
-			i++;
-		}
-	}
+	else if ((cmd->builtin == ECHON) || (cmd->builtin == ECHO))
+		ms_echo(cmd);
 	else if (cmd->builtin == PWD)
 		ms_pwd();
 	else if (cmd->builtin == EXP)
