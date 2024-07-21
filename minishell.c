@@ -50,13 +50,12 @@ void	exit_and_free(char **args, int fd_in, int fd_out)
 		while (args[i])
 			free(args[i++]);
 	}
-	exit(EXIT_FAILURE);
+	exit (EXIT_FAILURE);
 }
 
 // Free the memory allocated to one single t_command
 // Mainly (only?) in the args part.
-// DONE Ensure that this is protected against empty cmds
-// TODO Does this clear every part of a t_command?
+// TODO Does this clear every needed part of a t_command?
 void	clear_t_command(t_command *cmd)
 {
 	int	i;
@@ -64,24 +63,21 @@ void	clear_t_command(t_command *cmd)
 	if (cmd)
 	{
 		i = 0;
-		while (cmd->argv[i])	// FIXED Segfault here.
+		while (cmd->argv[i])
 			free(cmd->argv[i++]);
 		free(cmd->argv[cmd->argc]);
-//	free (*cmd->argv);	// NOTE Invalid free
 	}
 }
 
-// Take a command (currently assumed argv[0])
+// Take a command (must be at argv[0])
 // Check to see if it is itself a valid path.
-// Otherwise, find it in PATH
+// Otherwise, search for it in PATH
 // Run the command using argv set -- assumed to be NT'd and valid
 // NOTE Any fork-ing needed should have been handled before calling this.
 // NOTE The assumptions here are: argv[0] is a command not a redirect.
-// ...and that we can pass the arguments using cmd->argv
-// - this will fail when there are control characters and or multiple parameters
-// NOTE Check we have a valid format of argv (NTd, only one command and parameters)
+// ...and that all arguments in cmd->argv can be managed by the command
 // TODO Move this to a suitable other file.
-// DONE? If errors here, set g_procstatus
+// TODO define exit routines for not found and for exec failure.
 void	run_command(t_command *cmd, char **envp)
 {
 	char	*prog;
@@ -115,6 +111,7 @@ void	run_command(t_command *cmd, char **envp)
 // If there are control characters, pass it to the complex function
 // Clear the command struct on return.
 // TODO rename the bg variable to say what it does (what does it do?)
+// TODO First execbuiltin check is not needed.
 void eval(char *cmdline, char **envp)
 {
     int			bg;
@@ -129,10 +126,10 @@ void eval(char *cmdline, char **envp)
 		if (cmd.builtin != NONE)
 			executeBuiltin(&cmd, envp);
 		else
-			run_in_child(&cmd, envp, -1, -1);
+			run_final_cmd(&cmd, envp, -1, -1);
 	}
 	else
-		handle_complex_command_structure(&cmd, envp);
+		direct_complex_command(&cmd, envp);
 	/* if (bg == -1)	// TODO Do we still need this, what is it for? */
 	/* 	return; */
 	clear_t_command(&cmd);
@@ -154,13 +151,11 @@ char	*get_prompt(void)
 // TODO Implement signals handling CTRL-D
 // TODO Implement signals handling CTRL-\ uncontrolled quit
 // TODO Implement an exit routine that frees allocated memory.
-// KILL Can we configure the readline history to be friendlier?
-// ....This is a terminal emulator thing
+// TODO Ensure that *all* commands run quit or return to here.
 int main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;
 	char	*prompt;
-//	extern int	g_procstatus;
 
 	(void) argv;
 	cmdline = NULL;
@@ -169,20 +164,15 @@ int main(int argc, char **argv, char **envp)
 		signal(SIGQUIT, handle_sigquit);	// This works to supress ctrl-d but not the cmdline breakage
 		while (1)
 		{
-//			g_procstatus = 0;
 			signal(SIGINT, manipule_sigint);
 			prompt = get_prompt();
 			cmdline = readline(prompt);
-			// NOTE I think this below is a EOF getting stuck into readline.
-			// Need to catch it before?
-			// Or does it indicate a broken pipe?
-			if (cmdline == NULL)	// FIXME we return from pipes with cmdline NULL and boom
+			if (cmdline == NULL)
 				ms_exit(NULL);
 			if ((cmdline[0] != '\0'))
 			{
 				add_history((const char *) cmdline);
 				eval(cmdline, envp);
-//				printf("evaluation finished; if that was a pipe i will now crash");
 			}
 		}
 	}

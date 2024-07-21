@@ -52,12 +52,13 @@ int	determine_output(t_command *cmd)
 
 // When there is a control character present, guide it to the correct
 // execution function(s)
-// TODO Shorter (but still descriptive!) name needed.
+// DONE Shorter (but still descriptive!) name needed.
 // DONE Function will need to be shorter once it is working
 // DONE Must be able to handle BUILTINS here as well.
-// FIXED Naive addtion of builtins does not work.
-// FIXME < test | rev | rev triggered a crash - note that form is invalid!
-void	handle_complex_command_structure(t_command *cmd, char **envp)
+// FIXED Naive addition of builtins does not work.
+// FIXED < test | rev | rev no longer triggers a crash (form is invalid!)
+// FIXME Too many lines in this function
+void	direct_complex_command(t_command *cmd, char **envp)
 {
 	int			num_pipes;
 	int			i;
@@ -79,13 +80,13 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 		cmdlist = make_cmd_list(cmd, num_pipes);
 		while (cmdlist->next != NULL)
 		{
-			run_in_child_with_pipe(cmdlist, envp, &i_redir);
+			run_in_pipe(cmdlist, envp, &i_redir);
 			cmdlist = cmdlist->next;
 		}
-		run_in_child(cmdlist, envp, i_redir, o_redir);
+		run_final_cmd(cmdlist, envp, i_redir, o_redir);
 	}
 	else
-		run_in_child(cmd, envp, i_redir, o_redir);
+		run_final_cmd(cmd, envp, i_redir, o_redir);
 }
 
 // NOTE target could be a single char for matching purposes...
@@ -135,7 +136,8 @@ void	remove_cmd_parts(t_command *cmd, char *target)
 // TODO The exit_and_free should be unified with ms_exit, or renamed.
 // ...don't want to leave the entire shell for fork/pipe errors.
 // Now takes an input file pointer to connect to the previous command in pipe.
-void	run_in_child_with_pipe(t_command *cmd, char **envp, int *i_file)
+// TODO Move builtin check to run_command to save lines?
+void	run_in_pipe(t_command *cmd, char **envp, int *i_file)
 {
 	pid_t	child;
 	int		tube[2];
@@ -176,7 +178,7 @@ void	run_in_child_with_pipe(t_command *cmd, char **envp, int *i_file)
 // and waits for it to complete.
 // NOTE This is the one we use for simple commands. Should work with redirect.
 // TODO rename to "run_last" or similar
-void	run_in_child(t_command *cmd, char **envp, int i_file, int o_file)
+void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file)
 {
 	pid_t	child;
 	int		ret_val;

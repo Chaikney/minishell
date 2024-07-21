@@ -10,11 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-// TODO Remove un-needed includes, check against minishell forbidden functions.
-// DONE Add libft, or the needed functions.
-// DONE Separate the builtin_t definition
-// DONE Give struct command a typedef name (and fit Norm).
-
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -34,17 +29,13 @@
 # include "libft/libft.h"
 # include <signal.h>	// catch CRTL-c, CTRL-d, other signals
 
-extern int g_procstatus;	// global variable to hold exit codes
+// global variable to hold exit codes
+extern int g_procstatus;
 
-// TODO The name for this should be better.
-// TODO SHould the values include pipe, redirect info? Or elsewhere?
+// An enum covering the builtin functions that our shell provides.
 typedef enum e_builtin
 {
 	NONE,
-	QUIT,
-	JOBS,
-	BG,
-	FG,
 	CD,
 	EXIT,
 	ECHO,
@@ -55,7 +46,11 @@ typedef enum e_builtin
 	ENV
 }	t_builtin;
 
-// TODO What if we flag command types - system, builtin, what?
+// Holds details of command:
+// - argc - number of arguments
+// - argv - the command and its arguments
+// - builtin - whether the command is one of our builtin functions
+// - next - NULL, or a pointer to the next command in a pipeline.
 typedef struct s_command
 {
 	struct s_command	*next;
@@ -95,7 +90,7 @@ t_builtin	parse_builtin(t_command *cmd, int posn);
 int		parse(const char *cmdline, t_command *cmd);
 void	executeBuiltin(t_command *cmd, char **envp);
 char	**quote_aware_split(const char *cmdline);
-void	handle_complex_command_structure(t_command *cmd, char **envp);
+void	direct_complex_command(t_command *cmd, char **envp);
 
 // input.c - functions for redirecting input
 int		stopword_input(t_command *cmd);
@@ -103,8 +98,8 @@ int		setup_input(t_command *cmd, int i_lvl);
 int		determine_input(t_command *cmd);
 
 // paths.c - find and direct programs in PATH
-void	run_in_child(t_command *cmd, char **envp, int i_file, int o_file);
-void	run_in_child_with_pipe(t_command *cmd, char **envp, int *i_file);
+void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file);
+void	run_in_pipe(t_command *cmd, char **envp, int *i_file);
 void	remove_cmd_parts(t_command *cmd, char *target);
 
 // helpers.c - finder and helper functions

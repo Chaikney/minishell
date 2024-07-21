@@ -66,7 +66,6 @@ int	stopword_input(t_command *cmd)
 // bash quits with error and doesn’t run the command.
 // If it succeeds, bash uses the file descriptor
 // of the opened file as the stdin file descriptor for the command.
-// TODO Potential to merge with determine_input - not until heredoc done.
 int	setup_input(t_command *cmd, int i_lvl)
 {
 	char	*i_path;
