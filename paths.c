@@ -53,9 +53,9 @@ int	determine_output(t_command *cmd)
 // When there is a control character present, guide it to the correct
 // execution function(s)
 // TODO Shorter (but still descriptive!) name needed.
-// TODO Function will need to be shorter once it is working
-// TODO Must be able to handle BUILTINS here as well.
-// FIXME Naive addtion of builtins does not work.
+// DONE Function will need to be shorter once it is working
+// DONE Must be able to handle BUILTINS here as well.
+// FIXED Naive addtion of builtins does not work.
 // FIXME < test | rev | rev triggered a crash - note that form is invalid!
 void	handle_complex_command_structure(t_command *cmd, char **envp)
 {
@@ -79,22 +79,13 @@ void	handle_complex_command_structure(t_command *cmd, char **envp)
 		cmdlist = make_cmd_list(cmd, num_pipes);
 		while (cmdlist->next != NULL)
 		{
-			if (cmdlist->builtin == NONE)
-				run_in_child_with_pipe(cmdlist, envp, &i_redir);
-			else
-				executeBuiltin(cmdlist, envp);
+			run_in_child_with_pipe(cmdlist, envp, &i_redir);
 			cmdlist = cmdlist->next;
 		}
-		if (cmdlist->builtin == NONE)
-			run_in_child(cmdlist, envp, i_redir, o_redir);
-		else
-			executeBuiltin(cmdlist, envp);
+		run_in_child(cmdlist, envp, i_redir, o_redir);
 	}
 	else
-		if (cmd->builtin == NONE)
-			run_in_child(cmd, envp, i_redir, o_redir);
-		else
-			executeBuiltin(cmd, envp);
+		run_in_child(cmd, envp, i_redir, o_redir);
 }
 
 // NOTE target could be a single char for matching purposes...
@@ -162,16 +153,20 @@ void	run_in_child_with_pipe(t_command *cmd, char **envp, int *i_file)
 		// "redirect stdin to prevpipe"
 		dup2(*i_file, STDIN_FILENO);// closes STDIN, uses its ref to point to i_file (last processes' pipe read end)
 		close(*i_file);		// discard extra reference to the pipe read end.
-		run_command(cmd, envp);	// asfter this all fds of the child are released.
+		if (cmd->builtin == NONE)
+			run_command(cmd, envp);	// asfter this all fds of the child are released.
+		else
+		{
+			executeBuiltin(cmd, envp);
+			exit(EXIT_SUCCESS);
+		}
 	}
 	else
 	{
 		close(tube[1]);	// Shell will not write to the pipe
 		// NOTE: commenting out this line leads to endless loop or non-returning process
-//		dup2(tube[0], STDIN_FILENO);	// NOTE do not mess with shell / parent fds
 		waitpid(child, &g_procstatus, 0);
 		*i_file = tube[0];	// Keep hold of the read end of this pipe for the next run.
-//		close(tube[0]);
 		printf("process %s finished with code: %i\n", cmd->argv[0], g_procstatus); // HACK for debugging
 	}
 }
@@ -187,12 +182,10 @@ void	run_in_child(t_command *cmd, char **envp, int i_file, int o_file)
 	int		ret_val;
 	extern int	g_procstatus;
 
-//	g_procstatus = 0;
 	child = fork();
 	if (child == -1)
 	{
 		g_procstatus = errno;
-	//	exit_and_free(NULL, -1, -1);
 	}
 	if (child == 0)
 	{
@@ -203,7 +196,13 @@ void	run_in_child(t_command *cmd, char **envp, int i_file, int o_file)
 		}
 		dup2(i_file, STDIN_FILENO);	// Expect this to be the same as with pipe
 		close(i_file);
-		run_command(cmd, envp);
+		if (cmd->builtin == NONE)
+			run_command(cmd, envp);	// asfter this all fds of the child are released.
+		else
+		{
+			executeBuiltin(cmd, envp);
+			exit(EXIT_SUCCESS);
+		}
 	}
 	else
 	{
