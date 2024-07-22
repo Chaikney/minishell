@@ -47,10 +47,15 @@ int	stopword_input(t_command *cmd)
 		while (line)
 		{
 			if (ft_strncmp(stopword, line, ft_strlen(stopword)) == 0)
-				exit(EXIT_SUCCESS);
+			{
+				free (line);
+				exit_pipe(cmd);
+			}
 			write(fd[1], line, ft_strlen(line));
+			free (line);
 			line = get_next_line(STDIN_FILENO);
 		}
+		free (line);	// We have written it and so it is no longer needed.?
 	}
 	else
 	{
