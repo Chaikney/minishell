@@ -53,15 +53,22 @@ void	exit_and_free(char **args, int fd_in, int fd_out)
 	exit (EXIT_FAILURE);
 }
 
-// Free the memory allocated to one single t_command
-// Mainly (only?) in the args part.
-// TODO Does this clear every needed part of a t_command?
+// Free the memory allocated to a t_command and all those following it.
+// Frees all argv, including the final NULL
 void	clear_t_command(t_command *cmd)
 {
 	int	i;
 
 	if (cmd)
 	{
+		while (cmd->next != NULL)
+		{
+			i = 0;
+			while (cmd->argv[i])
+				free(cmd->argv[i++]);
+			free(cmd->argv[cmd->argc]);
+			cmd = cmd->next;
+		}
 		i = 0;
 		while (cmd->argv[i])
 			free(cmd->argv[i++]);
