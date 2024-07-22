@@ -32,9 +32,21 @@ void manipule_sigint(int sig)
 	}
 }
 
+// Call this when we need to exit from a successful process that
+// ran in a pipe but hasn't otherwise (i.e. via execve) been exited.
+// SO, the builtins, basicallyy.
+// TODO Ensure this works as expected and clears everything.
+// (File descriptors were handled before calling this.)
+void	exit_pipe(t_command *cmd)
+{
+	clear_t_command(cmd);
+	exit (EXIT_SUCCESS);
+}
+
 // Clear the pathparts and close fds created by piping before exit.
 // TODO This probably needs to be expanded and / or replaced for minishell use.
 // TODO Should this be merged into or called by ms_exit?
+// TODO The freeing of args here would be better handled by clear_t_command
 void	exit_and_free(char **args, int fd_in, int fd_out)
 {
 	int	i;

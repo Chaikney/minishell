@@ -160,7 +160,7 @@ void	run_in_pipe(t_command *cmd, char **envp, int *i_file)
 		else
 		{
 			executeBuiltin(cmd, envp);
-			exit(EXIT_SUCCESS);
+			exit_pipe(cmd);
 		}
 	}
 	else

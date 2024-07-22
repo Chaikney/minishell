@@ -61,6 +61,7 @@ typedef struct s_command
 
 // various functions
 void	exit_and_free(char **args, int fd_in, int fd_out);
+void	exit_pipe(t_command *cmd);
 void	clear_t_command(t_command *cmd);
 void	run_command(t_command *cmd, char **envp);
 void	eval(char *cmdline, char **envp);
