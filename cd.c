@@ -34,6 +34,9 @@ static void	cd_error(char *errmsg, char *wd, char **new_envp, char *oldpwd)
 		free(oldpwd);
 }
 
+// Copy the envp from src_envp to dst_envp
+// Ensures null-termination
+// but does *not* check that dst_envp is big enough!
 void	copy_envp(char **src_envp, char **dst_envp)
 {
 	int	i;
@@ -70,18 +73,14 @@ void	copy_envp(char **src_envp, char **dst_envp)
 // [x] cd ../other_folder					Move to sibling folder
 void	ms_export_cd(char **envp)
 {
-//	char	*var_pwd = "PWD=";
 	int		pwd_posn;
 	char	*wd;
 	char	**new_envp;	// NOTE This is malloc'd, has to be freed.
-//	size_t	j;
 	size_t	env_len;	// Number of lines in envp
-	size_t	i;			// What does this count?
 	char	*oldpwd;
 	char	*new_pwd;
 
 	pwd_posn = 0;
-//	j = 0;
 	wd = NULL;
 	wd = getcwd(wd, 0);
 	if (!wd)
@@ -101,13 +100,7 @@ void	ms_export_cd(char **envp)
 		return ;
 	}
 
-	i = env_len;	// HACK return to 0 if experiment fails
-	/* while (i < env_len) */
-	/* { */
-	/* 	new_envp[i] = envp[i]; */
-	/* 	i++; */
-	/* } */
-	copy_envp(envp, new_envp);	// HACK experiment WHICH WORKS
+	copy_envp(envp, new_envp);
 
 	// Create strings for old and new PWD
 	// TODO Handle PWD not found error (i.e. find_env_var returns -1)
@@ -115,25 +108,18 @@ void	ms_export_cd(char **envp)
 	oldpwd = ft_strjoin("OLD", new_envp[pwd_posn]);
 	// Set PWD to new working directory
 	new_pwd = ft_strjoin("PWD=", wd);
-//	new_pwd = ft_strjoin(var_pwd, wd);
 	if ((oldpwd == NULL) || (new_pwd == NULL))
 	{
 		cd_error("ft_strjoin", wd, new_envp, oldpwd);
 		return;
 	}
-	new_envp[i++] = oldpwd;
-	new_envp[i++] = new_pwd;
-	new_envp[i] = NULL;	// Terminate envp with NULL
+	// Adding new lines to the envp
+	new_envp[env_len++] = oldpwd;
+	new_envp[env_len++] = new_pwd;
+	new_envp[env_len] = NULL;	// Terminate envp with NULL
 	free(wd);
 
 	copy_envp(new_envp, envp);	// HACK Experiment part 2 -- ALSO WORKS
-	// Update original envp
-	/* while (j < i) */
-	/* { */
-	/* 	envp[j] = new_envp[j]; */
-	/* 	j++; */
-	/* } */
-//	envp[i] = NULL;	// NOTE This is now done in copy_envp
 	// NOTE This is needed to remove the extra (first) PWD entry in envp
 	ms_unset_export("PWD",envp);
 	free(new_envp);
