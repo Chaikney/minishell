@@ -115,4 +115,9 @@ int		is_legal_name(char *str);
 // pipes.c
 t_command	*split_pipe(t_command *cmd);
 t_command	*make_cmd_list(t_command *to_split, int n);
+
+// signals.c - catch and manage signals like CTRL-C
+void	handle_sigint(int sig);
+void	handle_sigquit();
+int		setup_signals(void);
 #endif

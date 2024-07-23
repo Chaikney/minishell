@@ -14,26 +14,6 @@
 
 int g_procstatus;
 
-// this is to disable CRTL-\ and also the apparent EOF we get
-// after a pipe ends
-// "Ctrl-\ does nothing"
-void	handle_sigquit()
-{
-	return ;
-}
-
-// catch CTRL-c / SIGINT
-// TODO This should return to the normal prompt / readline call
-// ...I think this leads to duplicated prompt message.
-// "CTRL-C displays a new prompt on a new line."
-void manipule_sigint(int sig)
-{
-	if(sig)
-	{
-		printf("\nwhat should i do? >");
-	}
-}
-
 // Call this when we need to exit from a successful process that
 // ran in a pipe but hasn't otherwise (i.e. via execve) been exited.
 // SO, the builtins, basicallyy.
@@ -172,9 +152,6 @@ char	*get_prompt(void)
 
 // FIXME Not clear what cmdline == NULL attempts, i can't trigger it.
 // ...readline man page says this what it returns on EOF on an empty line.
-// TODO Implement signals handling SIGINT - needs fixed
-// TODO Implement signals handling CTRL-D
-// TODO Implement signals handling CTRL-\ uncontrolled quit
 // TODO Implement an exit routine that frees allocated memory.
 // TODO Ensure that *all* commands run quit or return to here.
 int main(int argc, char **argv, char **envp)
@@ -186,10 +163,9 @@ int main(int argc, char **argv, char **envp)
 	cmdline = NULL;
 	if (argc == 1)
 	{
-		signal(SIGQUIT, handle_sigquit);	// This works to supress ctrl-d but not the cmdline breakage
+		setup_signals();
 		while (1)
 		{
-			signal(SIGINT, manipule_sigint);
 			prompt = get_prompt();
 			cmdline = readline(prompt);
 			if (cmdline == NULL)
