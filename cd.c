@@ -34,6 +34,20 @@ static void	cd_error(char *errmsg, char *wd, char **new_envp, char *oldpwd)
 		free(oldpwd);
 }
 
+void	copy_envp(char **src_envp, char **dst_envp)
+{
+	int	i;
+
+	i = 0;
+	while (src_envp[i] != NULL)
+	{
+		dst_envp[i] = src_envp[i];
+		i++;
+	}
+	dst_envp[i] = NULL;
+	return ;
+}
+
 // After cd is issued, this updates the PWD and OLDPWD variables.
 // (cd happens in executeBuiltin when chdir is called)
 // - unset existing $OLDPWD
@@ -60,14 +74,14 @@ void	ms_export_cd(char **envp)
 	int		pwd_posn;
 	char	*wd;
 	char	**new_envp;	// NOTE This is malloc'd, has to be freed.
-	size_t	j;
+//	size_t	j;
 	size_t	env_len;	// Number of lines in envp
 	size_t	i;			// What does this count?
 	char	*oldpwd;
 	char	*new_pwd;
 
 	pwd_posn = 0;
-	j = 0;
+//	j = 0;
 	wd = NULL;
 	wd = getcwd(wd, 0);
 	if (!wd)
@@ -87,12 +101,13 @@ void	ms_export_cd(char **envp)
 		return ;
 	}
 
-	i = 0;
-	while (i < env_len)
-	{
-		new_envp[i] = envp[i];
-		i++;
-	}
+	i = env_len;	// HACK return to 0 if experiment fails
+	/* while (i < env_len) */
+	/* { */
+	/* 	new_envp[i] = envp[i]; */
+	/* 	i++; */
+	/* } */
+	copy_envp(envp, new_envp);	// HACK experiment WHICH WORKS
 
 	// Create strings for old and new PWD
 	// TODO Handle PWD not found error (i.e. find_env_var returns -1)
@@ -111,14 +126,15 @@ void	ms_export_cd(char **envp)
 	new_envp[i] = NULL;	// Terminate envp with NULL
 	free(wd);
 
+	copy_envp(new_envp, envp);	// HACK Experiment part 2 -- ALSO WORKS
 	// Update original envp
-	while (j < i)
-	{
-		envp[j] = new_envp[j];
-		j++;
-	}
-	envp[i] = NULL;	// Why this AND the new_envp version above?
+	/* while (j < i) */
+	/* { */
+	/* 	envp[j] = new_envp[j]; */
+	/* 	j++; */
+	/* } */
+//	envp[i] = NULL;	// NOTE This is now done in copy_envp
 	// NOTE This is needed to remove the extra (first) PWD entry in envp
-	ms_unset_export("PWD",envp);	// TODO Why are we unsetting PWD after the actions above??
+	ms_unset_export("PWD",envp);
 	free(new_envp);
 }
