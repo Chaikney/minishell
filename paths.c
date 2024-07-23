@@ -202,7 +202,7 @@ void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file)
 		else
 		{
 			executeBuiltin(cmd, envp);
-			exit(EXIT_SUCCESS);
+			exit_pipe(cmd);
 		}
 	}
 	else
