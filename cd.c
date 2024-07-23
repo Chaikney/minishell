@@ -5,6 +5,7 @@
 // BUILTIN cd command
 // Triggered by user action. Most work done in ms_export_cd
 // TODO Error in CD should set g_procstatus?
+// TODO This looks like it only changes the OLDPWD variables if chdir fails!
 void	ms_cd(t_command *cmd, char **envp)
 {
 	if (cmd->argc < 2)
@@ -19,9 +20,10 @@ void	ms_cd(t_command *cmd, char **envp)
 	return ;
 }
 
-// free whatver vars need to be freed.
+// free whatever vars need to be freed.
 // Display appropriate error message
-void	cd_error(char *errmsg, char *wd, char **new_envp, char *oldpwd)
+// Static because it is specific to the CD function
+static void	cd_error(char *errmsg, char *wd, char **new_envp, char *oldpwd)
 {
 	perror(errmsg);
 	if (wd)
@@ -93,27 +95,20 @@ void	ms_export_cd(t_command *cmd, char **envp)
 		i++;
 	}
 
-	// Set OLDPWD to current PWD
+	// Create strings for old and new PWD
 	// TODO Handle PWD not found error (i.e. find_env_var returns -1)
 	pwd_posn = find_env_var(envp,"PWD");
 	oldpwd = ft_strjoin("OLD", new_envp[pwd_posn]);
-	if (oldpwd == NULL)
-	{
-		cd_error("ft_strjoin", wd, new_envp, NULL);
-		return;
-	}
-	new_envp[i++] = oldpwd;
-
 	// Set PWD to new working directory
 	new_pwd = ft_strjoin(var_pwd, wd);
-	if (new_pwd == NULL)
+	if ((oldpwd == NULL) || (new_pwd == NULL))
 	{
 		cd_error("ft_strjoin", wd, new_envp, oldpwd);
 		return;
 	}
+	new_envp[i++] = oldpwd;
 	new_envp[i++] = new_pwd;
-
-	new_envp[i] = NULL;
+	new_envp[i] = NULL;	// Terminate envp with NULL
 	free(wd);
 
 	// Update original envp
@@ -122,7 +117,7 @@ void	ms_export_cd(t_command *cmd, char **envp)
 		envp[j] = new_envp[j];
 		j++;
 	}
-	envp[i] = NULL;	// NOTE Should tyhis be freed instead?
-	ms_unset_export("PWD",envp);
+	envp[i] = NULL;	// Why this AND the new_envp version above?
+	ms_unset_export("PWD",envp);	// TODO Why are we unsetting PWD after the actions above??
 	free(new_envp);
 }
