@@ -6,6 +6,12 @@
 // Triggered by user action. Most work done in ms_export_cd
 // TODO Error in CD should set g_procstatus?
 // NOTE Check both oldpwd and newpwd for memleaks!
+/// Tests and edge cases we have to handle.
+// [x] cd [directory that exists]			move to that place
+// [x] cd [directory that does not exist]	"no such file or directory"
+// [x] cd ..								move up one level
+// [x] cd ../..							move up two levels
+// [x] cd ../other_folder					Move to sibling folder
 void	ms_cd(t_command *cmd, char **envp)
 {
 	int		pwd_posn;
@@ -36,6 +42,8 @@ void	ms_cd(t_command *cmd, char **envp)
 // free whatever vars need to be freed.
 // Display appropriate error message
 // Static because it is specific to the CD function
+// TODO Add newpwd to cd_error
+// TODO Remove envp from newpwd to cd_error ?
 static void	cd_error(char *errmsg, char *wd, char **new_envp, char *oldpwd)
 {
 	perror(errmsg);
@@ -73,8 +81,6 @@ void	copy_envp(char **src_envp, char **dst_envp)
 // - copy new_envp (back) to envp
 // - unset PWD to remove the first (old) PWD variable in envp
 // free new_envp
-// FIXED Too many variables in ms_export_cd
-// FIXED Too many lines in ms_export_cd, needs refactor
 // TODO Unify error handling in ms_export_cd
 // TODO ms_export_cd is a misleading name
 // NOTE Variables used:
@@ -82,37 +88,31 @@ void	copy_envp(char **src_envp, char **dst_envp)
 // -  OLDPWD	string to be written to OLDPWD (includes name=) (freeing TBC)
 // -  new_pwd:	(string to be written to PWD (includes name=) (freeing TBC)
 // - env_len:	Number of lines in the environment
-// Tests and edge cases we have to handle.
-// [x] cd [directory that exists]			move to that place
-// [x] cd [directory that does not exist]	"no such file or directory"
-// [x] cd ..								move up one level
-// [x] cd ../..							move up two levels
-// [x] cd ../other_folder					Move to sibling folder
 void	ms_export_cd(char **envp, char *oldpwd, char *new_pwd)
 {
 	char	**new_envp;
 	size_t	env_len;
 
-	ms_unset_export("OLDPWD", envp);
-	env_len = 0;
-	while (envp[env_len] != NULL)
-		env_len++;
-	new_envp = malloc(sizeof(char *) * (env_len + 3));
-	if (new_envp == NULL)
-	{
-		cd_error("malloc", NULL, NULL, NULL);
-		return ;
-	}
-	copy_envp(envp, new_envp);
 	if ((oldpwd == NULL) || (new_pwd == NULL))
+		cd_error("Missing value for PWD update.", NULL, NULL, oldpwd);
+	else
 	{
-		cd_error("ft_strjoin", NULL, new_envp, oldpwd);
-		return ;
+		ms_unset_export("OLDPWD", envp);
+		env_len = 0;
+		while (envp[env_len] != NULL)
+			env_len++;
+		new_envp = malloc(sizeof(char *) * (env_len + 3));
+		if (new_envp == NULL)
+		{
+			cd_error("malloc", NULL, NULL, NULL);
+			return ;
+		}
+		copy_envp(envp, new_envp);
+		new_envp[env_len++] = oldpwd;
+		new_envp[env_len++] = new_pwd;
+		new_envp[env_len] = NULL;
+		copy_envp(new_envp, envp);
+		ms_unset_export("PWD", envp);
+		free(new_envp);
 	}
-	new_envp[env_len++] = oldpwd;
-	new_envp[env_len++] = new_pwd;
-	new_envp[env_len] = NULL;
-	copy_envp(new_envp, envp);
-	ms_unset_export("PWD", envp);
-	free(new_envp);
 }
