@@ -5,13 +5,13 @@
 // BUILTIN cd command
 // Triggered by user action. Most work done in ms_export_cd
 // TODO Error in CD should set g_procstatus?
-// TODO This looks like it only changes the OLDPWD variables if chdir fails!
+// NOTE Check both oldpwd and newpwd for memleaks!
 void	ms_cd(t_command *cmd, char **envp)
 {
-	int	pwd_posn;
+	int		pwd_posn;
 	char	*oldpwd;
 	char	*new_pwd;
-//	char	*wd;
+	char	*wd;
 
 	if (cmd->argc < 2)
 		fprintf(stderr, "cd: missing argument\n");
@@ -21,18 +21,12 @@ void	ms_cd(t_command *cmd, char **envp)
 			printf("wrong address\n");
 		else
 		{
-			/* wd = NULL; */
-			/* wd = getcwd(wd, 0); */
-			pwd_posn = find_env_var(envp,"PWD");
+			wd = NULL;
+			wd = getcwd(wd, 0);
+			pwd_posn = find_env_var(envp, "PWD");
 			oldpwd = ft_strjoin("OLD", envp[pwd_posn]);
-			new_pwd = ft_strjoin("PWD=", getcwd(0, 0));
-//			new_pwd = ft_strjoin("PWD=", wd);
-			if ((oldpwd == NULL) || (new_pwd == NULL))
-			{
-				printf("prblme");
-//				cd_error("ft_strjoin", wd, new_envp, oldpwd);
-				return ;
-			}
+			new_pwd = ft_strjoin("PWD=", wd);
+			free(wd);
 			ms_export_cd(envp, oldpwd, new_pwd);
 		}
 	}
@@ -73,18 +67,21 @@ void	copy_envp(char **src_envp, char **dst_envp)
 // After cd is issued, this updates the PWD and OLDPWD variables.
 // (cd happens in executeBuiltin when chdir is called)
 // - unset existing $OLDPWD
-// - update $PWD and $OLDPWD
-// - - how? Looks like copying the entire envp?
-// FIXME Too many variables in ms_export_cd
-// FIXED Variables defined and set in line
-// FIXME Too many lines in ms_export_cd, needs refactor
+// - make space for copy of envp and 2 more variables
+// - copy envp to new_envp
+// - add $PWD and $OLDPWD to the end of new_envp
+// - copy new_envp (back) to envp
+// - unset PWD to remove the first (old) PWD variable in envp
+// free new_envp
+// FIXED Too many variables in ms_export_cd
+// FIXED Too many lines in ms_export_cd, needs refactor
 // TODO Unify error handling in ms_export_cd
 // TODO ms_export_cd is a misleading name
-// DONE REmove cmd from call signature, un-needed
-// TODO Variables to be freed:
-// [  ] new_envp
-// [  ] NOT wd! (TBC)
-// [  ]  OLDPWD
+// NOTE Variables used:
+// -  new_envp:	expanded temporary copy of envp (to be freed)
+// -  OLDPWD	string to be written to OLDPWD (includes name=) (freeing TBC)
+// -  new_pwd:	(string to be written to PWD (includes name=) (freeing TBC)
+// - env_len:	Number of lines in the environment
 // Tests and edge cases we have to handle.
 // [x] cd [directory that exists]			move to that place
 // [x] cd [directory that does not exist]	"no such file or directory"
@@ -93,54 +90,29 @@ void	copy_envp(char **src_envp, char **dst_envp)
 // [x] cd ../other_folder					Move to sibling folder
 void	ms_export_cd(char **envp, char *oldpwd, char *new_pwd)
 {
-//	int		pwd_posn;
-	char	*wd;
-	char	**new_envp;	// NOTE This is malloc'd, has to be freed.
-	size_t	env_len;	// Number of lines in envp
-	/* char	*oldpwd; */
-	/* char	*new_pwd; */
+	char	**new_envp;
+	size_t	env_len;
 
-//	pwd_posn = 0;
-	wd = NULL;
-	wd = getcwd(wd, 0);
-	if (!wd)
-		return;
-
-	// Unset OLDPWD
 	ms_unset_export("OLDPWD", envp);
-	// Update PWD and OLDPWD
 	env_len = 0;
 	while (envp[env_len] != NULL)
 		env_len++;
-	// Create space for a larger copy of envp
 	new_envp = malloc(sizeof(char *) * (env_len + 3));
 	if (new_envp == NULL)
 	{
-		cd_error("malloc", wd, NULL, NULL);
+		cd_error("malloc", NULL, NULL, NULL);
 		return ;
 	}
-
 	copy_envp(envp, new_envp);
-
-	// Create strings for old and new PWD
-	// TODO Handle PWD not found error (i.e. find_env_var returns -1)
-	/* pwd_posn = find_env_var(envp,"PWD"); */
-	/* oldpwd = ft_strjoin("OLD", new_envp[pwd_posn]); */
-	/* // Set PWD to new working directory */
-	/* new_pwd = ft_strjoin("PWD=", wd); */
-	/* if ((oldpwd == NULL) || (new_pwd == NULL)) */
-	/* { */
-	/* 	cd_error("ft_strjoin", wd, new_envp, oldpwd); */
-	/* 	return; */
-	/* } */
-	// Adding new lines to the envp
+	if ((oldpwd == NULL) || (new_pwd == NULL))
+	{
+		cd_error("ft_strjoin", NULL, new_envp, oldpwd);
+		return ;
+	}
 	new_envp[env_len++] = oldpwd;
 	new_envp[env_len++] = new_pwd;
-	new_envp[env_len] = NULL;	// Terminate envp with NULL
-	free(wd);
-
-	copy_envp(new_envp, envp);	// HACK Experiment part 2 -- ALSO WORKS
-	// NOTE This is needed to remove the extra (first) PWD entry in envp
-	ms_unset_export("PWD",envp);
+	new_envp[env_len] = NULL;
+	copy_envp(new_envp, envp);
+	ms_unset_export("PWD", envp);
 	free(new_envp);
 }
