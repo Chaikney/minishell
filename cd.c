@@ -15,7 +15,7 @@ void	ms_cd(t_command *cmd, char **envp)
 		if (chdir(cmd->argv[1]) != 0)
 			printf("wrong address\n");
 		else
-			ms_export_cd(cmd,envp);
+			ms_export_cd(envp);
 	}
 	return ;
 }
@@ -54,7 +54,7 @@ static void	cd_error(char *errmsg, char *wd, char **new_envp, char *oldpwd)
 // [x] cd ..								move up one level
 // [x] cd ../..							move up two levels
 // [x] cd ../other_folder					Move to sibling folder
-void	ms_export_cd(t_command *cmd, char **envp)
+void	ms_export_cd(char **envp)
 {
 	char	*var_pwd = "PWD=";
 	int		pwd_posn;
@@ -66,7 +66,6 @@ void	ms_export_cd(t_command *cmd, char **envp)
 	char	*oldpwd;
 	char	*new_pwd;
 
-	(void)cmd;
 	pwd_posn = 0;
 	j = 0;
 	wd = NULL;
