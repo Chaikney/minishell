@@ -13,7 +13,7 @@
 NAME	= minishell
 
 SRC		= minishell.c paths.c parse.c builtins.c substitute.c tokens.c \
-		helpers.c pipes.c input.c ms_echo.c signals.c exit.c
+		helpers.c pipes.c input.c ms_echo.c signals.c exit.c env.c cd.c
 
 OBJ		= $(SRC:.c=.o)
 

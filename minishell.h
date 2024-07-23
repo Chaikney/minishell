@@ -80,9 +80,9 @@ char	*get_strong_param(const char *cmdline, int *posn);
 int		ms_pwd(void);
 void	ms_export(t_command *cmd, char **envp);
 void	ms_unset(t_command *cmd, char **envp);
-void	ms_export_cd(t_command *cmd,char **envp);
 t_builtin	parse_builtin(t_command *cmd, int posn);
 void	ms_echo(t_command *cmd);
+void	ms_unset_export(char *unset_var, char **envp);
 
 // parse.c - functions to read and interpret user input
 int		parse(const char *cmdline, t_command *cmd);
@@ -122,4 +122,11 @@ void	exit_pipe(t_command *cmd);
 void	exit_and_free(char **args, int fd_in, int fd_out);
 void	clear_t_command(t_command *cmd);
 void	ms_exit(t_command *cmd);
+
+// env.c - just that for now
+void	ms_env(char **envp);
+
+// cd.c - change wd, set new value of PWD
+void	ms_cd(t_command *cmd, char **envp);
+void	ms_export_cd(t_command *cmd, char **envp);
 #endif

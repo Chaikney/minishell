@@ -41,9 +41,7 @@ t_builtin parse_builtin(t_command *cmd, int posn)
 	return (NONE);
 }
 
-// DONE echo Commands into separate function
-// FIXME Too many lines in function.
-// TODO env should not display empty variables, unlike export.
+// Check value of cmd->builtin and direct to desired function.
 // falta por añadir que hace cada
 //  [x] echo with -n (newline or not)
 //  [x] cd with only a relative or absolute path
@@ -55,17 +53,7 @@ t_builtin parse_builtin(t_command *cmd, int posn)
 void executeBuiltin(t_command *cmd, char **envp)
 {
 	if (cmd->builtin == CD)
-	{
-		if (cmd->argc < 2)
-			fprintf(stderr, "cd: missing argument\n");
-		else
-		{
-			if (chdir(cmd->argv[1]) != 0)
-				printf("wrong address\n");
-			else
-				ms_export_cd(cmd,envp);
-		}
-	}
+        ms_cd(cmd, envp);
 	else if (cmd->builtin == EXIT)
 		ms_exit(cmd);
 	else if ((cmd->builtin == ECHON) || (cmd->builtin == ECHO))
@@ -77,14 +65,7 @@ void executeBuiltin(t_command *cmd, char **envp)
 	else if (cmd->builtin == UNSET)
 		ms_unset(cmd, envp);
 	else if (cmd->builtin == ENV)
-	{
-		while (*envp)
-		{
-			printf("%s\n", *envp);
-			envp++;
-		}
-		return;
-	}
+        ms_env(envp);
 	else
 	{
 		printf("Unknown builtin command\n");
