@@ -19,6 +19,19 @@ void	ms_cd(t_command *cmd, char **envp)
 	return ;
 }
 
+// free whatver vars need to be freed.
+// Display appropriate error message
+void	cd_error(char *errmsg, char *wd, char **new_envp, char *oldpwd)
+{
+	perror(errmsg);
+	if (wd)
+		free (wd);
+	if (new_envp)
+		free(new_envp);
+	if (oldpwd)
+		free(oldpwd);
+}
+
 // After cd is issued, this updates the PWD and OLDPWD variables.
 // (cd happens in executeBuiltin when chdir is called)
 // - unset existing $OLDPWD
@@ -27,6 +40,12 @@ void	ms_cd(t_command *cmd, char **envp)
 // FIXME Too many variables in ms_export_cd
 // FIXED Variables defined and set in line
 // FIXME Too many lines in ms_export_cd, needs refactor
+// TODO Unify error handling in ms_export_cd
+// TODO REmove cmd from call signature, un-needed
+// TODO Variables to be freed:
+// [  ] new_envp
+// [  ] NOT wd! (TBC)
+// [  ]  OLDPWD
 // Tests and edge cases we have to handle.
 // [x] cd [directory that exists]			move to that place
 // [x] cd [directory that does not exist]	"no such file or directory"
@@ -36,18 +55,19 @@ void	ms_cd(t_command *cmd, char **envp)
 void	ms_export_cd(t_command *cmd, char **envp)
 {
 	char	*var_pwd = "PWD=";
-	int		h;
-	char	*wd = NULL;
+	int		pwd_posn;
+	char	*wd;
 	char	**new_envp;	// NOTE This is malloc'd, has to be freed.
 	size_t	j;
-	size_t	env_len;
-	size_t	i;
+	size_t	env_len;	// Number of lines in envp
+	size_t	i;			// What does this count?
 	char	*oldpwd;
 	char	*new_pwd;
 
 	(void)cmd;
-	h = 0;
+	pwd_posn = 0;
 	j = 0;
+	wd = NULL;
 	wd = getcwd(wd, 0);
 	if (!wd)
 		return;
@@ -56,14 +76,13 @@ void	ms_export_cd(t_command *cmd, char **envp)
 	ms_unset_export("OLDPWD", envp);
 	// Update PWD and OLDPWD
 	env_len = 0;
-	while (envp[env_len] != NULL) {
+	while (envp[env_len] != NULL)
 		env_len++;
-	}
 
 	new_envp = malloc(sizeof(char *) * (env_len + 3));
-	if (new_envp == NULL) {
-		perror("malloc");
-		free(wd);
+	if (new_envp == NULL)
+	{
+		cd_error("malloc", wd, NULL, NULL);
 		return;
 	}
 
@@ -75,23 +94,21 @@ void	ms_export_cd(t_command *cmd, char **envp)
 	}
 
 	// Set OLDPWD to current PWD
-	h = find_env_var(envp,"PWD");
-	oldpwd = ft_strjoin("OLD", new_envp[h]);
-	if (oldpwd == NULL) {
-		perror("ft_strjoin");
-		free(new_envp);
-		free(wd);
+	// TODO Handle PWD not found error (i.e. find_env_var returns -1)
+	pwd_posn = find_env_var(envp,"PWD");
+	oldpwd = ft_strjoin("OLD", new_envp[pwd_posn]);
+	if (oldpwd == NULL)
+	{
+		cd_error("ft_strjoin", wd, new_envp, NULL);
 		return;
 	}
 	new_envp[i++] = oldpwd;
 
 	// Set PWD to new working directory
 	new_pwd = ft_strjoin(var_pwd, wd);
-	if (new_pwd == NULL) {
-		perror("ft_strjoin");
-		free(new_envp);
-		free(wd);
-		free(oldpwd);
+	if (new_pwd == NULL)
+	{
+		cd_error("ft_strjoin", wd, new_envp, oldpwd);
 		return;
 	}
 	new_envp[i++] = new_pwd;
@@ -105,7 +122,7 @@ void	ms_export_cd(t_command *cmd, char **envp)
 		envp[j] = new_envp[j];
 		j++;
 	}
-	envp[i] = NULL;
+	envp[i] = NULL;	// NOTE Should tyhis be freed instead?
 	ms_unset_export("PWD",envp);
 	free(new_envp);
 }
