@@ -30,19 +30,6 @@ int ms_pwd(void)
 	return (0);
 }
 
-// Shell's exit clears the relevant variables and ends the program.
-// This handles USER-REQUESTED exits only.
-// NOTE This is different from exits in pipes or failed commands.
-// - free cmd
-// - what about the readline input variable?
-// TODO If this is called from main, we have a char* to free
-void	ms_exit(t_command *cmd)
-{
-	printf("Agurrrr....\n");
-	clear_t_command(cmd);
-	exit(EXIT_SUCCESS);
-}
-
 // UNSET used internally by other minishell functions (cd, export)
 // This takes the name of a variable to be unset,
 // whereas user-facing ms_export takes a t_command.

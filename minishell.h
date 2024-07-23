@@ -60,9 +60,6 @@ typedef struct s_command
 }	t_command;
 
 // various functions
-void	exit_and_free(char **args, int fd_in, int fd_out);
-void	exit_pipe(t_command *cmd);
-void	clear_t_command(t_command *cmd);
 void	run_command(t_command *cmd, char **envp);
 void	eval(char *cmdline, char **envp);
 char	*get_prompt(void);
@@ -83,7 +80,6 @@ char	*get_strong_param(const char *cmdline, int *posn);
 int		ms_pwd(void);
 void	ms_export(t_command *cmd, char **envp);
 void	ms_unset(t_command *cmd, char **envp);
-void	ms_exit(t_command *cmd);
 void	ms_export_cd(t_command *cmd,char **envp);
 t_builtin	parse_builtin(t_command *cmd, int posn);
 void	ms_echo(t_command *cmd);
@@ -120,4 +116,10 @@ t_command	*make_cmd_list(t_command *to_split, int n);
 void	handle_sigint(int sig);
 void	handle_sigquit();
 int		setup_signals(void);
+
+// exit.c - freeing memory and exiting cleanly
+void	exit_pipe(t_command *cmd);
+void	exit_and_free(char **args, int fd_in, int fd_out);
+void	clear_t_command(t_command *cmd);
+void	ms_exit(t_command *cmd);
 #endif
