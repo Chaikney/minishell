@@ -43,7 +43,7 @@ static void	cd_error(char *errmsg, char *wd, char **new_envp, char *oldpwd)
 // FIXED Variables defined and set in line
 // FIXME Too many lines in ms_export_cd, needs refactor
 // TODO Unify error handling in ms_export_cd
-// TODO REmove cmd from call signature, un-needed
+// DONE REmove cmd from call signature, un-needed
 // TODO Variables to be freed:
 // [  ] new_envp
 // [  ] NOT wd! (TBC)
@@ -56,7 +56,7 @@ static void	cd_error(char *errmsg, char *wd, char **new_envp, char *oldpwd)
 // [x] cd ../other_folder					Move to sibling folder
 void	ms_export_cd(char **envp)
 {
-	char	*var_pwd = "PWD=";
+//	char	*var_pwd = "PWD=";
 	int		pwd_posn;
 	char	*wd;
 	char	**new_envp;	// NOTE This is malloc'd, has to be freed.
@@ -73,18 +73,18 @@ void	ms_export_cd(char **envp)
 	if (!wd)
 		return;
 
-	// Unset OLD_PWD
+	// Unset OLDPWD
 	ms_unset_export("OLDPWD", envp);
 	// Update PWD and OLDPWD
 	env_len = 0;
 	while (envp[env_len] != NULL)
 		env_len++;
-
+	// Create space for a larger copy of envp
 	new_envp = malloc(sizeof(char *) * (env_len + 3));
 	if (new_envp == NULL)
 	{
 		cd_error("malloc", wd, NULL, NULL);
-		return;
+		return ;
 	}
 
 	i = 0;
@@ -99,7 +99,8 @@ void	ms_export_cd(char **envp)
 	pwd_posn = find_env_var(envp,"PWD");
 	oldpwd = ft_strjoin("OLD", new_envp[pwd_posn]);
 	// Set PWD to new working directory
-	new_pwd = ft_strjoin(var_pwd, wd);
+	new_pwd = ft_strjoin("PWD=", wd);
+//	new_pwd = ft_strjoin(var_pwd, wd);
 	if ((oldpwd == NULL) || (new_pwd == NULL))
 	{
 		cd_error("ft_strjoin", wd, new_envp, oldpwd);
@@ -117,6 +118,7 @@ void	ms_export_cd(char **envp)
 		j++;
 	}
 	envp[i] = NULL;	// Why this AND the new_envp version above?
+	// NOTE This is needed to remove the extra (first) PWD entry in envp
 	ms_unset_export("PWD",envp);	// TODO Why are we unsetting PWD after the actions above??
 	free(new_envp);
 }
