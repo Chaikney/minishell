@@ -20,31 +20,23 @@ void	ms_exit(t_command *cmd)
 // SO, the builtins, basicallyy.
 // TODO Ensure this works as expected and clears everything.
 // (File descriptors were handled before calling this.)
-void	exit_pipe(t_command *cmd)
+void	exit_successful_pipe(t_command *cmd)
 {
 	clear_t_command(cmd);
 	exit (EXIT_SUCCESS);
 }
 
-// Clear the pathparts and close fds created by piping before exit.
-// TODO This probably needs to be expanded and / or replaced for minishell use.
-// TODO Should this be merged into or called by ms_exit?
-// TODO The freeing of args here would be better handled by clear_t_command
-void	exit_and_free(char **args, int fd_in, int fd_out)
+// Cleanly exit from a failed command in a pipe
+void	exit_failed_pipe(t_command *cmd, int fd_in, int fd_out)
 {
-	int	i;
-
+	g_procstatus = errno;
+	if (cmd)
+		clear_t_command(cmd);
 	perror(strerror(errno));
 	if ((fd_in) && (fd_in != -1))
 		close(fd_in);
 	if ((fd_out) && (fd_out != -1))
 		close(fd_out);
-	i = 0;
-	if (args)
-	{
-		while (args[i])
-			free(args[i++]);
-	}
 	exit (EXIT_FAILURE);
 }
 

@@ -133,9 +133,7 @@ void	remove_cmd_parts(t_command *cmd, char *target)
 // - run command
 // - wait for it to come back
 // NOTE child == 0 means we are in the child process!
-// TODO The exit_and_free should be unified with ms_exit, or renamed.
-// ...don't want to leave the entire shell for fork/pipe errors.
-// Now takes an input file pointer to connect to the previous command in pipe.
+// NOTE The input file pointer connects us to the previous command in pipe.
 // TODO Move builtin check to run_command to save lines?
 void	run_in_pipe(t_command *cmd, char **envp, int *i_file)
 {
@@ -143,10 +141,10 @@ void	run_in_pipe(t_command *cmd, char **envp, int *i_file)
 	int		tube[2];
 
 	if (pipe(tube) == -1)
-		exit_and_free(NULL, tube[0], tube[1]);
+		exit_failed_pipe(NULL, tube[0], tube[1]);
 	child = fork();
 	if (child == -1)
-		exit_and_free(NULL, tube[0], tube[1]);
+		exit_failed_pipe(NULL, tube[0], tube[1]);
 	if (child == 0)
 	{
 		close(tube[0]);
@@ -160,7 +158,7 @@ void	run_in_pipe(t_command *cmd, char **envp, int *i_file)
 		else
 		{
 			executeBuiltin(cmd, envp);
-			exit_pipe(cmd);
+			exit_successful_pipe(cmd);
 		}
 	}
 	else
@@ -202,7 +200,7 @@ void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file)
 		else
 		{
 			executeBuiltin(cmd, envp);
-			exit_pipe(cmd);
+			exit_successful_pipe(cmd);
 		}
 	}
 	else

@@ -118,10 +118,10 @@ void	handle_sigquit();
 int		setup_signals(void);
 
 // exit.c - freeing memory and exiting cleanly
-void	exit_pipe(t_command *cmd);
-void	exit_and_free(char **args, int fd_in, int fd_out);
 void	clear_t_command(t_command *cmd);
 void	ms_exit(t_command *cmd);
+void	exit_successful_pipe(t_command *cmd);
+void	exit_failed_pipe(t_command *cmd, int fd_in, int fd_out);
 
 // env.c - just that for now
 void	ms_env(char **envp);

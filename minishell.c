@@ -96,7 +96,6 @@ char	*get_prompt(void)
 
 // FIXME Not clear what cmdline == NULL attempts, i can't trigger it.
 // ...readline man page says this what it returns on EOF on an empty line.
-// TODO Implement an exit routine that frees allocated memory.
 // TODO Ensure that *all* commands run quit or return to here.
 int main(int argc, char **argv, char **envp)
 {

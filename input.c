@@ -49,7 +49,7 @@ int	stopword_input(t_command *cmd)
 			if (ft_strncmp(stopword, line, ft_strlen(stopword)) == 0)
 			{
 				free (line);
-				exit_pipe(cmd);
+				exit_successful_pipe(cmd);
 			}
 			write(fd[1], line, ft_strlen(line));
 			free (line);
