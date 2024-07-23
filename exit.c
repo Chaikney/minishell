@@ -2,6 +2,19 @@
 
 // TODO Add 42 header
 
+// Shell's exit clears the relevant variables and ends the program.
+// This handles USER-REQUESTED exits only.
+// NOTE This is different from exits in pipes or failed commands.
+// - free cmd
+// - what about the readline input variable?
+// TODO If this is called from main, we have a char* to free
+void	ms_exit(t_command *cmd)
+{
+	printf("Agurrrr....\n");
+	clear_t_command(cmd);
+	exit(EXIT_SUCCESS);
+}
+
 // Call this when we need to exit from a successful process that
 // ran in a pipe but hasn't otherwise (i.e. via execve) been exited.
 // SO, the builtins, basicallyy.
