@@ -134,48 +134,48 @@ char	**quote_aware_split(const char *cmdline)
 
 // Parse input from cmdline into a command struct
 // Return values:
-// 0 - no tokens from split
-// 1 - Nothing added to the cmd
-// cmdline = string from readline
-// cmd - t_command to hold tokens from cmdline and other data
+// 0 - command parsed successfully
+// -1 - parsing failed
+// Variables:
+//  - cmdline:	string from readline
+//  - cmd:		t_command to hold tokens from cmdline and other data
 // TODO Perhaps the trim of cmdline should happen in quote_aware_split?
-// TODO Needs more consistent / clear error conditions to replace is_bg
 // FIXME Ensure that we free *all* parts of token once cmd is complete
 // TODO Give this a more descriptive name; we parse lots of things now.
-// TODO Careful with the argc counting here...
-// TODO Better name and defined purpose for is_bg variable.
+// DONE Better name and defined purpose for is_bg variable.
 // NOTE malloc'd variables used in this function:
 // - cmdline:  set by readline in main
 // - token:
-// - cmd_trim: freed here
+// - cmd_trim: copy of cmdline without leading / trailing spaces; freed here
 int	parse(const char *cmdline, t_command *cmd)
 {
     char	**token;
-    int	is_bg;
+    int	is_parsed;
     char	*cmd_trim;
     
-    is_bg = 0;	// HACK for compilation, remove later.
+    is_parsed = -1;
     cmd_trim = ft_strtrim(cmdline, " ");
     if (cmd_trim == NULL)
         perror("command line is NULL\n");
     token = quote_aware_split(cmd_trim);
     if (!token)
-        return (0);
+        return (is_parsed);
     cmd->argc = 0;
     while (token[cmd->argc] != NULL)
     {
         cmd->argv[cmd->argc] = token[cmd->argc];
         cmd->argc++;
         if (cmd->argc >= MAXARGS - 1)
-            break;
+            break ;
     }
     cmd->argv[cmd->argc] = NULL;
     free(token);
     if (cmd->argc == 0)
-        return (1);
+        return (is_parsed);
     cmd->next = NULL;	// NOTE Without this setup, segfaults all over.
-    print_cmd_parts(cmd);	// HACK for debugging
+//     print_cmd_parts(cmd);	// HACK for debugging
     cmd->builtin = parse_builtin (cmd, 0);	// HACK Hardcoding; should ensure no redirection present.
     free (cmd_trim);
-    return (is_bg);
+    is_parsed = 0;
+    return (is_parsed);
 }

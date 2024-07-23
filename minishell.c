@@ -55,7 +55,7 @@ void	run_command(t_command *cmd, char **envp)
 // If the return has no control characters, send it to run.
 // If there are control characters, pass it to the complex function
 // Clear the command struct on return.
-// TODO rename the bg variable to say what it does (what does it do?)
+// DONE rename the bg variable to say what it does (what does it do?)
 // NOTE First execbuiltin check looks to not be needed.
 // BUT some builtins don't work in pipes!
 // EXIT has to be an exit from the shell.
@@ -63,25 +63,25 @@ void	run_command(t_command *cmd, char **envp)
 // Therefore we keep the check here!
 void eval(char *cmdline, char **envp)
 {
-    int			bg;
+    int			parse_state;
     t_command	cmd;
 	int			con_loc;
 
-    bg = parse(cmdline, &cmd);
-	(void) bg;
-	con_loc = find_flow_control(&cmd);
-	if (con_loc == -1)
+    parse_state = parse(cmdline, &cmd);
+	if (parse_state == 0)
 	{
-		if (cmd.builtin != NONE)
-			executeBuiltin(&cmd, envp);
+		con_loc = find_flow_control(&cmd);
+		if (con_loc == -1)
+		{
+			if (cmd.builtin != NONE)
+				executeBuiltin(&cmd, envp);
+			else
+				run_final_cmd(&cmd, envp, -1, -1);
+		}
 		else
-			run_final_cmd(&cmd, envp, -1, -1);
+			direct_complex_command(&cmd, envp);
+		clear_t_command(&cmd);
 	}
-	else
-		direct_complex_command(&cmd, envp);
-	/* if (bg == -1)	// TODO Do we still need this, what is it for? */
-	/* 	return; */
-	clear_t_command(&cmd);
 }
 
 // TODO Define a more interesting prompt, e.g. show wd.
