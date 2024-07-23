@@ -128,5 +128,5 @@ void	ms_env(char **envp);
 
 // cd.c - change wd, set new value of PWD
 void	ms_cd(t_command *cmd, char **envp);
-void	ms_export_cd(char **envp);
+void	ms_export_cd(char **envp, char *oldpwd, char *newpwd);
 #endif

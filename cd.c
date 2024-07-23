@@ -8,6 +8,11 @@
 // TODO This looks like it only changes the OLDPWD variables if chdir fails!
 void	ms_cd(t_command *cmd, char **envp)
 {
+	int	pwd_posn;
+	char	*oldpwd;
+	char	*new_pwd;
+//	char	*wd;
+
 	if (cmd->argc < 2)
 		fprintf(stderr, "cd: missing argument\n");
 	else
@@ -15,7 +20,21 @@ void	ms_cd(t_command *cmd, char **envp)
 		if (chdir(cmd->argv[1]) != 0)
 			printf("wrong address\n");
 		else
-			ms_export_cd(envp);
+		{
+			/* wd = NULL; */
+			/* wd = getcwd(wd, 0); */
+			pwd_posn = find_env_var(envp,"PWD");
+			oldpwd = ft_strjoin("OLD", envp[pwd_posn]);
+			new_pwd = ft_strjoin("PWD=", getcwd(0, 0));
+//			new_pwd = ft_strjoin("PWD=", wd);
+			if ((oldpwd == NULL) || (new_pwd == NULL))
+			{
+				printf("prblme");
+//				cd_error("ft_strjoin", wd, new_envp, oldpwd);
+				return ;
+			}
+			ms_export_cd(envp, oldpwd, new_pwd);
+		}
 	}
 	return ;
 }
@@ -60,6 +79,7 @@ void	copy_envp(char **src_envp, char **dst_envp)
 // FIXED Variables defined and set in line
 // FIXME Too many lines in ms_export_cd, needs refactor
 // TODO Unify error handling in ms_export_cd
+// TODO ms_export_cd is a misleading name
 // DONE REmove cmd from call signature, un-needed
 // TODO Variables to be freed:
 // [  ] new_envp
@@ -71,16 +91,16 @@ void	copy_envp(char **src_envp, char **dst_envp)
 // [x] cd ..								move up one level
 // [x] cd ../..							move up two levels
 // [x] cd ../other_folder					Move to sibling folder
-void	ms_export_cd(char **envp)
+void	ms_export_cd(char **envp, char *oldpwd, char *new_pwd)
 {
-	int		pwd_posn;
+//	int		pwd_posn;
 	char	*wd;
 	char	**new_envp;	// NOTE This is malloc'd, has to be freed.
 	size_t	env_len;	// Number of lines in envp
-	char	*oldpwd;
-	char	*new_pwd;
+	/* char	*oldpwd; */
+	/* char	*new_pwd; */
 
-	pwd_posn = 0;
+//	pwd_posn = 0;
 	wd = NULL;
 	wd = getcwd(wd, 0);
 	if (!wd)
@@ -104,15 +124,15 @@ void	ms_export_cd(char **envp)
 
 	// Create strings for old and new PWD
 	// TODO Handle PWD not found error (i.e. find_env_var returns -1)
-	pwd_posn = find_env_var(envp,"PWD");
-	oldpwd = ft_strjoin("OLD", new_envp[pwd_posn]);
-	// Set PWD to new working directory
-	new_pwd = ft_strjoin("PWD=", wd);
-	if ((oldpwd == NULL) || (new_pwd == NULL))
-	{
-		cd_error("ft_strjoin", wd, new_envp, oldpwd);
-		return;
-	}
+	/* pwd_posn = find_env_var(envp,"PWD"); */
+	/* oldpwd = ft_strjoin("OLD", new_envp[pwd_posn]); */
+	/* // Set PWD to new working directory */
+	/* new_pwd = ft_strjoin("PWD=", wd); */
+	/* if ((oldpwd == NULL) || (new_pwd == NULL)) */
+	/* { */
+	/* 	cd_error("ft_strjoin", wd, new_envp, oldpwd); */
+	/* 	return; */
+	/* } */
 	// Adding new lines to the envp
 	new_envp[env_len++] = oldpwd;
 	new_envp[env_len++] = new_pwd;
