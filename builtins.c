@@ -20,6 +20,7 @@
 int ms_pwd(void)
 {
 	char    *wd;
+
 	wd = NULL;
 	wd = getcwd(wd, 0);
 	if (!wd)
@@ -30,8 +31,10 @@ int ms_pwd(void)
 }
 
 // Shell's exit clears the relevant variables and ends the program.
+// This handles USER-REQUESTED exits only.
+// NOTE This is different from exits in pipes or failed commands.
 // - free cmd
-// - anything else?
+// - what about the readline input variable?
 // TODO If this is called from main, we have a char* to free
 void	ms_exit(t_command *cmd)
 {

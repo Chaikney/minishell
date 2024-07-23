@@ -177,7 +177,6 @@ void	run_in_pipe(t_command *cmd, char **envp, int *i_file)
 // Forks, sets up input and output for one child process
 // and waits for it to complete.
 // NOTE This is the one we use for simple commands. Should work with redirect.
-// TODO rename to "run_last" or similar
 void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file)
 {
 	pid_t	child;

@@ -162,6 +162,11 @@ char	**quote_aware_split(const char *cmdline)
 // FIXME Ensure that we free *all* parts of token once cmd is complete
 // TODO Give this a more descriptive name; we parse lots of things now.
 // TODO Careful with the argc counting here...
+// TODO Better name and defined purpose for is_bg variable.
+// NOTE malloc'd variables used in this function:
+// - cmdline:  set by readline in main
+// - token:
+// - cmd_trim: freed here
 int	parse(const char *cmdline, t_command *cmd)
 {
     char	**token;

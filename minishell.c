@@ -14,8 +14,9 @@
 
 int g_procstatus;
 
-// this is to disable CRTL-D and the apparent EOF we get
+// this is to disable CRTL-\ and also the apparent EOF we get
 // after a pipe ends
+// "Ctrl-\ does nothing"
 void	handle_sigquit()
 {
 	return ;
@@ -24,6 +25,7 @@ void	handle_sigquit()
 // catch CTRL-c / SIGINT
 // TODO This should return to the normal prompt / readline call
 // ...I think this leads to duplicated prompt message.
+// "CTRL-C displays a new prompt on a new line."
 void manipule_sigint(int sig)
 {
 	if(sig)
@@ -130,7 +132,11 @@ void	run_command(t_command *cmd, char **envp)
 // If there are control characters, pass it to the complex function
 // Clear the command struct on return.
 // TODO rename the bg variable to say what it does (what does it do?)
-// TODO First execbuiltin check is not needed.
+// NOTE First execbuiltin check looks to not be needed.
+// BUT some builtins don't work in pipes!
+// EXIT has to be an exit from the shell.
+// EXPORT has to change values in the process above.
+// Therefore we keep the check here!
 void eval(char *cmdline, char **envp)
 {
     int			bg;

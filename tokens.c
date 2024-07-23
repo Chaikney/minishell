@@ -23,6 +23,7 @@
 // TODO We may need to handle some escape characters in this function.
 // TODO Consider if this should stop at a ' or "
 // (they would be misplaced, but...)
+// NOTE It is *only* this function which loses memory. What is the difference?
 char	*get_raw_param(const char *cmd, int *posn)
 {
 	int		i;

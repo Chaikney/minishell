@@ -71,6 +71,9 @@ int	stopword_input(t_command *cmd)
 // bash quits with error and doesn’t run the command.
 // If it succeeds, bash uses the file descriptor
 // of the opened file as the stdin file descriptor for the command.
+// NOTE i_file values of -1 are sometimes attempted to be closed
+// (In cases of BUILTIN commands)
+// ...better they should be caught instead
 int	setup_input(t_command *cmd, int i_lvl)
 {
 	char	*i_path;
