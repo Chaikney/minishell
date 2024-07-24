@@ -5,13 +5,15 @@
 // this is to disable CRTL-\ and also the apparent EOF we get
 // after a pipe ends
 // "Ctrl-\ does nothing"
-void	handle_sigquit()
+// FIXME This should do *something* no? Or should it be sigdelete?
+void	handle_sigquit(int sig)
 {
+	(void) sig;
 	return ;
 }
 
 // catch CTRL-c / SIGINT
-// TODO This should return to the normal prompt / readline call
+// FIXME This should return to the normal prompt / readline call
 // ...I think this leads to duplicated prompt message.
 // "CTRL-C displays a new prompt on a new line."
 void	handle_sigint(int sig)

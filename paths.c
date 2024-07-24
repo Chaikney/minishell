@@ -52,11 +52,6 @@ int	determine_output(t_command *cmd)
 
 // When there is a control character present, guide it to the correct
 // execution function(s)
-// DONE Shorter (but still descriptive!) name needed.
-// DONE Function will need to be shorter once it is working
-// DONE Must be able to handle BUILTINS here as well.
-// FIXED Naive addition of builtins does not work.
-// FIXED < test | rev | rev no longer triggers a crash (form is invalid!)
 // FIXME Too many lines in this function
 void	direct_complex_command(t_command *cmd, char **envp)
 {
@@ -98,6 +93,7 @@ void	direct_complex_command(t_command *cmd, char **envp)
 // NOTE Is it legit to have << *after* > ?
 // NOTE In bash the < and > can be anywhere: you take the control posn and the next param,
 // NOTE Fixed arrays (as we have for argv) cannot be resized!
+// TODO Move remove_cmd_parts elsewhere - parse.c?
 void	remove_cmd_parts(t_command *cmd, char *target)
 {
 	int	i;

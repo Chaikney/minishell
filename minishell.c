@@ -90,7 +90,7 @@ void eval(char *cmdline, char **envp)
 
 // TODO Add (a part of) the wd to prompt
 // TODO Add username to prompt
-// TODO Check that the terminal is colour-capable before
+// TODO Check that the terminal is colour-capable before using control codes
 // DONE Display exit status in prompt.
 // DONE Add colours to prompt.
 // This returns a text string to be dsiplayed by readline

@@ -30,7 +30,7 @@
 # include <signal.h>	// catch CRTL-c, CTRL-d, other signals
 
 // global variable to hold exit codes
-extern int g_procstatus;
+extern int	g_procstatus;
 
 // An enum covering the builtin functions that our shell provides.
 typedef enum e_builtin
@@ -77,12 +77,12 @@ char	*get_weak_param(const char *cmdline, int *posn);
 char	*get_strong_param(const char *cmdline, int *posn);
 
 // builtins.c
-int		ms_pwd(void);
-void	ms_export(t_command *cmd, char **envp);
-void	ms_unset(t_command *cmd, char **envp);
+int			ms_pwd(void);
+void		ms_export(t_command *cmd, char **envp);
+void		ms_unset(t_command *cmd, char **envp);
 t_builtin	parse_builtin(t_command *cmd, int posn);
-void	ms_echo(t_command *cmd);
-void	ms_unset_export(char *unset_var, char **envp);
+void		ms_echo(t_command *cmd);
+void		ms_unset_export(char *unset_var, char **envp);
 
 // parse.c - functions to read and interpret user input
 int		parse(const char *cmdline, t_command *cmd);
@@ -105,7 +105,7 @@ char	*search_in_path(char *cmd);
 void	goto_stop_char(const char *cmdline, int *posn);
 int		find_flow_control(t_command *cmdset);
 int		find_env_var(char **envp, const char *var);
-void	print_cmd_parts(t_command *cmd)	;
+void	print_cmd_parts(t_command *cmd);
 int		is_legal_name(char *str);
 
 // pipes.c
@@ -114,7 +114,7 @@ t_command	*make_cmd_list(t_command *to_split, int n);
 
 // signals.c - catch and manage signals like CTRL-C
 void	handle_sigint(int sig);
-void	handle_sigquit();
+void	handle_sigquit(int sig);
 int		setup_signals(void);
 
 // exit.c - freeing memory and exiting cleanly
