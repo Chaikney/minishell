@@ -23,6 +23,8 @@ int g_procstatus;
 // ...and that all arguments in cmd->argv can be managed by the command
 // TODO Move this to a suitable other file.
 // TODO define exit routines for not found and for exec failure.
+// FIXME After one command has failed, we have to call EXIT twice to end.
+// ...I think the fault lies here.
 void	run_command(t_command *cmd, char **envp)
 {
 	char	*prog;
@@ -34,15 +36,14 @@ void	run_command(t_command *cmd, char **envp)
 		prog = cmd->argv[0];
 	else
 		prog = search_in_path(cmd->argv[0]);
-	if (!prog)
+	if ((!prog) || (access(prog, X_OK) != 0))
 	{
 		g_procstatus = errno;
-		perror("Program not found in PATH");
+		perror("Executable program not found in PATH");
 		free(prog);
 //		exit_and_free(cmd, -1, -1);
 	}
-	// TODO Check that prog is X_OK first, else we get errors at least in VG
-	if (execve(prog, cmd->argv, envp) == -1)	// if successful, execve does not return
+	else if (execve(prog, cmd->argv, envp) == -1)	// if successful, execve does not return
 	{
 		g_procstatus = errno;
 		perror("Failed to execute program");
@@ -116,7 +117,6 @@ char	*get_prompt(void)
 // FIXME Not clear what cmdline == NULL attempts, i can't trigger it.
 // ...readline man page says this what it returns on EOF on an empty line.
 // TODO Ensure that *all* commands run quit or return to here.
-// FIXME After one command has failed, we have to call EXIT twice to end.
 // NOTE Exit called by user does not need to free prompt as we destory it before eval
 int main(int argc, char **argv, char **envp)
 {
