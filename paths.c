@@ -188,13 +188,14 @@ void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file)
 	}
 	if (child == 0)
 	{
-		if (o_file != STDOUT_FILENO)	// Detect whether redirection is *needed*
+		if ((o_file >= 0) && (o_file != STDOUT_FILENO))	// Detect whether redirection is *needed*
 		{
 			dup2(o_file, STDOUT_FILENO); // Although if these are equal, nothing happens.
 			close (o_file);	// if o_file was set as STDOUT before, closing would be dangerous as they are the *same* fd, not like dup (new fd pointing to same resource)
 		}
 		dup2(i_file, STDIN_FILENO);	// Expect this to be the same as with pipe
-		close(i_file);
+		if (i_file >= 0)
+			close(i_file);
 		if (cmd->builtin == NONE)
 			run_command(cmd, envp);	// asfter this all fds of the child are released.
 		else
@@ -208,9 +209,9 @@ void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file)
 		ret_val = waitpid(child, &g_procstatus, 0);
 //		dup2(o_file, STDOUT_FILENO); // NOTE BAD this closes the shell's STDOUT!
 //		printf("waiting for child process: %i", child);	// HACK for debugging
-		if (o_file != STDOUT_FILENO)	// Make sure we don't close STDOUT if no redirection was given.
+		if ((o_file >= 0) && (o_file != STDOUT_FILENO))	// Make sure we don't close STDOUT if no redirection was given.
 			close(o_file);	// This makes sense if we are writing to a file *and* have access to it.
-		if (i_file != STDIN_FILENO)
+		if ((i_file >= 0) && (i_file != STDIN_FILENO))
 			close(i_file);	// NOTE If this file is closed, shell never returns
 		if (ret_val == -1)
 			printf("error in child process");
