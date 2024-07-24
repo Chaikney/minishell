@@ -41,6 +41,7 @@ void	run_command(t_command *cmd, char **envp)
 		free(prog);
 //		exit_and_free(cmd, -1, -1);
 	}
+	// TODO Check that prog is X_OK first, else we get errors at least in VG
 	if (execve(prog, cmd->argv, envp) == -1)	// if successful, execve does not return
 	{
 		g_procstatus = errno;
@@ -85,18 +86,36 @@ void eval(char *cmdline, char **envp)
 }
 
 // TODO Define a more interesting prompt, e.g. show wd.
-// TODO Display exit status in prompt.
+// DONE Display exit status in prompt.
 // TODO Add colours to prompt.
 // This returns a text string to be dsiplayed by readline
 // when waiting for user input
 char	*get_prompt(void)
 {
-    return("what should i do? > ");
+	char	*prompt;
+	char	*status;
+	char	*first_part;
+
+	if (g_procstatus != 0)
+	{
+		status = ft_itoa(g_procstatus);
+		first_part = ft_strjoin("what should i do? [", status);
+		prompt = ft_strjoin(first_part, "] > ");
+		free (first_part);
+		free (status);
+	}
+	else
+	{
+		prompt = "what should i do? > ";
+	}
+    return(prompt);
 }
 
 // FIXME Not clear what cmdline == NULL attempts, i can't trigger it.
 // ...readline man page says this what it returns on EOF on an empty line.
 // TODO Ensure that *all* commands run quit or return to here.
+// FIXME After one command has failed, we have to call EXIT twice to end.
+// NOTE Exit called by user does not need to free prompt as we destory it before eval
 int main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;
@@ -111,6 +130,7 @@ int main(int argc, char **argv, char **envp)
 		{
 			prompt = get_prompt();
 			cmdline = readline(prompt);
+			free (prompt);
 			if (cmdline == NULL)
 				ms_exit(NULL);
 			if ((cmdline[0] != '\0'))
