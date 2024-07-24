@@ -183,10 +183,8 @@ void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file)
 
 	child = fork();
 	if (child == -1)
-	{
 		g_procstatus = errno;
-	}
-	if (child == 0)
+	else if (child == 0)
 	{
 		if ((o_file >= 0) && (o_file != STDOUT_FILENO))	// Detect whether redirection is *needed*
 		{
@@ -207,12 +205,10 @@ void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file)
 	else
 	{
 		ret_val = waitpid(child, &g_procstatus, 0);
-//		dup2(o_file, STDOUT_FILENO); // NOTE BAD this closes the shell's STDOUT!
-//		printf("waiting for child process: %i", child);	// HACK for debugging
 		if ((o_file >= 0) && (o_file != STDOUT_FILENO))	// Make sure we don't close STDOUT if no redirection was given.
 			close(o_file);	// This makes sense if we are writing to a file *and* have access to it.
 		if ((i_file >= 0) && (i_file != STDIN_FILENO))
-			close(i_file);	// NOTE If this file is closed, shell never returns
+			close(i_file);
 		if (ret_val == -1)
 			printf("error in child process");
 		printf("process finished with code: %i\n", g_procstatus); // HACK for debugging
