@@ -23,8 +23,8 @@ int g_procstatus;
 // ...and that all arguments in cmd->argv can be managed by the command
 // TODO Move this to a suitable other file.
 // TODO define exit routines for not found and for exec failure.
-// FIXME After one command has failed, we have to call EXIT twice to end.
-// ...I think the fault lies here.
+// FIXED After one command has failed, we have to call EXIT twice to end.
+// NOTE The free and exit_failed_pipe lines at the end are only reached if execve fails
 void	run_command(t_command *cmd, char **envp)
 {
 	char	*prog;
@@ -40,17 +40,14 @@ void	run_command(t_command *cmd, char **envp)
 	{
 		g_procstatus = errno;
 		perror("Executable program not found in PATH");
-		free(prog);
-//		exit_and_free(cmd, -1, -1);
 	}
 	else if (execve(prog, cmd->argv, envp) == -1)	// if successful, execve does not return
 	{
 		g_procstatus = errno;
 		perror("Failed to execute program");
-        free (prog);
-//		ms_exit(cmd);	// TODO Determine proper free-ing needs here.
-//		exit_and_free(args, -1, -1);
 	}
+	free (prog);
+	exit_failed_pipe(cmd, -1, -1);
 }
 
 // Sends cmdline to parse function to get a t_command
