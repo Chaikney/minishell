@@ -85,9 +85,11 @@ void eval(char *cmdline, char **envp)
 	}
 }
 
-// TODO Define a more interesting prompt, e.g. show wd.
+// TODO Add (a part of) the wd to prompt
+// TODO Add username to prompt
+// TODO Check that the terminal is colour-capable before
 // DONE Display exit status in prompt.
-// TODO Add colours to prompt.
+// DONE Add colours to prompt.
 // This returns a text string to be dsiplayed by readline
 // when waiting for user input
 char	*get_prompt(void)
@@ -99,14 +101,14 @@ char	*get_prompt(void)
 	if (g_procstatus != 0)
 	{
 		status = ft_itoa(g_procstatus);
-		first_part = ft_strjoin("what should i do? [", status);
-		prompt = ft_strjoin(first_part, "] > ");
+		first_part = ft_strjoin("what should i do? [\033[31m", status);
+		prompt = ft_strjoin(first_part, "\033[0m] > ");
 		free (first_part);
 		free (status);
 	}
 	else
 	{
-		prompt = "what should i do? > ";
+		prompt = ft_strdup("what should i do? > ");
 	}
     return(prompt);
 }
