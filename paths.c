@@ -134,7 +134,7 @@ void	remove_cmd_parts(t_command *cmd, char *target)
 // - wait for it to come back
 // NOTE child == 0 means we are in the child process!
 // NOTE The input file pointer connects us to the previous command in pipe.
-// TODO Move builtin check to run_command to save lines?
+// DONE Move builtin check to run_command to save lines?
 void	run_in_pipe(t_command *cmd, char **envp, int *i_file)
 {
 	pid_t	child;
@@ -153,13 +153,7 @@ void	run_in_pipe(t_command *cmd, char **envp, int *i_file)
 		// "redirect stdin to prevpipe"
 		dup2(*i_file, STDIN_FILENO);// closes STDIN, uses its ref to point to i_file (last processes' pipe read end)
 		close(*i_file);		// discard extra reference to the pipe read end.
-		if (cmd->builtin == NONE)
-			run_command(cmd, envp);	// asfter this all fds of the child are released.
-		else
-		{
-			executeBuiltin(cmd, envp);
-			exit_successful_pipe(cmd);
-		}
+		run_command(cmd, envp);	// asfter this all fds of the child are released.
 	}
 	else
 	{
@@ -174,7 +168,8 @@ void	run_in_pipe(t_command *cmd, char **envp, int *i_file)
 // Simplest command runner.
 // Forks, sets up input and output for one child process
 // and waits for it to complete.
-// NOTE This is the one we use for simple commands. Should work with redirect.
+// NOTE This is used with either simple commands or at the end of complex one.
+// FIXME run_final_cmd still has too many lines
 void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file)
 {
 	pid_t	child;
@@ -194,13 +189,7 @@ void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file)
 		dup2(i_file, STDIN_FILENO);	// Expect this to be the same as with pipe
 		if (i_file >= 0)
 			close(i_file);
-		if (cmd->builtin == NONE)
-			run_command(cmd, envp);	// asfter this all fds of the child are released.
-		else
-		{
-			executeBuiltin(cmd, envp);
-			exit_successful_pipe(cmd);
-		}
+		run_command(cmd, envp);	// after this all fds of the child are released.
 	}
 	else
 	{
