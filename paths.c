@@ -85,43 +85,36 @@ void	direct_complex_command(t_command *cmd, char **envp)
 }
 
 // NOTE target could be a single char for matching purposes...
-// To remove control parameters we find the > < character in cmd->argv
+// To remove control parameters we find target character in cmd->argv
 // ...it is that position and the next that need to be removed.
 // So we copy the value +2 ahead from there to the end of the array.
 // free parts and reduce argc by 2.
-// FIXME One block is lost (to valgrind) after stripping things for > >>
-// NOTE Is it legit to have << *after* > ?
+// FIXED! One block is lost (to valgrind) after stripping things for > >>
 // NOTE In bash the < and > can be anywhere: you take the control posn and the next param,
-// NOTE Fixed arrays (as we have for argv) cannot be resized!
 // TODO Move remove_cmd_parts elsewhere - parse.c?
+// The argv[i] containing < > etc *must* be freed, as is the parameter after it
+// (Both have been processed before removal)
+// Then we copy the parts from ahead into the gap left (inc the final NULL)
 void	remove_cmd_parts(t_command *cmd, char *target)
 {
 	int	i;
-//	char	*to_free;
 
 	i = 0;
-//	print_cmd_parts(cmd);	// HACK for debugging
-	while ((cmd->argv[i]) && (ft_strncmp(cmd->argv[i], target, 1) != 0))	// NOTE this matches both
+	while ((cmd->argv[i]) && (ft_strncmp(cmd->argv[i], target, 1) != 0))
 	{
 		if (i == cmd->argc - 1)
 			return ;
 		i++;
 	}
-//	printf("\ntarget at position %i", i);	// HACK debugging only
-	while (cmd->argv[i + 2])	// FIXME Can reach here when target not present
+	free (cmd->argv[i]);
+	free (cmd->argv[i + 1]);
+	while (cmd->argv[i + 2] != NULL)
 	{
-//		to_free = cmd->argv[i];
 		cmd->argv[i] = cmd->argv[i + 2];
 		i++;
-//		free (to_free);
 	}
-//	printf("\tending at position %i", i);	// HACK debugging only
-//	print_cmd_parts(cmd);	// HACK for debugging
+	cmd->argv[i] = cmd->argv[i + 2];
 	cmd->argc = cmd->argc - 2;
-	cmd->argv[cmd->argc] = NULL;
-	/* free (cmd->argv[i + 1]);	// FIXME Invalid free */
-	/* free (cmd->argv[i + 2]); */
-//	print_cmd_parts(cmd);	// HACK for debugging
 }
 
 // Make a child process to execute the command, putting the output in a pipe
