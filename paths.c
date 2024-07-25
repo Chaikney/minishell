@@ -161,8 +161,7 @@ void	run_in_pipe(t_command *cmd, char **envp, int *i_file)
 // FIXME run_final_cmd still has too many lines
 void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file)
 {
-	pid_t	child;
-	int		ret_val;
+	pid_t		child;
 	extern int	g_procstatus;
 
 	child = fork();
@@ -182,13 +181,11 @@ void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file)
 	}
 	else
 	{
-		ret_val = waitpid(child, &g_procstatus, 0);
+		waitpid(child, &g_procstatus, 0);
 		if ((o_file >= 0) && (o_file != STDOUT_FILENO))	// Make sure we don't close STDOUT if no redirection was given.
 			close(o_file);	// This makes sense if we are writing to a file *and* have access to it.
 		if ((i_file >= 0) && (i_file != STDIN_FILENO))
 			close(i_file);
-		if (ret_val == -1)
-			printf("error in child process");
 		printf("process finished with code: %i\n", g_procstatus); // HACK for debugging
 	}
 }
