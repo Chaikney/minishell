@@ -24,7 +24,7 @@ char	*grab_control_seq(const char *cmd, int *posn)
 	char	*par;
 
 	i = 0;
-	par = malloc(sizeof(char) * 256);	// FIXME block lost after any redirection.
+	par = malloc(sizeof(char) * 256);
 	if (!par)
 		return (NULL);
 	ft_bzero(par, 256);
@@ -47,12 +47,14 @@ char	*grab_control_seq(const char *cmd, int *posn)
 // - step over initial spaces, avoiding the end marker
 // - copy characters
 // - null-term and return
-// TODO We may need to handle some escape characters in this function.
+// DONE handle some escape characters in this function: if \, copy the next char
 // TODO Consider if this should stop at a ' or "
 // (they would be misplaced, but...)
+// NOTE Fish and bash react to echo 'thing but opening multiline input.
+// ....really don't see a way to achieving that.
 // NOTE It is *only* this function which loses memory. What is the difference?
-// TODO Handle case when we have > < without spaces to the next
-// (Before or after so  a coontrol anywhere means: break)
+// DONE Handle case when we have > < without spaces to the next
+// TODO Handle command *ending* with a control char, i.e. Test ls> test
 char	*get_raw_param(const char *cmd, int *posn)
 {
 	int		i;
@@ -61,8 +63,7 @@ char	*get_raw_param(const char *cmd, int *posn)
 	// HACK These two lines debugging only, can remove later.
 	if ((cmd[*posn] == ' ') || (cmd[*posn] == '\0'))
 		printf("\t*** entered at incorrect char: %c", cmd[*posn]);
-	i = 0;
-	// do we have a control char?
+	// have we started at a control char?
 	if ((cmd[*posn] == '>')||(cmd[*posn] == '<') || (cmd[*posn] == '|'))
 		par = grab_control_seq(cmd, posn);
 	// this is the part that copies.
@@ -72,8 +73,14 @@ char	*get_raw_param(const char *cmd, int *posn)
 		if (!par)
 			return (NULL);
 		ft_bzero(par, 256);
+		i = 0;
 		while ((cmd[*posn] != '\0') && (cmd[*posn] != ' '))
 		{
+			if (cmd[*posn] == '\\')
+			{
+				(*posn)++;
+				// copy the next char
+			}
 			par[i] = cmd[*posn];
 			i++;
 			(*posn)++;
