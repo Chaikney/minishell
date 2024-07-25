@@ -14,6 +14,33 @@
 
 // Functions used to break up the readline input into tokens for parsing.
 
+// Return the whole of the control sequence landed on.
+// It will be either < << > >> or |
+// And since we know where we started the question is do we take the
+// first char only, or the second as well.
+char	*grab_control_seq(const char *cmd, int *posn)
+{
+	int		i;
+	char	*par;
+
+	i = 0;
+	par = malloc(sizeof(char) * 256);	// FIXME block lost after any redirection.
+	if (!par)
+		return (NULL);
+	ft_bzero(par, 256);
+	if (cmd[*posn] == cmd[*posn + 1])
+	{
+			par[i] = cmd[*posn];
+			i++;
+			(*posn)++;
+	}
+	par[i] = cmd[*posn];
+	i++;
+	(*posn)++;
+	par[i] = '\0';
+	return (par);
+}
+
 // Return one single parameter from a command line.
 // - allocate arbitrary space
 // - if we are at the end, reset the static and return NULL to finish.
@@ -24,25 +51,35 @@
 // TODO Consider if this should stop at a ' or "
 // (they would be misplaced, but...)
 // NOTE It is *only* this function which loses memory. What is the difference?
+// TODO Handle case when we have > < without spaces to the next
+// (Before or after so  a coontrol anywhere means: break)
 char	*get_raw_param(const char *cmd, int *posn)
 {
 	int		i;
 	char	*par;
 
+	// HACK These two lines debugging only, can remove later.
 	if ((cmd[*posn] == ' ') || (cmd[*posn] == '\0'))
 		printf("\t*** entered at incorrect char: %c", cmd[*posn]);
 	i = 0;
-	par = malloc(sizeof(char) * 256);	// FIXME block lost after any redirection.
-	if (!par)
-		return (NULL);
-	ft_bzero(par, 256);
-	while ((cmd[*posn] != '\0') && (cmd[*posn] != ' '))
+	// do we have a control char?
+	if ((cmd[*posn] == '>')||(cmd[*posn] == '<') || (cmd[*posn] == '|'))
+		par = grab_control_seq(cmd, posn);
+	// this is the part that copies.
+	else
 	{
-		par[i] = cmd[*posn];
-		i++;
-		(*posn)++;
+		par = malloc(sizeof(char) * 256);	// FIXME block lost after any redirection.
+		if (!par)
+			return (NULL);
+		ft_bzero(par, 256);
+		while ((cmd[*posn] != '\0') && (cmd[*posn] != ' '))
+		{
+			par[i] = cmd[*posn];
+			i++;
+			(*posn)++;
+		}
+		par[i] = '\0';
 	}
-	par[i] = '\0';
 	return (par);
 }
 

@@ -75,6 +75,7 @@ int		needs_sub(char *str);
 char	*get_raw_param(const char *cmd, int *posn);
 char	*get_weak_param(const char *cmdline, int *posn);
 char	*get_strong_param(const char *cmdline, int *posn);
+char	*grab_control_seq(const char *cmd, int *posn);
 
 // builtins.c
 int			ms_pwd(void);
