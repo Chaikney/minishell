@@ -108,6 +108,7 @@ int		find_flow_control(t_command *cmdset);
 int		find_env_var(char **envp, const char *var);
 void	print_cmd_parts(t_command *cmd);
 int		is_legal_name(char *str);
+int		is_control_char(char c);
 
 // pipes.c
 t_command	*split_pipe(t_command *cmd);

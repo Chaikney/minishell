@@ -35,6 +35,16 @@ int	find_env_var(char **envp, const char *var)
 	return (-1);
 }
 
+// return 1 if c is a flow control character, 0 if not
+// Flow control chars are: < > |
+int	is_control_char(char c)
+{
+	if ((c == '>') || (c == '<') || (c == '|'))
+		return (1);
+	else
+		return (0);
+}
+
 // Look through a parsed set of commands and see if it contains
 // flow control parameters: | > < >> or <<
 // They would be separate from commands either side.
