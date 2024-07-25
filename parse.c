@@ -106,7 +106,6 @@ char	**quote_aware_split(const char *cmdline)
 	while ((p_num < MAXARGS))
 	{
 		goto_stop_char(cmdline, &cmd_pos);
-//		printf("stop char found: %c\n", cmdline[cmd_pos]);
 		if (cmdline[cmd_pos] == '\0')
 			params[p_num] = NULL;
 		else if (cmdline[cmd_pos] == '\"')
@@ -123,8 +122,6 @@ char	**quote_aware_split(const char *cmdline)
             if (needs_sub(params[p_num]) != -1)
                 params[p_num] = substitute_variables(params[p_num]);
 		}
-		printf("added: %s\n", params[p_num]);	// HACK remove debugging statement
-//		printf("Stop pos is now %i (%c)", cmd_pos, cmdline[cmd_pos]);
 		if (params[p_num] == NULL)
 			break ;
 		p_num++;

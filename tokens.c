@@ -54,7 +54,7 @@ char	*grab_control_seq(const char *cmd, int *posn)
 // ....really don't see a way to achieving that.
 // NOTE It is *only* this function which loses memory. What is the difference?
 // DONE Handle case when we have > < without spaces to the next
-// TODO Handle command *ending* with a control char, i.e. Test ls> test
+// DONE Handle command *ending* with a control char, i.e. Test ls> test
 char	*get_raw_param(const char *cmd, int *posn)
 {
 	int		i;
@@ -64,7 +64,7 @@ char	*get_raw_param(const char *cmd, int *posn)
 	if ((cmd[*posn] == ' ') || (cmd[*posn] == '\0'))
 		printf("\t*** entered at incorrect char: %c", cmd[*posn]);
 	// have we started at a control char?
-	if ((cmd[*posn] == '>')||(cmd[*posn] == '<') || (cmd[*posn] == '|'))
+	if (is_control_char(cmd[*posn]) == 1)
 		par = grab_control_seq(cmd, posn);
 	// this is the part that copies.
 	else
@@ -74,7 +74,7 @@ char	*get_raw_param(const char *cmd, int *posn)
 			return (NULL);
 		ft_bzero(par, 256);
 		i = 0;
-		while ((cmd[*posn] != '\0') && (cmd[*posn] != ' '))
+		while ((cmd[*posn] != '\0') && (cmd[*posn] != ' ') && (is_control_char(cmd[*posn]) == 0))
 		{
 			if (cmd[*posn] == '\\')
 			{
