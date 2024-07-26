@@ -12,6 +12,24 @@
 
 #include "minishell.h"
 
+// Remove specified cmd arg characters from memory
+// Assume that they have been processed and the command split into a list.
+// This is picking up the parts left in the original cmd.
+void	remove_cmd_part(t_command *cmd, int posn)
+{
+	int	i;
+
+	free(cmd->argv[posn]);
+	i = posn;
+	while (cmd->argv[i + 1] != NULL)
+	{
+		cmd->argv[i] = cmd->argv[i + 1];
+		i++;
+	}
+	cmd->argv[i] = cmd->argv[i + 1];
+	cmd->argc = cmd->argc - 1;
+}
+
 // Take one cmd and split its arguments up until a |
 // (assumed to be present).
 // No worrying about redirects; copy as-is.
