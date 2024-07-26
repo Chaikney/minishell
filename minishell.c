@@ -88,32 +88,95 @@ void eval(char *cmdline, char **envp)
 	}
 }
 
-// TODO Add (a part of) the wd to prompt
-// TODO Add username to prompt
+// Return a part of the working directory to show in prompt
+// FIXME None of the working directory code works.
+char	*get_shrt_wd()
+{
+	char	*wd;
+	char	*cut_wd;
+	int		len;
+	int		i;
+	int		linesize;
+
+	linesize = 15;
+	cut_wd = malloc (sizeof(char) * linesize + 1);
+	wd = NULL;
+	getcwd(wd, 0);
+	len = ft_strlen(wd);
+	if (len < linesize)
+		cut_wd = wd;
+	else
+	{
+		i = linesize;
+		cut_wd[linesize] = '\0';
+		while (i >= 0)
+		{
+			cut_wd[i] = wd[len];
+			i--;
+			len--;
+		}
+	}
+	printf("got the wd");
+	return (cut_wd);
+}
+
+// Return a coloured string with g_processtus
+// i.e. the last process result to be used in the prompt
+char	*get_status_for_prompt()
+{
+	char	*status;
+	char	*prompt;
+	char	*first_part;
+
+	status = ft_itoa(g_procstatus);
+	first_part = ft_strjoin(" [\033[31m", status);
+	prompt = ft_strjoin(first_part, "\033[0m] > ");
+	free (first_part);
+	free (status);
+	return (prompt);
+}
+
+// DONE Add (a part of) the wd to prompt
+// TODO Shorten the wd.
+// FIXME Too many variables.
+// DONE Add username to prompt
 // TODO Check that the terminal is colour-capable before using control codes
-// DONE Display exit status in prompt.
-// DONE Add colours to prompt.
 // This returns a text string to be dsiplayed by readline
 // when waiting for user input
 char	*get_prompt(void)
 {
 	char	*prompt;
 	char	*status;
-	char	*first_part;
+	char	*tmp_part;
+	char	*uname;
+	char	*cwd;
+	char	*tmp2;
 
+	cwd = NULL;
+//	printf("getting prompt");
+	uname = getenv("USER");
+	cwd = getenv("PWD");
+	if (uname)
+		tmp_part = ft_strjoin(uname, " in ");
+//	printf("\tusername... %s", tmp_part);
+//	cwd = get_shrt_wd();
+	tmp2 = ft_strjoin(tmp_part, cwd);
+//	printf("\twd...%s", tmp2);
+	free (tmp_part);
 	if (g_procstatus != 0)
 	{
-		status = ft_itoa(g_procstatus);
-		first_part = ft_strjoin("what should i do? [\033[31m", status);
-		prompt = ft_strjoin(first_part, "\033[0m] > ");
-		free (first_part);
+		status = get_status_for_prompt();
+		prompt = ft_strjoin(tmp2, status);
 		free (status);
+//		printf("\tstatus...%s", prompt);
 	}
 	else
 	{
-		prompt = ft_strdup("what should i do? > ");
+		prompt = ft_strjoin(tmp2, " > ");
 	}
-    return(prompt);
+//	printf("done %s", prompt);
+	free (tmp2);
+    return (prompt);
 }
 
 // FIXME Not clear what cmdline == NULL attempts, i can't trigger it.
