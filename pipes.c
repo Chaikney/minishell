@@ -45,9 +45,6 @@ t_command	init_new_command(void)
 // (assumed to be present).
 // No worrying about redirects; copy as-is.
 // NOTE No allocation needed for t_command, but maybe for the args?
-// DONE Wrap this in a loop
-// DONE Check to see what cmd->builtin should be
-// FIXED Static to keep track of position in argv, but when do we reset it?
 // FIXME < test | rev causes a segfault (when the is_alpha check takes place?)
 // Because input is piped NOT a cmd...
 // NOTE Also this is an invalid pipe (though seems OK) - no command before it!
@@ -55,13 +52,13 @@ t_command	init_new_command(void)
 // FIXME function split_pipe is too long.
 t_command	*split_pipe(t_command *cmd)
 {
-	static int		i;
-	int				j;
+	static int		i;	// counter for old cmd arguments
+	int				j;	// counter for new cmd arguments
 	t_command		*new_cmd;
 
 	j = 0;
 	printf("\nAttempting to split a command starting at posn: %i\n", i);	// HACK for debugging
-	print_cmd_parts(cmd);	// HACK for debugging
+//	print_cmd_parts(cmd);	// HACK for debugging
 	if (ft_strncmp(cmd->argv[0], "|", 1) == 0)
 		perror("bad command format");	// TODO Throw appropriate error here.
 	new_cmd = malloc(sizeof(t_command));	// FIXME Memory allocated here is not freed

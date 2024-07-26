@@ -73,6 +73,7 @@ void	direct_complex_command(t_command *cmd, char **envp)
 	if (num_pipes > 0)
 	{
 		cmdlist = make_cmd_list(cmd, num_pipes);
+//		clear_t_command(cmd);
 		while (cmdlist->next != NULL)
 		{
 			run_in_pipe(cmdlist, envp, &i_redir);

@@ -95,7 +95,7 @@ void	print_cmd_parts(t_command *cmd)
 	printf("\nExamining command with argc of %i:\n", cmd->argc);
 	while (i < cmd->argc)
 	{
-		printf("Index: %i\t%s\n", i, cmd->argv[i]);
+		printf("Index: %i\t%s\n", i, cmd->argv[i]);	// FIXME invalid read triggerede here from split pipe
 		i++;
 	}
 }
