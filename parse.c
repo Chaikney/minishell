@@ -129,6 +129,46 @@ char	**quote_aware_split(const char *cmdline)
 	return (params);
 }
 
+// debugging aid: print a list of strings.
+void	print_tokens(char **arr)
+{
+    int 	i;
+
+    i = 0;
+    printf("\nAnalysing token list.");
+    while ((arr[i]) && (i < MAXARGS))
+    {
+        printf("\ntoken %i:\t%s", i, arr[i]);
+        i++;
+    }
+}
+
+// Return a -1 if there are illegal combinations of tokens
+// e.g. multiple attempts at redirection for either I or O
+// TODO Implement sanity checks on token set.
+// [x]	do not start with a pipe
+// [ ]	do not end with a pipe
+// [ ]	do not have both > and >>
+// [ ]	do not have both < and <<
+// [ ]	do not have more than one input directive
+// [ ]	do not have more than one output directive
+int	check_tokens(char **arr)
+{
+	if (ft_strncmp(arr[0], "|", 1) == 0)
+		perror("bad command format");	// TODO Throw appropriate error here.
+    return (0);
+}
+
+// Clear the list of tokens generated from the cmdline.
+void	wipe_tokens(char **arr)
+{
+    if (arr)
+    {
+        while (*arr)
+            free(*arr++);
+        free (arr);
+    }
+}
 // Parse input from cmdline into a command struct
 // Return values:
 // 0 - command parsed successfully
