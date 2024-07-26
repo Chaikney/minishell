@@ -30,6 +30,17 @@ void	remove_cmd_part(t_command *cmd, int posn)
 	cmd->argc = cmd->argc - 1;
 }
 
+t_command	init_new_command(void)
+{
+	t_command	new_cmd;
+
+//	new_cmd = malloc(sizeof(t_command));	// FIXME Memory allocated here is not freed
+	new_cmd.argc = 0;
+	new_cmd.builtin = NONE;
+	new_cmd.next = NULL;
+	return (new_cmd);
+}
+
 // Take one cmd and split its arguments up until a |
 // (assumed to be present).
 // No worrying about redirects; copy as-is.
