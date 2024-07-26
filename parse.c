@@ -142,11 +142,15 @@ char	**quote_aware_split(const char *cmdline)
 // DONE Better name and defined purpose for is_bg variable.
 // NOTE malloc'd variables used in this function:
 // - cmdline:  set by readline in main
-// - token:
-// - cmd_trim: copy of cmdline without leading / trailing spaces; freed here
+// - tokens:	list of strings mallocd to a set size
+// - cmd_trim:	copy of cmdline without leading / trailing spaces; freed here
+// - cmd:		not mallocd, an uninitialised address from eval.
+// Need consistency in t_comamnds. The split ones are mallocd, the one here (base) is not.
+// So hard to know what can be freed safely.
+// TODO Create the t_command list explicitly here (not later split)
 int	parse(const char *cmdline, t_command *cmd)
 {
-    char	**token;
+    char	**tokens;
     int	is_parsed;
     char	*cmd_trim;
     
@@ -154,19 +158,20 @@ int	parse(const char *cmdline, t_command *cmd)
     cmd_trim = ft_strtrim(cmdline, " ");
     if (cmd_trim == NULL)
         perror("command line is NULL\n");
-    token = quote_aware_split(cmd_trim);
-    if (!token)
+    tokens = quote_aware_split(cmd_trim);
+    if (!tokens)
         return (is_parsed);
     cmd->argc = 0;
-    while (token[cmd->argc] != NULL)
+    while (tokens[cmd->argc] != NULL)
     {
-        cmd->argv[cmd->argc] = token[cmd->argc];
+        cmd->argv[cmd->argc] = tokens[cmd->argc];
         cmd->argc++;
         if (cmd->argc >= MAXARGS - 1)
             break ;
     }
-    cmd->argv[cmd->argc] = NULL;
-    free(token);
+    cmd->argv[cmd->argc] = tokens[cmd->argc];	// which i take to be the null
+//    cmd->argv[cmd->argc] = NULL;
+    free(tokens);	// free the pointer to the string arrary. the strings are all(?) now in cmd
     if (cmd->argc == 0)
         return (is_parsed);
     cmd->next = NULL;	// NOTE Without this setup, segfaults all over.
