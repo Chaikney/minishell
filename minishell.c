@@ -89,7 +89,9 @@ void eval(char *cmdline, char **envp)
 }
 
 // Return a part of the working directory to show in prompt
-// FIXME None of the working directory code works.
+// linesize limits how many characters we show
+// FIXME This does not get updated when we change directory?
+// Yet ENV shows a new PWD...
 char	*get_shrt_wd()
 {
 	char	*wd;
@@ -100,8 +102,7 @@ char	*get_shrt_wd()
 
 	linesize = 15;
 	cut_wd = malloc (sizeof(char) * linesize + 1);
-	wd = NULL;
-	getcwd(wd, 0);
+	wd = getenv("PWD");
 	len = ft_strlen(wd);
 	if (len < linesize)
 		cut_wd = wd;
@@ -109,14 +110,15 @@ char	*get_shrt_wd()
 	{
 		i = linesize;
 		cut_wd[linesize] = '\0';
-		while (i >= 0)
+		while (i != 0)
 		{
 			cut_wd[i] = wd[len];
 			i--;
 			len--;
 		}
+		cut_wd[0] = '.';
+		cut_wd[1] = '.';
 	}
-	printf("got the wd");
 	return (cut_wd);
 }
 
@@ -143,6 +145,7 @@ char	*get_status_for_prompt()
 // TODO Check that the terminal is colour-capable before using control codes
 // This returns a text string to be dsiplayed by readline
 // when waiting for user input
+// NOTE Once a variable has been used in strjoin it can (should) be freed.
 char	*get_prompt(void)
 {
 	char	*prompt;
@@ -152,29 +155,23 @@ char	*get_prompt(void)
 	char	*cwd;
 	char	*tmp2;
 
-	cwd = NULL;
-//	printf("getting prompt");
 	uname = getenv("USER");
-	cwd = getenv("PWD");
 	if (uname)
 		tmp_part = ft_strjoin(uname, " in ");
-//	printf("\tusername... %s", tmp_part);
-//	cwd = get_shrt_wd();
+	cwd = get_shrt_wd();
 	tmp2 = ft_strjoin(tmp_part, cwd);
-//	printf("\twd...%s", tmp2);
 	free (tmp_part);
+	free(cwd);
 	if (g_procstatus != 0)
 	{
 		status = get_status_for_prompt();
 		prompt = ft_strjoin(tmp2, status);
 		free (status);
-//		printf("\tstatus...%s", prompt);
 	}
 	else
 	{
 		prompt = ft_strjoin(tmp2, " > ");
 	}
-//	printf("done %s", prompt);
 	free (tmp2);
     return (prompt);
 }
