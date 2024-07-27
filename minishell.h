@@ -62,7 +62,6 @@ typedef struct s_command
 // various functions
 void	run_command(t_command *cmd, char **envp);
 void	eval(char *cmdline, char **envp);
-char	*get_prompt(void);
 int		determine_output(t_command *cmd);
 
 // substitute.c - variable substitution
@@ -131,4 +130,9 @@ void	ms_env(char **envp);
 // cd.c - change wd, set new value of PWD
 void	ms_cd(t_command *cmd, char **envp);
 void	ms_export_cd(char **envp, char *oldpwd, char *newpwd);
+
+// prompt.c - functions to enhance the readline prompt
+char	*get_shrt_wd(void);
+char	*get_status_for_prompt(void);
+char	*get_prompt(void);
 #endif
