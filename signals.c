@@ -2,10 +2,8 @@
 
 // TODO Add 42 header
 
-// this is to disable CRTL-\ and also the apparent EOF we get
-// after a pipe ends
+// this is to disable CRTL-BACKSLASH
 // "Ctrl-\ does nothing"
-// FIXME This should do *something* no? Or should it be sigdelete?
 void	handle_sigquit(int sig)
 {
 	(void) sig;
@@ -33,11 +31,11 @@ void	handle_sigint(int sig)
 
 // Setup the functions to handle each signal we have to manage.
 // DONE Implement signals handling SIGINT - needs fixed
-// TODO Implement signals handling CTRL-D
-// TODO Implement signals handling CTRL-\ uncontrolled quit
+// TODO Implement signals handling CTRL-D EOF
+// DONE Implement signals handling CTRL-\ uncontrolled quit
 int	setup_signals(void)
 {
 	signal(SIGINT, handle_sigint);
-	signal(SIGQUIT, handle_sigquit);	// This works to supress ctrl-d but not the cmdline breakage
+	signal(SIGQUIT, handle_sigquit);
 	return (0);
 }
