@@ -132,7 +132,7 @@ void	ms_env(char **envp);
 void	ms_cd(t_command *cmd, char **envp);
 void	ms_export_cd(char **envp, char *oldpwd, char *newpwd);
 
-t_command	init_new_command(void);
+t_command	*init_new_command(void);
 // prompt.c - functions to enhance the readline prompt
 char	*get_shrt_wd(void);
 char	*get_status_for_prompt(void);

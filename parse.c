@@ -158,6 +158,8 @@ int	check_tokens(char **arr)
 }
 
 // Clear the list of tokens generated from the cmdline.
+// FIXME Sometimes this clear unitialised values - set to blank when set?
+// Or stop when NULL reached?
 void	wipe_tokens(char **arr)
 {
     int	i;
@@ -191,11 +193,11 @@ t_command	*build_command(char **tokens)
 
 	j = 0;
     num_tokens = count_tokens(tokens);
-	new_cmd = malloc(sizeof(t_command));	// FIXME Memory allocated here is not freed
-	new_cmd->argc = 0;
-	new_cmd->builtin = NONE;
-	new_cmd->next = NULL;
-//	new_cmd = init_new_command();
+	/* new_cmd = malloc(sizeof(t_command));	// FIXME Memory allocated here is not freed */
+	/* new_cmd->argc = 0; */
+	/* new_cmd->builtin = NONE; */
+	/* new_cmd->next = NULL; */
+	new_cmd = init_new_command();
 	while ((i < num_tokens) && (tokens[i]) && (ft_strncmp(tokens[i], "|", 1) != 0))
 	{
 		new_cmd->argv[j] = ft_strdup(tokens[i]);	// NOTE if we copy the values, can wipe all tokens

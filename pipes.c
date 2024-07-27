@@ -30,14 +30,16 @@ void	remove_cmd_part(t_command *cmd, int posn)
 	cmd->argc = cmd->argc - 1;
 }
 
-t_command	init_new_command(void)
+// Allocate and safely set up a t_command struct (object).
+// The memory allocated here is completely freed in clear_t_command
+t_command	*init_new_command(void)
 {
-	t_command	new_cmd;
+	t_command	*new_cmd;
 
-//	new_cmd = malloc(sizeof(t_command));	// FIXME Memory allocated here is not freed
-	new_cmd.argc = 0;
-	new_cmd.builtin = NONE;
-	new_cmd.next = NULL;
+	new_cmd = malloc(sizeof(t_command));	// FIXED? Memory allocated here is not freed
+	new_cmd->argc = 0;
+	new_cmd->builtin = NONE;
+	new_cmd->next = NULL;
 	return (new_cmd);
 }
 
@@ -50,6 +52,7 @@ t_command	init_new_command(void)
 // NOTE Also this is an invalid pipe (though seems OK) - no command before it!
 // So really should just fail gracefully, Make sure | is not the first char?
 // FIXME function split_pipe is too long.
+// TODO I think split_pipe is now obsolete and can be removed.
 t_command	*split_pipe(t_command *cmd)
 {
 	static int		i;	// counter for old cmd arguments
