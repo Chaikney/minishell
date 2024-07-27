@@ -95,11 +95,17 @@ void	direct_complex_command(t_command *cmd, char **envp)
 // The argv[i] containing < > etc *must* be freed, as is the parameter after it
 // (Both have been processed before removal)
 // Then we copy the parts from ahead into the gap left (inc the final NULL)
+// NOTE Expanded to cope with | char as well.
 void	remove_cmd_parts(t_command *cmd, char *target)
 {
 	int	i;
+	int	to_go;
 
 	i = 0;
+	if (target[0] == '|')
+		to_go = 1;
+	else
+		to_go = 2;
 	while ((cmd->argv[i]) && (ft_strncmp(cmd->argv[i], target, 1) != 0))
 	{
 		if (i == cmd->argc - 1)
@@ -107,14 +113,15 @@ void	remove_cmd_parts(t_command *cmd, char *target)
 		i++;
 	}
 	free (cmd->argv[i]);
-	free (cmd->argv[i + 1]);
-	while (cmd->argv[i + 2] != NULL)
+	if (to_go == 2)
+		free (cmd->argv[i + 1]);
+	while (cmd->argv[i + to_go] != NULL)
 	{
-		cmd->argv[i] = cmd->argv[i + 2];
+		cmd->argv[i] = cmd->argv[i + to_go];
 		i++;
 	}
-	cmd->argv[i] = cmd->argv[i + 2];
-	cmd->argc = cmd->argc - 2;
+	cmd->argv[i] = cmd->argv[i + to_go];
+	cmd->argc = cmd->argc - to_go;
 }
 
 // Make a child process to execute the command, putting the output in a pipe
