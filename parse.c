@@ -221,85 +221,56 @@ t_command	*build_command(char **tokens)
 }
 
 // Parse input from cmdline into a command struct
-// Return values:
-// 0 - command parsed successfully
-// -1 - parsing failed
+// Returns the first cmd in a list of them.
 // Variables:
 //  - cmdline:	string from readline
-//  - cmd:		t_command to hold tokens from cmdline and other data
-// TODO Perhaps the trim of cmdline should happen in quote_aware_split?
-// FIXME Ensure that we free *all* parts of token once cmd is complete
+// FIXED Ensure that we free *all* parts of token once cmd is complete
 // TODO Give this a more descriptive name; we parse lots of things now.
-// DONE Better name and defined purpose for is_bg variable.
 // NOTE malloc'd variables used in this function:
 // - cmdline:  set by readline in main
 // - tokens:	list of strings mallocd to a set size
 // - cmd_trim:	copy of cmdline without leading / trailing spaces; freed here
-// - cmd:		not mallocd, an uninitialised address from eval.
-// Need consistency in t_comamnds. The split ones are mallocd, the one here (base) is not.
-// So hard to know what can be freed safely.
-// TODO Create the t_command list explicitly here (not later split)
-//int	parse(const char *cmdline, t_command *cmd)
+// DONE Create the t_command list explicitly here (not later split)
+// FIXME make shorter
+// TODO Perhaps the trim of cmdline should happen elsewhere?
 t_command	*parse(const char *cmdline)
 {
-    char	**tokens;
-    int	is_parsed;
-    char	*cmd_trim;
-    t_command	*next_cmd;
-    t_command	*cmd_ptr;
-    t_command	*cmd_head;
-    int	i;
-    int	num_pipes;
+	char	**tokens;
+	char	*cmd_trim;
+	t_command	*next_cmd;
+	t_command	*cmd_ptr;
+	t_command	*cmd_head;
+	int	i;
+	int	num_pipes;
 
 //    (void) cmd;	// HACK for debugging;
-    is_parsed = -1;
-    cmd_trim = ft_strtrim(cmdline, " ");
-    if (cmd_trim == NULL)
-        perror("command line is NULL\n");
-    tokens = quote_aware_split(cmd_trim);
-    free (cmd_trim);
-    if (!tokens)
-        return (NULL);
-    print_tokens(tokens);
+	cmd_trim = ft_strtrim(cmdline, " ");
+	if (cmd_trim == NULL)
+		perror("command line is NULL\n");
+	tokens = quote_aware_split(cmd_trim);
+	free (cmd_trim);
+	if (!tokens)
+		return (NULL);
+	print_tokens(tokens);
 	i = 0;
-    num_pipes = 0;
+	num_pipes = 0;
 	while (tokens[i] != NULL)
 		if (ft_strncmp(tokens[i++], "|", 1) == 0)
 			num_pipes++;
-    cmd_head = build_command(tokens);
-    cmd_ptr = cmd_head;
-
-//    cmd = &new_cmd;	// NOTE Marking the first command in the set.
-    i = 1;
-    while (i <= num_pipes)
-    {
-        next_cmd = build_command(tokens);
-        cmd_ptr->next = next_cmd;
-        i++;
-        cmd_ptr = cmd_ptr->next;
-        print_cmd_parts(next_cmd);
-    }
-    /* cmd->argc = 0; */
-    /* while (tokens[cmd->argc] != NULL) */
-    /* { */
-    /*     cmd->argv[cmd->argc] = tokens[cmd->argc]; */
-    /*     cmd->argc++; */
-    /*     if (cmd->argc >= MAXARGS - 1) */
-    /*         break ; */
-    /* } */
-    /* cmd->argv[cmd->argc] = tokens[cmd->argc];	// which i take to be the null */
-//    cmd->argv[cmd->argc] = NULL;
-//
-    wipe_tokens(tokens);
-
-    if (cmd_head->argv[0] == NULL)
-        return (NULL);
-    print_cmd_parts(cmd_head);	// HACK for debugging
-    is_parsed = 0;
-    if (is_parsed == 0)
-        return (cmd_head);
-    else {
-        return (NULL);
-    }
-//    return (is_parsed);
+	cmd_head = build_command(tokens);
+	cmd_ptr = cmd_head;
+	i = 1;
+	while (i <= num_pipes)
+	{
+		next_cmd = build_command(tokens);
+		cmd_ptr->next = next_cmd;
+		i++;
+		cmd_ptr = cmd_ptr->next;
+		print_cmd_parts(next_cmd);
+	}
+	wipe_tokens(tokens);
+	if (cmd_head->argv[0] == NULL)
+		return (NULL);
+	print_cmd_parts(cmd_head);	// HACK for debugging
+    return (cmd_head);
 }

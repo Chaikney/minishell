@@ -63,8 +63,8 @@ t_command	*split_pipe(t_command *cmd)
 	printf("\nAttempting to split a command starting at posn: %i\n", i);	// HACK for debugging
 //	print_cmd_parts(cmd);	// HACK for debugging
 	if (ft_strncmp(cmd->argv[0], "|", 1) == 0)
-		perror("bad command format");	// TODO Throw appropriate error here.
-	new_cmd = malloc(sizeof(t_command));	// FIXME Memory allocated here is not freed
+		perror("bad command format");	// KILL Throw appropriate error here.
+	new_cmd = malloc(sizeof(t_command));	// FIXED? Memory allocated here is not freed
 	new_cmd->argc = 0;
 	new_cmd->builtin = NONE;
 	new_cmd->next = NULL;

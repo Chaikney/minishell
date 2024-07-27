@@ -24,7 +24,7 @@ char	*grab_control_seq(const char *cmd, int *posn)
 	char	*par;
 
 	i = 0;
-	par = malloc(sizeof(char) * 256);	// FIXME < and > freed, check |
+	par = malloc(sizeof(char) * 256);
 	if (!par)
 		return (NULL);
 	ft_bzero(par, 256);
@@ -69,7 +69,7 @@ char	*get_raw_param(const char *cmd, int *posn)
 	// this is the part that copies.
 	else
 	{
-		par = malloc(sizeof(char) * 256);	// FIXME < and > freed, check |
+		par = malloc(sizeof(char) * 256);
 		if (!par)
 			return (NULL);
 		ft_bzero(par, 256);

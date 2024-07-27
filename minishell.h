@@ -86,7 +86,6 @@ void		ms_unset_export(char *unset_var, char **envp);
 
 // parse.c - functions to read and interpret user input
 t_command	*parse(const char *cmdline);
-//int		parse(const char *cmdline, t_command *cmd);
 void	executeBuiltin(t_command *cmd, char **envp);
 char	**quote_aware_split(const char *cmdline);
 void	direct_complex_command(t_command *cmd, char **envp);
