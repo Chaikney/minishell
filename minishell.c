@@ -68,24 +68,26 @@ void	run_command(t_command *cmd, char **envp)
 // Therefore we keep the check here!
 void	eval(char *cmdline, char **envp)
 {
-	int			parse_state;
-	t_command	cmd;
-	int			con_loc;
+//	int			parse_state;
+	t_command	*cmd;
+//	int			con_loc;
 
-	parse_state = parse(cmdline, &cmd);
-	if (parse_state == 0)
+//	parse_state = parse(cmdline, &cmd);
+	cmd = parse(cmdline);
+//	if (parse_state == 0)
+	if (cmd)
 	{
-		con_loc = find_flow_control(&cmd);
-		if (con_loc == -1)
-		{
-			if (cmd.builtin != NONE)
-				executeBuiltin(&cmd, envp);
-			else
-				run_final_cmd(&cmd, envp, -1, -1);
-		}
-		else
-			direct_complex_command(&cmd, envp);
-		clear_t_command(&cmd);
+	//	con_loc = find_flow_control(cmd);	// FIXME Suspect this wont work now
+		/* if (con_loc == -1) */
+		/* { */
+		/* 	if (cmd->builtin != NONE) */
+		/* 		executeBuiltin(cmd, envp); */
+		/* 	else */
+		/* 		run_final_cmd(cmd, envp, -1, -1); */
+		/* } */
+		/* else */
+			direct_complex_command(cmd, envp);
+		clear_t_command(cmd);
 	}
 }
 

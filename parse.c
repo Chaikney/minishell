@@ -166,40 +166,57 @@ void	wipe_tokens(char **arr)
     {
         while (*arr)
             free(*arr++);
-        free (arr);
+//        free (arr);
     }
+}
+
+int	count_tokens(char **arr)
+{
+    int	i;
+
+    i = 0;
+    while (arr[i] != NULL)
+        i++;
+    return (i);
 }
 
 // Assign tokens to parts of a command struct, include with list.
 // When it reaches a pipe character it stops. Outside the function must handle ->next
 // Return NULL when we finish.
 // This would retain the I/O redir but remove the pipes.(replaced with the ->next)
-t_command	build_command(char **tokens)
+t_command	*build_command(char **tokens)
 {
 	static int	i;
 	int		j;
-	t_command	new_cmd;
+	int		num_tokens;
+	t_command	*new_cmd;
 
 	j = 0;
-	new_cmd = init_new_command();
-	while ((tokens[i]) && (ft_strncmp(tokens[i], "|", 1) != 0))
+    num_tokens = count_tokens(tokens);
+	new_cmd = malloc(sizeof(t_command));	// FIXME Memory allocated here is not freed
+	new_cmd->argc = 0;
+	new_cmd->builtin = NONE;
+	new_cmd->next = NULL;
+//	new_cmd = init_new_command();
+	while ((i < num_tokens) && (tokens[i]) && (ft_strncmp(tokens[i], "|", 1) != 0))
 	{
-		new_cmd.argv[j] = ft_strdup(tokens[i]);	// NOTE if we copy the values, can wipe all tokens
-		new_cmd.argc++;
+		new_cmd->argv[j] = ft_strdup(tokens[i]);	// NOTE if we copy the values, can wipe all tokens
+		new_cmd->argc++;
 		i++;
 		j++;
 	}
 	// we have reached the end, or a pipe.
-	new_cmd.argv[j] = NULL;	// NOTE Should we also inc argc? Does the null count?
+	new_cmd->argv[new_cmd->argc] = NULL;
+//	new_cmd.argv[j] = NULL;	// NOTE Should we also inc argc? Does the null count?
 	if (tokens[i] == NULL)
 		i = 0;
 	else
 		i++;	// step over the pipe.
     // TODO Break out the builtin parsing to elsewhere.
-	if ((new_cmd.argv[0]) && (ft_isalpha(new_cmd.argv[0][1]) == 1))
-		new_cmd.builtin = parse_builtin(&new_cmd, 0);
+	if ((new_cmd->argv[0]) && (ft_isalpha(new_cmd->argv[0][1]) == 1))
+		new_cmd->builtin = parse_builtin(new_cmd, 0);
 	else
-		new_cmd.builtin = parse_builtin(&new_cmd, 2);
+		new_cmd->builtin = parse_builtin(new_cmd, 2);
 	return (new_cmd);
 }
 
@@ -222,14 +239,19 @@ t_command	build_command(char **tokens)
 // Need consistency in t_comamnds. The split ones are mallocd, the one here (base) is not.
 // So hard to know what can be freed safely.
 // TODO Create the t_command list explicitly here (not later split)
-int	parse(const char *cmdline, t_command *cmd)
+//int	parse(const char *cmdline, t_command *cmd)
+t_command	*parse(const char *cmdline)
 {
     char	**tokens;
     int	is_parsed;
     char	*cmd_trim;
-    t_command	new_cmd;
-    t_command	*prev;
-    
+    t_command	*next_cmd;
+    t_command	*cmd_ptr;
+    t_command	*cmd_head;
+    int	i;
+    int	num_pipes;
+
+//    (void) cmd;	// HACK for debugging;
     is_parsed = -1;
     cmd_trim = ft_strtrim(cmdline, " ");
     if (cmd_trim == NULL)
@@ -237,16 +259,25 @@ int	parse(const char *cmdline, t_command *cmd)
     tokens = quote_aware_split(cmd_trim);
     free (cmd_trim);
     if (!tokens)
-        return (is_parsed);
+        return (NULL);
     print_tokens(tokens);
-    new_cmd = build_command(tokens);
-    cmd = &new_cmd;	// NOTE Marking the first command in the set.
-    while (new_cmd.argv[0] != NULL)
+	i = 0;
+    num_pipes = 0;
+	while (tokens[i] != NULL)
+		if (ft_strncmp(tokens[i++], "|", 1) == 0)
+			num_pipes++;
+    cmd_head = build_command(tokens);
+    cmd_ptr = cmd_head;
+
+//    cmd = &new_cmd;	// NOTE Marking the first command in the set.
+    i = 1;
+    while (i <= num_pipes)
     {
-        prev = &new_cmd;
-        new_cmd = build_command(tokens);
-        prev->next = &new_cmd;
-        print_cmd_parts(&new_cmd);
+        next_cmd = build_command(tokens);
+        cmd_ptr->next = next_cmd;
+        i++;
+        cmd_ptr = cmd_ptr->next;
+        print_cmd_parts(next_cmd);
     }
     /* cmd->argc = 0; */
     /* while (tokens[cmd->argc] != NULL) */
@@ -261,9 +292,14 @@ int	parse(const char *cmdline, t_command *cmd)
 //
     wipe_tokens(tokens);
 
-    if (cmd->argv[0] == NULL)
-        return (is_parsed);
-    print_cmd_parts(cmd);	// HACK for debugging
+    if (cmd_head->argv[0] == NULL)
+        return (NULL);
+    print_cmd_parts(cmd_head);	// HACK for debugging
     is_parsed = 0;
-    return (is_parsed);
+    if (is_parsed == 0)
+        return (cmd_head);
+    else {
+        return (NULL);
+    }
+//    return (is_parsed);
 }

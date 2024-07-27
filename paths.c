@@ -55,34 +55,35 @@ int	determine_output(t_command *cmd)
 // FIXME Too many lines in this function
 void	direct_complex_command(t_command *cmd, char **envp)
 {
-	int			num_pipes;
-	int			i;
+//	int			num_pipes;
+//	int			i;
 	int			o_redir;
 	int			i_redir;
-	t_command	*cmdlist;
+//	t_command	*cmdlist;
 
-	num_pipes = 0;
-	i = 0;
-	while (i < cmd->argc)
-		if (ft_strncmp(cmd->argv[i++], "|", 1) == 0)
-			num_pipes++;
+//	num_pipes = 0;
+//	i = 0;
+	/* while (i < cmd->argc) */
+	/* 	if (ft_strncmp(cmd->argv[i++], "|", 1) == 0) */
+	/* 		num_pipes++; */
 	i_redir = determine_input(cmd);
-	o_redir = determine_output(cmd);
-	remove_cmd_parts(cmd, ">");
 	remove_cmd_parts(cmd, "<");
-	if (num_pipes > 0)
+	// FIXME These will not work with a cmdlist
+//	if (num_pipes > 0)
 	{
-		cmdlist = make_cmd_list(cmd, num_pipes);
+//		cmdlist = make_cmd_list(cmd, num_pipes);
 //		clear_t_command(cmd);
-		while (cmdlist->next != NULL)
+		while (cmd->next != NULL)
 		{
-			run_in_pipe(cmdlist, envp, &i_redir);
-			cmdlist = cmdlist->next;
+			run_in_pipe(cmd, envp, &i_redir);
+			cmd = cmd->next;
 		}
-		run_final_cmd(cmdlist, envp, i_redir, o_redir);
-	}
-	else
+		o_redir = determine_output(cmd);
+		remove_cmd_parts(cmd, ">");
 		run_final_cmd(cmd, envp, i_redir, o_redir);
+	}
+	/* else */
+	/* 	run_final_cmd(cmd, envp, i_redir, o_redir); */
 }
 
 // NOTE target could be a single char for matching purposes...

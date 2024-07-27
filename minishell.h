@@ -85,7 +85,8 @@ void		ms_echo(t_command *cmd);
 void		ms_unset_export(char *unset_var, char **envp);
 
 // parse.c - functions to read and interpret user input
-int		parse(const char *cmdline, t_command *cmd);
+t_command	*parse(const char *cmdline);
+//int		parse(const char *cmdline, t_command *cmd);
 void	executeBuiltin(t_command *cmd, char **envp);
 char	**quote_aware_split(const char *cmdline);
 void	direct_complex_command(t_command *cmd, char **envp);
@@ -131,6 +132,7 @@ void	ms_env(char **envp);
 void	ms_cd(t_command *cmd, char **envp);
 void	ms_export_cd(char **envp, char *oldpwd, char *newpwd);
 
+t_command	init_new_command(void);
 // prompt.c - functions to enhance the readline prompt
 char	*get_shrt_wd(void);
 char	*get_status_for_prompt(void);
