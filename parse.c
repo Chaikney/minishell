@@ -88,8 +88,6 @@ void executeBuiltin(t_command *cmd, char **envp)
 // -- break when the parameter is NULL.
 // NOTE This applies variable substition where wanted.
 // FIXME Likely quote_aware_split has too many lines.
-// FIXME Note that in bash, >file is acceptable: matters for split!
-// TODO Splitting around > type chars needs to be rethought
 // KILL Variable substitution interferes with unset builtin.
 // NOTE This is not an issue, we do the same as bash does.
 char	**quote_aware_split(const char *cmdline)
@@ -100,7 +98,7 @@ char	**quote_aware_split(const char *cmdline)
 
 	p_num = 0;
 	cmd_pos = 0;
-	params = malloc (sizeof (char *) * MAXARGS);
+	params = malloc (sizeof (char *) * MAXARGS);	// FIXED? These are still not (always?) freed.
 	if (!params)
 		return (NULL);
 	while ((p_num < MAXARGS))
@@ -162,12 +160,12 @@ int	check_tokens(char **arr)
 // Clear the list of tokens generated from the cmdline.
 void	wipe_tokens(char **arr)
 {
-    if (arr)
-    {
-        while (*arr)
-            free(*arr++);
-//        free (arr);
-    }
+    int	i;
+
+    i = 0;
+    while (i < MAXARGS)
+        free(arr[i++]);
+    free (arr);
 }
 
 int	count_tokens(char **arr)
