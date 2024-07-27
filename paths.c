@@ -80,7 +80,10 @@ void	direct_complex_command(t_command *cmd, char **envp)
 		}
 		o_redir = determine_output(cmd);
 		remove_cmd_parts(cmd, ">");
-		run_final_cmd(cmd, envp, i_redir, o_redir);
+		if (cmd->builtin != NONE)
+			executeBuiltin(cmd, envp);
+		else
+			run_final_cmd(cmd, envp, i_redir, o_redir);
 	}
 	/* else */
 	/* 	run_final_cmd(cmd, envp, i_redir, o_redir); */
