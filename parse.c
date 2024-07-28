@@ -232,7 +232,6 @@ t_command	*parse(const char *cmdline)
 	t_command	*next_cmd;
 	t_command	*cmd_ptr;
 	t_command	*cmd_head;
-	int	i;
 	int	num_pipes;
 
 	cmd_trim = ft_strtrim(cmdline, " ");
@@ -248,14 +247,13 @@ t_command	*parse(const char *cmdline)
 	num_pipes = count_pipes(tokens);
 	cmd_head = build_command(tokens);
 	cmd_ptr = cmd_head;
-	i = 1;
-	while (i <= num_pipes)
+	while (num_pipes > 0)
 	{
 		next_cmd = build_command(tokens);
 		cmd_ptr->next = next_cmd;
-		i++;
+		num_pipes--;
 		cmd_ptr = cmd_ptr->next;
-		print_cmd_parts(next_cmd);
+		print_cmd_parts(next_cmd);	// HACK for debugging, remove later
 	}
 	wipe_tokens(tokens);
 	if (cmd_head->argv[0] == NULL)
