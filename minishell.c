@@ -14,44 +14,6 @@
 
 int	g_procstatus;
 
-// Take a command (must be at argv[0])
-// Check to see if it is itself a valid path.
-// Otherwise, search for it in PATH
-// Run the command using argv set -- assumed to be NT'd and valid
-// NOTE Any fork-ing needed should have been handled before calling this.
-// NOTE The assumptions here are: argv[0] is a command not a redirect.
-// ...and that all arguments in cmd->argv can be managed by the command
-// TODO Move this to a suitable other file.
-// DONE define exit routines for not found and for exec failure.
-// FIXED After one command has failed, we have to call EXIT twice to end.
-// FIXED Too many lines in function
-// NOTE The lines at the end are only reached if execve fails
-void	run_command(t_command *cmd, char **envp)
-{
-	char	*prog;
-
-	if (cmd->builtin != NONE)
-	{
-		executeBuiltin(cmd, envp);
-		exit_successful_pipe(cmd);
-	}
-	if (access(cmd->argv[0], X_OK) == 0)
-		prog = cmd->argv[0];
-	else
-		prog = search_in_path(cmd->argv[0]);
-	if ((!prog) || (access(prog, X_OK) != 0))
-	{
-		g_procstatus = errno;
-		perror("Executable program not found in PATH");
-	}
-	else if (execve(prog, cmd->argv, envp) == -1)
-	{
-		g_procstatus = errno;
-		perror("Failed to execute program");
-	}
-	free (prog);
-	exit_failed_pipe(cmd, -1, -1);
-}
 
 // Sends cmdline to parse function to get a t_command list
 // Pass it to the complex function

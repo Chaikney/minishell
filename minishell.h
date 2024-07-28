@@ -60,7 +60,6 @@ typedef struct s_command
 }	t_command;
 
 // various functions
-void	run_command(t_command *cmd, char **envp);
 void	eval(char *cmdline, char **envp);
 int		determine_output(t_command *cmd);
 
@@ -86,7 +85,6 @@ void		ms_unset_export(char *unset_var, char **envp);
 
 // parse.c - functions to read and interpret user input
 t_command	*parse(const char *cmdline);
-void	executeBuiltin(t_command *cmd, char **envp);
 char	**quote_aware_split(const char *cmdline);
 void	direct_complex_command(t_command *cmd, char **envp);
 
@@ -139,4 +137,8 @@ char	*get_prompt(void);
 // debug.c - functions to use in development
 void	print_tokens(char **arr);
 void	print_cmd_parts(t_command *cmd);
+
+// execute.c -functions to execute commands
+void	run_command(t_command *cmd, char **envp);
+void	execute_builtin(t_command *cmd, char **envp);
 #endif

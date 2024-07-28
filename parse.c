@@ -41,39 +41,6 @@ t_builtin parse_builtin(t_command *cmd, int posn)
 	return (NONE);
 }
 
-// Check value of cmd->builtin and direct to desired function.
-// falta por añadir que hace cada
-//  [x] echo with -n (newline or not)
-//  [x] cd with only a relative or absolute path
-//  [x] pwd (no options)
-//  [x] unset (no options)
-//  [x] env, no options or args
-//  [x] export
-//  [x] exit no options.
-//  TODO Move executeBuiltin to another file
-void executeBuiltin(t_command *cmd, char **envp)
-{
-	if (cmd->builtin == CD)
-        ms_cd(cmd, envp);
-	else if (cmd->builtin == EXIT)
-		ms_exit(cmd);
-	else if ((cmd->builtin == ECHON) || (cmd->builtin == ECHO))
-		ms_echo(cmd);
-	else if (cmd->builtin == PWD)
-		ms_pwd();
-	else if (cmd->builtin == EXP)
-		ms_export(cmd, envp);
-	else if (cmd->builtin == UNSET)
-		ms_unset(cmd, envp);
-	else if (cmd->builtin == ENV)
-        ms_env(envp);
-	else
-	{
-		printf("Unknown builtin command\n");
-		return;
-	}
-}
-
 // Quotation-aware command line split / tokenising
 // 3 modes: raw, "weak" quoting and 'strong' quoting
 // RAW: stop on a space, respect \escapes, substitute variables.

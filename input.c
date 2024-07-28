@@ -25,10 +25,10 @@
 // -- waits for reader to finish
 // - returns the read end of the parent's pipe
 // TODO	stopword = cmd->argv[1] is a hardcoded assumption, is it safe?
-// TODO Is there any cleanup to do in reader fork? child copy of cmd?
 // TODO Should we set g_procstatus here?
 // FIXME Protect against if first call to line returns null
 // 		reader process never would never end!
+// 		...although that implies there is no STDIN, a bigger problem...
 int	stopword_input(t_command *cmd)
 {
 	int		fd[2];
@@ -42,7 +42,6 @@ int	stopword_input(t_command *cmd)
 	{
 		close(fd[0]);	// NOTE read end of pipe is not needed by GNL
 		stopword = cmd->argv[1];
-//		printf("stopword is: %s", stopword);	// HACK for debugging
 		line = get_next_line(STDIN_FILENO);
 		while (line)
 		{
@@ -65,15 +64,14 @@ int	stopword_input(t_command *cmd)
 	return (fd[0]);
 }
 
-// NOTE That is in the format: cmd << stop_word
-// NOTE Input redir in format:  < infile grep a1
+// Receive a command and the type of redirection needed.
+// Return a file descriptor to access that input.
+// Return -1 and set g_procstatus if fd can't be accessed.
+// NOTE Expected behaviour:
 // If opening the file fails,
 // bash quits with error and doesn’t run the command.
 // If it succeeds, bash uses the file descriptor
 // of the opened file as the stdin file descriptor for the command.
-// NOTE i_file values of -1 are sometimes attempted to be closed
-// (In cases of BUILTIN commands)
-// ...better they should be caught instead
 int	setup_input(t_command *cmd, int i_lvl)
 {
 	char	*i_path;
@@ -99,8 +97,8 @@ int	setup_input(t_command *cmd, int i_lvl)
 // and return the fd to it.
 // Flags for input redir:
 // 0 - no special input
-// 1 - input from file
-// 2 - input from STDIN with stop word.
+// 1 - input from file (< infile grep a1)
+// 2 - input from STDIN with stop word (cmd << stop_word)
 int	determine_input(t_command *cmd)
 {
 	int	i;
