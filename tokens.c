@@ -95,7 +95,7 @@ char	*get_raw_param(const char *cmd, int *posn)
 // - Find the first double quote, step past it
 // - Start copying characters until the end quote
 // - Step past the end quote if that will not go out of bounds.
-// TODO Should this null-terminate its return value?
+// NOTE bzero call means we don't need to explicitly null-terminate par.
 char	*get_weak_param(const char *cmdline, int *posn)
 {
 	char	*par;
@@ -126,7 +126,7 @@ char	*get_weak_param(const char *cmdline, int *posn)
 // - start copying characters until the next quote
 // - step past the final ' if safe
 // NOTE This version does not allow for escaped quotes!
-// TODO Should this null-terminate its return value?
+// NOTE bzero call means we don't need to explicitly null-terminate par.
 char	*get_strong_param(const char *cmdline, int *posn)
 {
 	char	*par;

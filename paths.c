@@ -18,9 +18,8 @@
 // - Set file perms for level (create or append)
 // - find file name
 // - check access to file, open it
-// NOTE The file mode has no exec permission to avoid that...
-// ...a file with the same name as a program in the wd is attempted to be run
-// because it has the X bit set!
+// NOTE file mode is set to have NO EXEC permission so we don't...
+// ...attempt to execute any file with the same name as a program in the wd
 int	determine_output(t_command *cmd)
 {
 	int		i;
@@ -52,6 +51,12 @@ int	determine_output(t_command *cmd)
 
 // When there is a control character present, guide it to the correct
 // execution function(s)
+// - Set up input redirection and remove / free those parts of cmd.
+// - run not-final commands in a pipe, altering input pointer
+// - setup output redirection and remove / free those parts of cmd
+// - if the final command is a builtin, execute it directly.
+// - otherwise pass it to be run in a fork
+// NOTE i_redir is passed as pointer so it can be changed to the next step in pipe.
 void	direct_complex_command(t_command *cmd, char **envp)
 {
 	int			o_redir;
@@ -113,6 +118,7 @@ void	run_in_pipe(t_command *cmd, char **envp, int *i_file)
 // Forks, sets up input and output for one child process
 // and waits for it to complete.
 // NOTE This is used with either simple commands or at the end of complex one.
+// NOTE This *cannot* receive EXIT builtin
 // FIXME run_final_cmd still has too many lines
 void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file)
 {

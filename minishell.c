@@ -14,7 +14,6 @@
 
 int	g_procstatus;
 
-
 // Sends cmdline to parse function to get a t_command list
 // Pass it to the complex function
 // Clear the command struct on return.

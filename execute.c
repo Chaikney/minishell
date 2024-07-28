@@ -6,8 +6,8 @@
 
 // Take a command (must be at argv[0])
 // If it is a builtin, run that and exit the child process.
-// TODO Ensure that EXIT has been handled outside of a fork!
-// Check to see if it is itself a valid path.
+// NOTE Ensure that EXIT has been handled outside of a fork!
+// Check to see if argv[0] is itself a valid executable
 // Otherwise, search for it in PATH
 // NOTE The assumptions here are:
 // - argv[0] is a command not a redirect.
