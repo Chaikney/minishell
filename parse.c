@@ -223,7 +223,7 @@ int	count_pipes(char **arr)
 // FIXME make parse function shorter
 // DONE Perhaps the trim of cmdline should happen elsewhere?
 // DONE Split out "count pipes" functioning
-// TODO Must free tokens if the checks do not pass.
+// DONE Must free tokens if the checks do not pass.
 // FIXED Too many variables in parse.
 t_command	*parse(char *cmdline)
 {
@@ -239,7 +239,10 @@ t_command	*parse(char *cmdline)
 		return (NULL);
 	print_tokens(tokens);	// HACK for debugging, remove later.
 	if (check_tokens(tokens) == -1)
+	{
+		wipe_tokens(tokens);
 		return (NULL);
+	}
 	num_pipes = count_pipes(tokens);
 	cmd_head = build_command(tokens);
 	cmd_ptr = cmd_head;
