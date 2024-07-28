@@ -133,18 +133,39 @@ char	**quote_aware_split(const char *cmdline)
 
 // Return a -1 if there are illegal combinations of tokens
 // e.g. multiple attempts at redirection for either I or O
-// TODO Implement sanity checks on token set.
+// DONE Implement sanity checks on token set.
 // [x]	do not start with a pipe
-// [ ]	do not end with a pipe
-// [ ]	do not have both > and >>
-// [ ]	do not have both < and <<
-// [ ]	do not have more than one input directive
-// [ ]	do not have more than one output directive
+// [x]	do not end with a pipe
+// [x]	do not have both > and >>
+// [x]	do not have both < and <<
+// [x]	do not have more than one input directive
+// [x]	do not have more than one output directive
 int	check_tokens(char **arr)
 {
+	int	num_input;
+	int	num_output;
+	int	i;
+	int	is_bad;
+
+	num_input = 0;
+	num_output = 0;
+	is_bad = 0;
+	i = 0;
 	if (ft_strncmp(arr[0], "|", 1) == 0)
-		perror("bad command format");	// TODO Throw appropriate error here.
-    return (0);
+		is_bad = -1;
+	while (arr[i] != NULL)
+	{
+		if (ft_strncmp(arr[i], "<", 1) == 0)
+			num_input++;
+		if (ft_strncmp(arr[i], ">", 1) == 0)
+			num_output++;
+		i++;
+	}
+	if (ft_strncmp(arr[i - 1], "|", 1) == 0)
+		is_bad = -1;
+	if ((num_input > 1) || (num_output > 1))
+		is_bad = -1;
+    return (is_bad);
 }
 
 // Clear the list of tokens generated from the cmdline.
@@ -219,6 +240,8 @@ t_command	*build_command(char **tokens)
 // DONE Create the t_command list explicitly here (not later split)
 // FIXME make shorter
 // TODO Perhaps the trim of cmdline should happen elsewhere?
+// TODO Split out "count pipes" functioning
+// TODO Must free tokens if the checks do not pass.
 t_command	*parse(const char *cmdline)
 {
 	char	**tokens;
@@ -229,7 +252,6 @@ t_command	*parse(const char *cmdline)
 	int	i;
 	int	num_pipes;
 
-//    (void) cmd;	// HACK for debugging;
 	cmd_trim = ft_strtrim(cmdline, " ");
 	if (cmd_trim == NULL)
 		perror("command line is NULL\n");
@@ -237,7 +259,9 @@ t_command	*parse(const char *cmdline)
 	free (cmd_trim);
 	if (!tokens)
 		return (NULL);
-	print_tokens(tokens);
+	print_tokens(tokens);	// HACK for debugging, remove later.
+	if (check_tokens(tokens) == -1)
+		return (NULL);
 	i = 0;
 	num_pipes = 0;
 	while (tokens[i] != NULL)
