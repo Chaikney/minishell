@@ -84,7 +84,7 @@ void		ms_echo(t_command *cmd);
 void		ms_unset_export(char *unset_var, char **envp);
 
 // parse.c - functions to read and interpret user input
-t_command	*parse(const char *cmdline);
+t_command	*parse(char *cmdline);
 char	**quote_aware_split(const char *cmdline);
 void	direct_complex_command(t_command *cmd, char **envp);
 

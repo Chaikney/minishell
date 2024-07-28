@@ -221,24 +221,20 @@ int	count_pipes(char **arr)
 // - cmd_trim:	copy of cmdline without leading / trailing spaces; freed here
 // DONE Create the t_command list explicitly here (not later split)
 // FIXME make parse function shorter
-// TODO Perhaps the trim of cmdline should happen elsewhere?
+// DONE Perhaps the trim of cmdline should happen elsewhere?
 // DONE Split out "count pipes" functioning
 // TODO Must free tokens if the checks do not pass.
-// FIXME Too many variables in parse.
-t_command	*parse(const char *cmdline)
+// FIXED Too many variables in parse.
+t_command	*parse(char *cmdline)
 {
-	char	**tokens;
-	char	*cmd_trim;
+	char		**tokens;
 	t_command	*next_cmd;
 	t_command	*cmd_ptr;
 	t_command	*cmd_head;
-	int	num_pipes;
+	int			num_pipes;
 
-	cmd_trim = ft_strtrim(cmdline, " ");
-	if (cmd_trim == NULL)
-		perror("command line is NULL\n");
-	tokens = quote_aware_split(cmd_trim);
-	free (cmd_trim);
+	tokens = quote_aware_split(cmdline);
+	free (cmdline);
 	if (!tokens)
 		return (NULL);
 	print_tokens(tokens);	// HACK for debugging, remove later.

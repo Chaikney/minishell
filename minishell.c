@@ -22,11 +22,17 @@ int	g_procstatus;
 // as some builtins don't work in pipes!
 // - EXIT has to be an exit from the shell.
 // - EXPORT has to change values in the process above.
+// TODO Move some of direct_complex_command back here?
 void	eval(char *cmdline, char **envp)
 {
 	t_command	*cmd;
+	char		*trimmed;
 
-	cmd = parse(cmdline);
+	trimmed = ft_strtrim(cmdline, " ");
+	if (trimmed == NULL)
+		perror("command line is NULL\n");
+	free (cmdline);
+	cmd = parse(trimmed);
 	if (cmd)
 	{
 		direct_complex_command(cmd, envp);
