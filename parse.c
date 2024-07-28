@@ -194,6 +194,21 @@ t_command	*build_command(char **tokens)
 	return (new_cmd);
 }
 
+// Take an array of strings (tokens from the split cmdline)
+// Return the number of pipe characters it contains.
+int	count_pipes(char **arr)
+{
+	int	n;
+	int	i;
+
+	i = 0;
+	n = 0;
+	while (arr[i] != NULL)
+		if (ft_strncmp(arr[i++], "|", 1) == 0)
+			n++;
+	return (n);
+}
+
 // Parse input from cmdline into a command struct
 // Returns the first cmd in a list of them.
 // Variables:
@@ -205,10 +220,11 @@ t_command	*build_command(char **tokens)
 // - tokens:	list of strings mallocd to a set size
 // - cmd_trim:	copy of cmdline without leading / trailing spaces; freed here
 // DONE Create the t_command list explicitly here (not later split)
-// FIXME make shorter
+// FIXME make parse function shorter
 // TODO Perhaps the trim of cmdline should happen elsewhere?
-// TODO Split out "count pipes" functioning
+// DONE Split out "count pipes" functioning
 // TODO Must free tokens if the checks do not pass.
+// FIXME Too many variables in parse.
 t_command	*parse(const char *cmdline)
 {
 	char	**tokens;
@@ -229,11 +245,7 @@ t_command	*parse(const char *cmdline)
 	print_tokens(tokens);	// HACK for debugging, remove later.
 	if (check_tokens(tokens) == -1)
 		return (NULL);
-	i = 0;
-	num_pipes = 0;
-	while (tokens[i] != NULL)
-		if (ft_strncmp(tokens[i++], "|", 1) == 0)
-			num_pipes++;
+	num_pipes = count_pipes(tokens);
 	cmd_head = build_command(tokens);
 	cmd_ptr = cmd_head;
 	i = 1;

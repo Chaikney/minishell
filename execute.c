@@ -5,16 +5,15 @@
 // Functions that handle the execution and running of commands.
 
 // Take a command (must be at argv[0])
+// If it is a builtin, run that and exit the child process.
+// TODO Ensure that EXIT has been handled outside of a fork!
 // Check to see if it is itself a valid path.
 // Otherwise, search for it in PATH
-// Run the command using argv set -- assumed to be NT'd and valid
-// NOTE Any fork-ing needed should have been handled before calling this.
-// NOTE The assumptions here are: argv[0] is a command not a redirect.
-// ...and that all arguments in cmd->argv can be managed by the command
-// TODO Move this to a suitable other file.
-// DONE define exit routines for not found and for exec failure.
-// FIXED After one command has failed, we have to call EXIT twice to end.
-// FIXED Too many lines in function
+// NOTE The assumptions here are:
+// - argv[0] is a command not a redirect.
+// - all arguments in cmd->argv can be managed by the command
+// - i.e. they are valid and null-terminated.
+// - Any fork-ing needed has been handled before calling this.
 // NOTE The lines at the end are only reached if execve fails
 void	run_command(t_command *cmd, char **envp)
 {

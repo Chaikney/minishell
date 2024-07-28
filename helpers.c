@@ -13,6 +13,7 @@
 #include "minishell.h"
 
 // Various finders and helper functions.
+// TODO There are too many functions in helpers.c Find other places for them!
 
 // Returns the line index number of PATH for the requested var string
 // If not found, returns -1
