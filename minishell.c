@@ -22,17 +22,14 @@ int	g_procstatus;
 // NOTE The assumptions here are: argv[0] is a command not a redirect.
 // ...and that all arguments in cmd->argv can be managed by the command
 // TODO Move this to a suitable other file.
-// TODO define exit routines for not found and for exec failure.
+// DONE define exit routines for not found and for exec failure.
 // FIXED After one command has failed, we have to call EXIT twice to end.
-// FIXME Too many lines in function
-// NOTE The free and exit_failed_pipe lines at the end are only reached if execve fails
+// FIXED Too many lines in function
+// NOTE The lines at the end are only reached if execve fails
 void	run_command(t_command *cmd, char **envp)
 {
 	char	*prog;
 
-	printf("about to run a command with %i args", cmd->argc);
-//	print_cmd_parts(cmd);	// HACK for debugging
-//	printf("here to run a command: %s", cmd->argv[0]);	// HACK for debugging
 	if (cmd->builtin != NONE)
 	{
 		executeBuiltin(cmd, envp);
@@ -47,7 +44,7 @@ void	run_command(t_command *cmd, char **envp)
 		g_procstatus = errno;
 		perror("Executable program not found in PATH");
 	}
-	else if (execve(prog, cmd->argv, envp) == -1)	// if successful, execve does not return
+	else if (execve(prog, cmd->argv, envp) == -1)
 	{
 		g_procstatus = errno;
 		perror("Failed to execute program");
@@ -56,37 +53,21 @@ void	run_command(t_command *cmd, char **envp)
 	exit_failed_pipe(cmd, -1, -1);
 }
 
-// Sends cmdline to parse function to get a t_command
-// If the return has no control characters, send it to run.
-// If there are control characters, pass it to the complex function
+// Sends cmdline to parse function to get a t_command list
+// Pass it to the complex function
 // Clear the command struct on return.
-// DONE rename the bg variable to say what it does (what does it do?)
-// NOTE First execbuiltin check looks to not be needed.
-// BUT some builtins don't work in pipes!
-// EXIT has to be an exit from the shell.
-// EXPORT has to change values in the process above.
-// Therefore we keep the check here!
+// NOTE Was an execbuiltin check here
+// as some builtins don't work in pipes!
+// - EXIT has to be an exit from the shell.
+// - EXPORT has to change values in the process above.
 void	eval(char *cmdline, char **envp)
 {
-//	int			parse_state;
 	t_command	*cmd;
-//	int			con_loc;
 
-//	parse_state = parse(cmdline, &cmd);
 	cmd = parse(cmdline);
-//	if (parse_state == 0)
 	if (cmd)
 	{
-	//	con_loc = find_flow_control(cmd);	// FIXME Suspect this wont work now
-		/* if (con_loc == -1) */
-		/* { */
-		/* 	if (cmd->builtin != NONE) */
-		/* 		executeBuiltin(cmd, envp); */
-		/* 	else */
-		/* 		run_final_cmd(cmd, envp, -1, -1); */
-		/* } */
-		/* else */
-			direct_complex_command(cmd, envp);
+		direct_complex_command(cmd, envp);
 		clear_t_command(cmd);
 	}
 }

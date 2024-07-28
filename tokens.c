@@ -30,9 +30,9 @@ char	*grab_control_seq(const char *cmd, int *posn)
 	ft_bzero(par, 256);
 	if (cmd[*posn] == cmd[*posn + 1])
 	{
-			par[i] = cmd[*posn];
-			i++;
-			(*posn)++;
+		par[i] = cmd[*posn];
+		i++;
+		(*posn)++;
 	}
 	par[i] = cmd[*posn];
 	i++;
@@ -149,4 +149,46 @@ char	*get_strong_param(const char *cmdline, int *posn)
 	if (cmdline[*posn] != '\0')
 		(*posn)++;
 	return (par);
+}
+
+// Find and remove (freeing memory) target string from cmd argument list.
+// Target can match on a single character
+// Target will be a control character (< > |)
+// < << > and >> are associated with the parameter after,
+// ...so we also remove that.
+// ...controlled with the to_go variable.
+// Method:
+// - Decide if one or two entries must be removed.
+// - Find position of the target
+// - free memory at position (and next if needed)
+// - copy the values ahead to the position
+// - Ensure last NULL is copied
+// - Adjust value of argc
+// NOTE The target parts *must* have already been processed.
+void	remove_cmd_parts(t_command *cmd, char *target)
+{
+	int	i;
+	int	to_go;
+
+	i = 0;
+	if (target[0] == '|')
+		to_go = 1;
+	else
+		to_go = 2;
+	while ((cmd->argv[i]) && (ft_strncmp(cmd->argv[i], target, 1) != 0))
+	{
+		if (i == cmd->argc - 1)
+			return ;
+		i++;
+	}
+	free (cmd->argv[i]);
+	if (to_go == 2)
+		free (cmd->argv[i + 1]);
+	while (cmd->argv[i + to_go] != NULL)
+	{
+		cmd->argv[i] = cmd->argv[i + to_go];
+		i++;
+	}
+	cmd->argv[i] = cmd->argv[i + to_go];
+	cmd->argc = cmd->argc - to_go;
 }

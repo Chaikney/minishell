@@ -52,81 +52,24 @@ int	determine_output(t_command *cmd)
 
 // When there is a control character present, guide it to the correct
 // execution function(s)
-// FIXME Too many lines in this function
 void	direct_complex_command(t_command *cmd, char **envp)
 {
-//	int			num_pipes;
-//	int			i;
 	int			o_redir;
 	int			i_redir;
-//	t_command	*cmdlist;
 
-//	num_pipes = 0;
-//	i = 0;
-	/* while (i < cmd->argc) */
-	/* 	if (ft_strncmp(cmd->argv[i++], "|", 1) == 0) */
-	/* 		num_pipes++; */
 	i_redir = determine_input(cmd);
 	remove_cmd_parts(cmd, "<");
-	// FIXME These will not work with a cmdlist
-//	if (num_pipes > 0)
+	while (cmd->next != NULL)
 	{
-//		cmdlist = make_cmd_list(cmd, num_pipes);
-//		clear_t_command(cmd);
-		while (cmd->next != NULL)
-		{
-			run_in_pipe(cmd, envp, &i_redir);
-			cmd = cmd->next;
-		}
-		o_redir = determine_output(cmd);
-		remove_cmd_parts(cmd, ">");
-		if (cmd->builtin != NONE)
-			executeBuiltin(cmd, envp);
-		else
-			run_final_cmd(cmd, envp, i_redir, o_redir);
+		run_in_pipe(cmd, envp, &i_redir);
+		cmd = cmd->next;
 	}
-	/* else */
-	/* 	run_final_cmd(cmd, envp, i_redir, o_redir); */
-}
-
-// NOTE target could be a single char for matching purposes...
-// To remove control parameters we find target character in cmd->argv
-// ...it is that position and the next that need to be removed.
-// So we copy the value +2 ahead from there to the end of the array.
-// free parts and reduce argc by 2.
-// FIXED! One block is lost (to valgrind) after stripping things for > >>
-// NOTE In bash the < and > can be anywhere: you take the control posn and the next param,
-// TODO Move remove_cmd_parts elsewhere - parse.c?
-// The argv[i] containing < > etc *must* be freed, as is the parameter after it
-// (Both have been processed before removal)
-// Then we copy the parts from ahead into the gap left (inc the final NULL)
-// NOTE Expanded to cope with | char as well.
-void	remove_cmd_parts(t_command *cmd, char *target)
-{
-	int	i;
-	int	to_go;
-
-	i = 0;
-	if (target[0] == '|')
-		to_go = 1;
+	o_redir = determine_output(cmd);
+	remove_cmd_parts(cmd, ">");
+	if (cmd->builtin != NONE)
+		executeBuiltin(cmd, envp);
 	else
-		to_go = 2;
-	while ((cmd->argv[i]) && (ft_strncmp(cmd->argv[i], target, 1) != 0))
-	{
-		if (i == cmd->argc - 1)
-			return ;
-		i++;
-	}
-	free (cmd->argv[i]);
-	if (to_go == 2)
-		free (cmd->argv[i + 1]);
-	while (cmd->argv[i + to_go] != NULL)
-	{
-		cmd->argv[i] = cmd->argv[i + to_go];
-		i++;
-	}
-	cmd->argv[i] = cmd->argv[i + to_go];
-	cmd->argc = cmd->argc - to_go;
+		run_final_cmd(cmd, envp, i_redir, o_redir);
 }
 
 // Make a child process to execute the command, putting the output in a pipe

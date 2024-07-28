@@ -50,6 +50,7 @@ int	is_control_char(char c)
 // They would be separate from commands either side.
 // (locates, it is up to the outer loop to re-identify what the thing is)
 // FIXME Segfaults if cmdset (or any part of it) is null, add protection
+// TODO find_flow_control could be removed now, or find other use of it.
 int	find_flow_control(t_command *cmdset)
 {
 	int	i;
@@ -72,32 +73,6 @@ int	find_flow_control(t_command *cmdset)
 	if (i == cmdset->argc)
 		i = -1;
 	return (i);
-}
-
-// Debugging function to view the active parts of a command.
-// If there is a list in the command, it prints all commands
-void	print_cmd_parts(t_command *cmd)
-{
-	int	i;
-
-	while (cmd->next != NULL)
-	{
-		i = 0;
-		printf("\nExamining command with argc of %i:\n", cmd->argc);
-		while (i < cmd->argc)
-		{
-			printf("Index: %i\t%s\n", i, cmd->argv[i]);
-			i++;
-		}
-		cmd = cmd->next;
-	}
-	i = 0;
-	printf("\nExamining command with argc of %i:\n", cmd->argc);
-	while (i < cmd->argc)
-	{
-		printf("Index: %i\t%s\n", i, cmd->argv[i]);	// FIXME invalid read triggerede here from split pipe
-		i++;
-	}
 }
 
 // Moves the *posn pointer forward through a command line

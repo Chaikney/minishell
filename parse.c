@@ -14,7 +14,7 @@
 
 // Read the given command argument and if it matches a builtin, set the flag.
 // (posn will be 0 except when there is input redirection)
-// FIXME Lines are too long for norminette
+// FIXME Lines are too long for norminette - a match function needed?
 t_builtin parse_builtin(t_command *cmd, int posn)
 {
 	if (cmd->argc == 0)
@@ -50,6 +50,7 @@ t_builtin parse_builtin(t_command *cmd, int posn)
 //  [x] env, no options or args
 //  [x] export
 //  [x] exit no options.
+//  TODO Move executeBuiltin to another file
 void executeBuiltin(t_command *cmd, char **envp)
 {
 	if (cmd->builtin == CD)
@@ -90,6 +91,7 @@ void executeBuiltin(t_command *cmd, char **envp)
 // FIXME Likely quote_aware_split has too many lines.
 // KILL Variable substitution interferes with unset builtin.
 // NOTE This is not an issue, we do the same as bash does.
+// NOTE we Initialise / NULLify the end values for memory safety.
 char	**quote_aware_split(const char *cmdline)
 {
 	char	**params;
@@ -109,36 +111,24 @@ char	**quote_aware_split(const char *cmdline)
 		else if (cmdline[cmd_pos] == '\"')
 		{
 			params[p_num] = get_weak_param(cmdline, &cmd_pos);
-            if (needs_sub(params[p_num]) != -1)
-                params[p_num] = substitute_variables(params[p_num]);
+			if (needs_sub(params[p_num]) != -1)
+				params[p_num] = substitute_variables(params[p_num]);
 		}
 		else if (cmdline[cmd_pos] == '\'')
 			params[p_num] = get_strong_param(cmdline, &cmd_pos);
 		else
 		{
 			params[p_num] = get_raw_param(cmdline, &cmd_pos);
-            if (needs_sub(params[p_num]) != -1)
-                params[p_num] = substitute_variables(params[p_num]);
+			if (needs_sub(params[p_num]) != -1)
+				params[p_num] = substitute_variables(params[p_num]);
 		}
 		if (params[p_num] == NULL)
 			break ;
 		p_num++;
 	}
+	while (p_num < MAXARGS)
+		params[p_num++] = NULL;
 	return (params);
-}
-
-// debugging aid: print a list of strings.
-void	print_tokens(char **arr)
-{
-    int 	i;
-
-    i = 0;
-    printf("\nAnalysing token list.");
-    while ((arr[i]) && (i < MAXARGS))
-    {
-        printf("\ntoken %i:\t%s", i, arr[i]);
-        i++;
-    }
 }
 
 // Return a -1 if there are illegal combinations of tokens
@@ -158,7 +148,7 @@ int	check_tokens(char **arr)
 }
 
 // Clear the list of tokens generated from the cmdline.
-// FIXME Sometimes this clear unitialised values - set to blank when set?
+// FIXED Sometimes this clear unitialised values - set to blank when set?
 // Or stop when NULL reached?
 void	wipe_tokens(char **arr)
 {
@@ -181,33 +171,29 @@ int	count_tokens(char **arr)
 }
 
 // Assign tokens to parts of a command struct, include with list.
-// When it reaches a pipe character it stops. Outside the function must handle ->next
+// When it reaches a pipe character it stops.
+// Outside the function must handle ->next
 // Return NULL when we finish.
 // This would retain the I/O redir but remove the pipes.(replaced with the ->next)
+// NOTE We copy the values to make it easier to can wipe all tokens.
 t_command	*build_command(char **tokens)
 {
 	static int	i;
-	int		j;
-	int		num_tokens;
+	int			j;
+	int			num_tokens;
 	t_command	*new_cmd;
 
 	j = 0;
     num_tokens = count_tokens(tokens);
-	/* new_cmd = malloc(sizeof(t_command));	// FIXME Memory allocated here is not freed */
-	/* new_cmd->argc = 0; */
-	/* new_cmd->builtin = NONE; */
-	/* new_cmd->next = NULL; */
 	new_cmd = init_new_command();
 	while ((i < num_tokens) && (tokens[i]) && (ft_strncmp(tokens[i], "|", 1) != 0))
 	{
-		new_cmd->argv[j] = ft_strdup(tokens[i]);	// NOTE if we copy the values, can wipe all tokens
+		new_cmd->argv[j] = ft_strdup(tokens[i]);
 		new_cmd->argc++;
 		i++;
 		j++;
 	}
-	// we have reached the end, or a pipe.
 	new_cmd->argv[new_cmd->argc] = NULL;
-//	new_cmd.argv[j] = NULL;	// NOTE Should we also inc argc? Does the null count?
 	if (tokens[i] == NULL)
 		i = 0;
 	else

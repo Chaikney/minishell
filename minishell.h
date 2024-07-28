@@ -105,13 +105,13 @@ char	*search_in_path(char *cmd);
 void	goto_stop_char(const char *cmdline, int *posn);
 int		find_flow_control(t_command *cmdset);
 int		find_env_var(char **envp, const char *var);
-void	print_cmd_parts(t_command *cmd);
 int		is_legal_name(char *str);
 int		is_control_char(char c);
 
 // pipes.c
 t_command	*split_pipe(t_command *cmd);
 t_command	*make_cmd_list(t_command *to_split, int n);
+t_command	*init_new_command(void);
 
 // signals.c - catch and manage signals like CTRL-C
 void	handle_sigint(int sig);
@@ -131,9 +131,12 @@ void	ms_env(char **envp);
 void	ms_cd(t_command *cmd, char **envp);
 void	ms_export_cd(char **envp, char *oldpwd, char *newpwd);
 
-t_command	*init_new_command(void);
 // prompt.c - functions to enhance the readline prompt
 char	*get_shrt_wd(void);
 char	*get_status_for_prompt(void);
 char	*get_prompt(void);
+
+// debug.c - functions to use in development
+void	print_tokens(char **arr);
+void	print_cmd_parts(t_command *cmd);
 #endif
