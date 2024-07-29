@@ -107,7 +107,7 @@ void	ms_export_cd(char **envp, char *oldpwd, char *new_pwd)
 		cd_error("Missing value for PWD update.", NULL, NULL, oldpwd);
 	else
 	{
-		ms_unset_export("OLDPWD", envp);
+		int_unset("OLDPWD", envp);
 		env_len = 0;
 		while (envp[env_len] != NULL)
 			env_len++;
@@ -122,7 +122,7 @@ void	ms_export_cd(char **envp, char *oldpwd, char *new_pwd)
 		new_envp[env_len++] = new_pwd;
 		new_envp[env_len] = NULL;
 		copy_envp(new_envp, envp);
-		ms_unset_export("PWD", envp);
+		int_unset("PWD", envp);
 		free(new_envp);
 	}
 }

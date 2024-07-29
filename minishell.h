@@ -80,7 +80,7 @@ int			ms_pwd(void);
 void		ms_export(t_command *cmd, char **envp);
 void		ms_unset(t_command *cmd, char **envp);
 void		ms_echo(t_command *cmd);
-void		ms_unset_export(char *unset_var, char **envp);
+void		int_unset(char *unset_var, char **envp);
 void		ms_export_display(char **envp);
 void		copy_envp(char **src_envp, char **dst_envp);
 

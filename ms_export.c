@@ -54,7 +54,7 @@ void	replace_env_var(char *name, char *value, char **envp)
 	else
 	{
 		printf("\nupdating %s with %s", name, value);	// HACK for debugging
-		ms_unset_export(name, envp);
+		int_unset(name, envp);
 		add_new_env_var(name, value, envp);
 	}
 }

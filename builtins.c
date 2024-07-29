@@ -37,7 +37,7 @@ int	ms_pwd(void)
 // ...what do we mean by "unset"? AND how does this work?
 // - Finds the line in envp where the variable is.
 // - copies the next lines over it.
-void	ms_unset_export(char *unset_var, char **envp)
+void	int_unset(char *unset_var, char **envp)
 {
 	int	var_index;
 
@@ -146,7 +146,7 @@ void ms_export(t_command *cmd, char **envp)
             j++;
         }
         unset_var[k][len_unset] = '\0';
-        ms_unset_export(unset_var[k],envp);
+        int_unset(unset_var[k],envp);
         env_len = 0;
         j = 0;
         k++;
@@ -248,7 +248,7 @@ void	ms_unset(t_command *cmd, char **envp)
 			var_name = get_export_name(cmd->argv[i]);
 			if ((!var_name) || (is_legal_name(var_name) == 0))
 				perror ("failed");
-			ms_unset_export(var_name, envp);
+			int_unset(var_name, envp);
 			i++;
 		}
 	}
