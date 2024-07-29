@@ -85,6 +85,9 @@ void		ms_echo(t_command *cmd);
 void		ms_unset_export(char *unset_var, char **envp);
 void		ms_export_display(char **envp);
 void		copy_envp(char **src_envp, char **dst_envp);
+char		*make_env_string(char *name, char *value);
+char		*get_export_name(char *str);
+char		*get_export_value(char *str);
 
 // parse.c - functions to read and interpret user input
 t_command	*parse(char *cmdline);

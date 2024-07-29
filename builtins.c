@@ -219,35 +219,34 @@ void ms_export(t_command *cmd, char **envp)
 // TODO Use perror not printf when cmd fails?
 // TODO If this fails, should we set g_procstatus?
 // TODO Do we need to free memory for var_name?
-// FIXME ms_unset has too many lines
+// FIXED ms_unset has too many lines
+// DONE UNSET should act to act on multiple vars, space separated,.
+// NOTE This *works* but I don't understand why...
+// - Make variable name from cmd parameter
+// - Look for the name in ENVP
+// - - if not there, do nothing
+// - - if there:
+// - - copy the next line over this one, and so on to end of envp
 void	ms_unset(t_command *cmd, char **envp)
 {
 	int	i;
-	int	var_index;
 	char	*var_name;
 
 	i = 0;
 	if (cmd->argc < 2)
 	{
-		printf("unset: missing argument\n");
+		perror("unset: missing argument\n");
 		return ;
 	}
-	i = ft_strlen(cmd->argv[1]);
-	var_name = malloc(sizeof (char *) * i);	// TODO Do we need to have + 1 for null-termination here?
-	var_name = cmd->argv[1];
-	var_index = find_env_var(envp, var_name);
-	if (var_index >= 0)
+	else
 	{
-		// Liberar la memoria de la variable de entorno
-//        free(envp[var_index]);	// NOTE Segfault caused here - this is invalid when we did not allocate the var
-		// Eliminar la variable de entorno del arreglo envp
-		i = var_index;
-		while (envp[i] != NULL)
+		while (i <= (cmd->argc - 1))
 		{
-			envp[i] = envp[i + 1];
+			var_name = get_export_name(cmd->argv[i]);
+			if ((!var_name) || (is_legal_name(var_name) == 0))
+				perror ("failed");
+			ms_unset_export(var_name, envp);
 			i++;
 		}
 	}
-	else
-		printf("unset: variable %s not found\n", var_name);
 }
