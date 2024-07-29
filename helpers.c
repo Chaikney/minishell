@@ -13,29 +13,6 @@
 #include "minishell.h"
 
 // Various finders and helper functions.
-// TODO There are too many functions in helpers.c Find other places for them!
-
-// Returns the line index number of PATH for the requested var string
-// If not found, returns -1
-// FIXME This is unclear, why does it require the = (or not require?!)
-int	find_env_var(char **envp, const char *var)
-{
-	size_t	len;
-	int		i;
-
-	len = 0;
-	i = 0;
-	len = ft_strlen(var);
-	while (envp[i] != NULL)
-	{
-		if (ft_strncmp(envp[i], var, len) == 0 && envp[i][len] == '=')
-			return (i);
-		else if(ft_strncmp(envp[i], var, len) == 0 && envp[i][len] != '=')
-			return(i);
-		i++;
-	}
-	return (-1);
-}
 
 // return 1 if c is a flow control character, 0 if not
 // Flow control chars are: < > |

@@ -51,7 +51,6 @@ static void	ms_ed_with_var(char *c, char *split_point)
 
 // Handle the display of ENV variables when EXPORT is called
 // with 0 arguments.
-//
 // display "declare -x "
 // display NAME
 // if value, display "=VALUE"
@@ -83,4 +82,50 @@ void	ms_export_display(char **envp)
 		}
 		envp++;
 	}
+}
+
+// Takes a  name and a value; returns a string formatted suitable
+// for storing as an environment variable.
+// Variables:
+// len:	length needed for string. 1 for null and 1 for the =
+// name:	of the environment variable
+// value:	of the environment variable
+char	*make_env_string(char *name, char *value)
+{
+	char	*env_str;
+	char	*tmp;
+
+	if (!name)
+		return (NULL);
+	if (!value)
+		return (ft_strdup(name));
+	else
+	{
+		tmp = ft_strjoin(name, "=");
+	}
+	env_str = ft_strjoin(tmp, value);
+	free (tmp);
+	return (env_str);
+}
+
+// Returns the line index number (in eviornment)
+// for the requested var name.
+// If variable not found, returns -1
+int	find_env_var(char **envp, const char *var)
+{
+	size_t	len;
+	int		i;
+
+	len = 0;
+	i = 0;
+	len = ft_strlen(var);
+	while (envp[i] != NULL)
+	{
+		if (ft_strncmp(envp[i], var, len) == 0 && envp[i][len] == '=')
+			return (i);
+		else if (ft_strncmp(envp[i], var, len) == 0 && envp[i][len] != '=')
+			return (i);
+		i++;
+	}
+	return (-1);
 }

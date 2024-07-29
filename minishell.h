@@ -78,21 +78,22 @@ char	*grab_control_seq(const char *cmd, int *posn);
 // builtins.c
 int			ms_pwd(void);
 void		ms_export(t_command *cmd, char **envp);
-void		ms_alt_export(t_command *cmd, char **envp);
 void		ms_unset(t_command *cmd, char **envp);
-t_builtin	parse_builtin(t_command *cmd, int posn);
 void		ms_echo(t_command *cmd);
 void		ms_unset_export(char *unset_var, char **envp);
 void		ms_export_display(char **envp);
 void		copy_envp(char **src_envp, char **dst_envp);
-char		*make_env_string(char *name, char *value);
+
+// ms_export.c - and related helpers
 char		*get_export_name(char *str);
 char		*get_export_value(char *str);
+void		ms_alt_export(t_command *cmd, char **envp);
 
 // parse.c - functions to read and interpret user input
 t_command	*parse(char *cmdline);
-char	**quote_aware_split(const char *cmdline);
-void	direct_complex_command(t_command *cmd, char **envp);
+char		**quote_aware_split(const char *cmdline);
+void		direct_complex_command(t_command *cmd, char **envp);
+t_builtin	parse_builtin(t_command *cmd, int posn);
 
 // input.c - functions for redirecting input
 int		stopword_input(t_command *cmd);
@@ -108,7 +109,6 @@ void	remove_cmd_parts(t_command *cmd, char *target);
 char	*search_in_path(char *cmd);
 void	goto_stop_char(const char *cmdline, int *posn);
 int		find_flow_control(t_command *cmdset);
-int		find_env_var(char **envp, const char *var);
 int		is_legal_name(char *str);
 int		is_control_char(char c);
 
@@ -128,8 +128,10 @@ void	ms_exit(t_command *cmd);
 void	exit_successful_pipe(t_command *cmd);
 void	exit_failed_pipe(t_command *cmd, int fd_in, int fd_out);
 
-// env.c - just that for now
+// env.c - ENV builtin and environment variable helpers
 void	ms_env(char **envp);
+char	*make_env_string(char *name, char *value);
+int		find_env_var(char **envp, const char *var);
 
 // cd.c - change wd, set new value of PWD
 void	ms_cd(t_command *cmd, char **envp);

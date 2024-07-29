@@ -17,7 +17,7 @@
 // Minishell builtin, our version of pwd.
 // Calls getcwd, displays wd then frees the variable.
 // NOTE Calling getcwd with NULL and 0 mallocs as much space as is needed
-int ms_pwd(void)
+int	ms_pwd(void)
 {
 	char    *wd;
 
@@ -34,6 +34,9 @@ int ms_pwd(void)
 // This takes the name of a variable to be unset,
 // whereas user-facing ms_export takes a t_command.
 // NOTE Potential to unify these!
+// ...what do we mean by "unset"? AND how does this work?
+// - Finds the line in envp where the variable is.
+// - copies the next lines over it.
 void	ms_unset_export(char *unset_var, char **envp)
 {
 	int	var_index;
@@ -61,7 +64,7 @@ void	ms_unset_export(char *unset_var, char **envp)
 // - does it already exist?
 // NOTE Each argument to EXPORT should be in the form NAME=VALUE, without(?) spaces
 // therefore, the part to = is the NAME
-// FIXME ms_export Will have to be shortened to pass Norm
+// FIXME ms_export can be removed / replaced now
 // FIXME ms_export Too many variables for Norm: merge some counters?
 // FIXME ms_export does not conform to bash behaviour, see below
 // TODO If var name is not followed by = do not change env
