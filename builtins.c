@@ -232,7 +232,7 @@ void	ms_unset(t_command *cmd, char **envp)
 	int	i;
 	char	*var_name;
 
-	i = 0;
+	i = 1;
 	if (cmd->argc < 2)
 	{
 		perror("unset: missing argument\n");
