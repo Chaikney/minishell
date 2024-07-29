@@ -17,6 +17,7 @@
 
 // Returns the line index number of PATH for the requested var string
 // If not found, returns -1
+// FIXME This is unclear, why does it require the = (or not require?!)
 int	find_env_var(char **envp, const char *var)
 {
 	size_t	len;
