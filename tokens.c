@@ -60,9 +60,6 @@ char	*get_raw_param(const char *cmd, int *posn)
 	int		i;
 	char	*par;
 
-	// HACK These two lines debugging only, can remove later.
-	if ((cmd[*posn] == ' ') || (cmd[*posn] == '\0'))
-		printf("\t*** entered at incorrect char: %c", cmd[*posn]);
 	// have we started at a control char?
 	if (is_control_char(cmd[*posn]) == 1)
 		par = grab_control_seq(cmd, posn);
@@ -81,7 +78,15 @@ char	*get_raw_param(const char *cmd, int *posn)
 				(*posn)++;
 				// copy the next char
 			}
-			par[i] = cmd[*posn];
+			if (cmd[*posn] == '\"')
+			{
+				(*posn)++;
+				// copy until next one
+				while ((cmd[*posn] != '\"') && (cmd[*posn] != '\0'))
+					par[i++] = cmd[(*posn)++];
+			}
+			if (cmd[*posn] != '\"')
+				par[i] = cmd[*posn];
 			i++;
 			(*posn)++;
 		}
@@ -96,6 +101,7 @@ char	*get_raw_param(const char *cmd, int *posn)
 // - Start copying characters until the end quote
 // - Step past the end quote if that will not go out of bounds.
 // NOTE bzero call means we don't need to explicitly null-terminate par.
+// FIXED export MS_TEST="can have spaces" is being split and should not be.
 char	*get_weak_param(const char *cmdline, int *posn)
 {
 	char	*par;

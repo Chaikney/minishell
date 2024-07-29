@@ -59,6 +59,7 @@ t_builtin parse_builtin(t_command *cmd, int posn)
 // KILL Variable substitution interferes with unset builtin.
 // NOTE This is not an issue, we do the same as bash does.
 // NOTE we Initialise / NULLify the end values for memory safety.
+// FIXED export MS_TEST="can have spaces" is being split and should not be.
 char	**quote_aware_split(const char *cmdline)
 {
 	char	**params;

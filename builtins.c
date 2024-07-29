@@ -219,7 +219,7 @@ void ms_export(t_command *cmd, char **envp)
 // [x] unset a variable that we set previously using export
 // [x] unset a variable that was inherited
 // FIXED ms_unset should not segfault
-// TODO Use perror not printf when cmd fails?
+// DONE Use perror not printf when cmd fails?
 // TODO If this fails, should we set g_procstatus?
 // TODO Do we need to free memory for var_name?
 // FIXED ms_unset has too many lines
