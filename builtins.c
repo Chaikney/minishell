@@ -52,85 +52,109 @@ void	ms_unset_export(char *unset_var, char **envp)
 		printf("unset: variable %s not found\n", unset_var);
 }
 
+// Take a name and value and add this  to the envp.
+// the Named value should not already exist.
+// If value is NULL, add only the name.
+// TODO Implement add_new_env_var
+void	add_new_env_var(char *name, char *value, char **envp)
+{
+
+}
+
+// Take a name change the value in the envp to the one given.
+// TODO If value is NULL, what should replace_env_var do?
+// TODO Implement replace_env_var
+void	replace_env_var(char *name, char *value, char **envp)
+{
+
+}
 // Return the NAME part of str. OR NULL if the name is invalid.
 // NOTE Each argument to EXPORT should be in the form NAME=VALUE, without(?) spaces
 // therefore, the part to = is the NAME
 // See how long the part before = is
 char	*get_export_name(char *str)
 {
-    char	*c;
-    int	len;
-    char	*name;
+	char	*c;
+	int	len;
+	char	*name;
 
-    len = 0;
-    while ((str[len] != '\0') && (str[len] != '='))
-        len++;
-    if (len == 0)
-        return (NULL);
-    name = malloc(sizeof(char) * (len + 1 + 1));
-    if (!name)
-        return (NULL);
-    name[len + 1] = '\0';
-    while (len >= 0)
-    {
-        name[len] = str[len];
-        len--;
-    }
-    return (name);
+	len = 0;
+	while ((str[len] != '\0') && (str[len] != '='))
+		len++;
+	if (len == 0)
+		return (NULL);
+	name = malloc(sizeof(char) * (len + 1 + 1));
+	if (!name)
+		return (NULL);
+	name[len + 1] = '\0';
+	while (len >= 0)
+	{
+		name[len] = str[len];
+		len--;
+	}
+	return (name);
 }
 
 // return the VALUE part of a NAME=VALUE pair to process in EXPORT
-// FIXME The counting in this will be wrong. Also I am moving value forward, need stable ref
+// Variables:
+// - value:	the string returned. Must be freed later.
+// - midpoint:	index of the = character.
+// - len:		NUmber of chars we have to copy from value.
+// NOTE: Could we just give len as some large amount and let substr handle it for us?
 char	*get_export_value(char *str)
 {
-    char	*midpoint;
-    char	*c;
-    char	*ptr;
-    int	len;
-    char	*value;
+	int	midpoint;
+	int	len;
+	char	*value;
 
-    midpoint = ft_strchr(str, '=');
-    if (midpoint)
-        return (NULL);
-    else
-    {
-        c = midpoint + 1;
-        ptr = c;
-        while (*ptr++ != '\0')
-            len++;
-        value = malloc (sizeof(char) * len + 1 + 1);
-        if (!value)
-            return (NULL);
-        while (*c != '\0')
-            *value++ = *c++;
-
-    }
-    return (value);
+	if (ft_strchr(str, '=') == NULL)
+		return (NULL);
+	midpoint = 0;
+	len = 0;
+	while ((str[midpoint] != '\0') && (str[midpoint] != '='))
+		midpoint++;
+	midpoint++;
+	while (str[midpoint + len] != '\0')
+		len++;
+	value = ft_substr(str, midpoint, len);
+	return (value);
 }
 
 // A version of ms_export that is easier to understand for me.
 // Building from the base.
 void	ms_alt_export(t_command *cmd, char **envp)
 {
-    char	*evar_name;
-    char	*evar_newvalue;
-    int	i;
+	char	*evar_name;
+	char	*evar_newvalue;
+	char	*edit_point;
+	int	i;
 
-    i = 0;
-    if (cmd->argc < 2)
-        ms_export_display(envp);
-    else
-    {
-        while (i < cmd->argc) 	// FIXME I mean " do for every argument except export"
-        {
-            evar_name = get_export_name(cmd->argv[i]);
-            if ((!evar_name) || (is_legal_name(evar_name) == 0))
-                perror ("failed");
-            evar_newvalue = get_export_value(cmd->argv[i]);
-        }
+	i = 1;
+	if (cmd->argc < 2)
+		ms_export_display(envp);
+	else
+	{
+		while (i < (cmd->argc - 1))
+		{
+			evar_name = get_export_name(cmd->argv[i]);
+			if ((!evar_name) || (is_legal_name(evar_name) == 0))
+				perror ("failed");
+			evar_newvalue = get_export_value(cmd->argv[i]);
+			edit_point = getenv(evar_name);
+			if (!edit_point)
+			{
+				add_new_env_var(evar_name, evar_newvalue, envp);
+				// No variable: add a new one.
+			}
+			else
+			{
+				replace_env_var(evar_name, evar_newvalue, envp);
+				// variable exists: overwrite it
+			}
+		}
 
 
-    }
+	}
 
 }
 
