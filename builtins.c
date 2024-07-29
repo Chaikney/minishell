@@ -96,7 +96,7 @@ void ms_export(t_command *cmd, char **envp)
     len_unset = 0;
     if (cmd->argc < 2) 
     {
-        printf("export: missing argument\n");
+        ms_export_display(envp);
         return ;
     }
     unset_var = malloc((cmd->argc - 1) * sizeof(char *));

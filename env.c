@@ -27,3 +27,41 @@ void	ms_env(char **envp)
 	}
 	return ;
 }
+
+// Handle the display of ENV variables when EXPORT is called
+// with 0 arguments.
+// TODO Handle empty values (if no equals, stop there.)
+void	ms_export_display(char **envp)
+{
+	char	*line_split;
+	char	*c;
+
+	while (*envp)
+	{
+		c = *envp;
+		line_split = ft_strchr(*envp, '=');
+		if (line_split)
+		{
+			printf("declare -x ");
+			while (c != line_split)
+			{
+				printf("%c", *c);
+				c++;
+			}
+			printf("%c", *c);
+			c++;
+			printf("\"");
+			while (*c != '\0')
+			{
+				printf("%c", *c);
+				c++;
+			}
+			printf("\"\n");
+			envp++;
+		}
+		// display "declare -x "
+		// display NAME
+		// if value, display "=VALUE"
+		// if no vlaue, only newline
+	}
+}
