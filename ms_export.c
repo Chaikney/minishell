@@ -64,40 +64,19 @@ void	add_new_env_var(char *name, char *value, char **envp)
 // Take a name change the value in the envp to the one given.
 // TODO If value is NULL, what should replace_env_var do?
 // TODO Implement replace_env_var
-// FIXME This only *adds* values, it does not remove them.
+// FIXED? This only *adds* values, it does not remove them.
 void	replace_env_var(char *name, char *value, char **envp)
 {
-	char	*write_point;
-	size_t	new_len;
-	size_t	old_val_len;
-	char	*ptr;
+	int		var_i;
 
-    (void) envp;	// HACK For compilation.
-	write_point = getenv(name);
-	if (!write_point)
-		printf("\nVariable %s not found to replace", name);
+	var_i = find_env_var(envp, name);
+	if (var_i == -1)
+		printf("\nVariable %s not found to replace", name);	// HACK for debugging
 	else
 	{
-		old_val_len = 0;
-		ptr = write_point;
-		new_len = ft_strlen(name) + 1 + ft_strlen(value) + 1;
-		while (*ptr++ != '\0')
-			old_val_len++;
-		if (new_len > (ft_strlen(name) + 1 + old_val_len))
-		{
-			printf("\nMore space needed in env! Not implemented yet");
-			// we need to allocate more space.
-		}
-		else
-		{
-			// we can overwrite.
-			// Go backwards, null-ing
-			while (ptr-- != write_point)
-				*ptr = '\0';
-			// go forwards, copying chars from value
-			while (*value != '\0')
-				*ptr++ = *value++;
-		}
+		printf("\nupdating %s with %s", name, value);	// HACK for debugging
+		ms_unset_export(name, envp);
+		add_new_env_var(name, value, envp);
 	}
 }
 
@@ -155,12 +134,30 @@ char	*get_export_value(char *str)
 
 // A version of ms_export that is easier to understand for me.
 // Building from the base.
+// - if no parameters, run the display function.
+// - for the rest of the parameters
+// - - split into NAME and VALUE
+// - - Find the NAME in envp using getenv FIXME this method doesn't work
+// - - - not there: add new env var
+// - - - already there replace env var
+// Test cases and expected (bash) behaviour:
+// [x] export MS_TEST=hola				Add variable (visible with env)
+// [x] export MS_TEST=goodbye			Change previous variable to new value.
+// FIXME test below fails because splits the value as if 2 further vars.
+// [ ] export MS_TEST="hola que tal"	Add 1 variable with spaces	FAIL adds 3 vars
+// [x] export MS_TEST hola				adds 2 vars without =
+// [x] export hola que tal				as above
+// [ ] export MS_TEST=					Add blank "" variable		FAIL env then shows "", unlike bash
+// [x] export MS_TEST					Adds var visible export but not env
+// [x] export							displays all vars in specific format.
+// FIXED There is a problem in replacing OUR, CUSTOM variables.
+// ....getenv is not reliable for that!
 void	ms_alt_export(t_command *cmd, char **envp)
 {
 	char	*evar_name;
 	char	*evar_newvalue;
-	char	*edit_point;
-	int	i;
+	int		i;
+	int		var_i;
 
 	i = 1;
 	if (cmd->argc < 2)
@@ -172,19 +169,19 @@ void	ms_alt_export(t_command *cmd, char **envp)
 			evar_name = get_export_name(cmd->argv[i]);
 			if ((!evar_name) || (is_legal_name(evar_name) == 0))
 				perror ("failed");
-            printf("\tWill act on: %s", evar_name);
+            printf("\tWill act on: %s", evar_name);	// HACK for debugging
 			evar_newvalue = get_export_value(cmd->argv[i]);
-            printf("\tto change to: %s", evar_newvalue);
-			edit_point = getenv(evar_name);
-			if (!edit_point)
+            printf("\tto change to: %s", evar_newvalue);	// HACK for debugging
+			var_i = find_env_var(envp, evar_name);
+			if (var_i == -1)
 			{
+				printf("variable not found, adding fresh.");	// HACK for debugging
 				add_new_env_var(evar_name, evar_newvalue, envp);
-				// No variable: add a new one.
 			}
 			else
 			{
+				printf("variable exists, replacing (aye right)");	// HACK for debugging
 				replace_env_var(evar_name, evar_newvalue, envp);
-				// variable exists: overwrite it
 			}
             i++;
 		}
