@@ -72,7 +72,7 @@ void	execute_builtin(t_command *cmd, char **envp)
 	else if (cmd->builtin == PWD)
 		ms_pwd();
 	else if (cmd->builtin == EXP)
-		ms_alt_export(cmd, envp);
+		ms_export(cmd, envp);
 //		ms_export(cmd, envp);
 	else if (cmd->builtin == UNSET)
 		ms_unset(cmd, envp);

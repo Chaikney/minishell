@@ -124,8 +124,7 @@ char	*get_export_value(char *str)
 // Test cases and expected (bash) behaviour:
 // [x] export MS_TEST=hola				Add variable (visible with env)
 // [x] export MS_TEST=goodbye			Change previous variable to new value.
-// FIXME test below fails because splits the value as if 2 further vars.
-// [ ] export MS_TEST="hola que tal"	Add 1 variable with spaces	FAIL adds 3 vars
+// [x] export MS_TEST="hola que tal"	Add 1 variable with spaces	FAIL adds 3 vars
 // [x] export MS_TEST hola				adds 2 vars without =
 // [x] export hola que tal				as above
 // [ ] export MS_TEST=					Add blank "" variable		FAIL env then shows "", unlike bash
@@ -134,8 +133,8 @@ char	*get_export_value(char *str)
 // FIXED There is a problem in replacing OUR, CUSTOM variables.
 // ....getenv is not reliable for that!
 // FIXME Too many lines (might be the printfs...)
-// TODO Can rename this to become the real ms_export soon.
-void	ms_alt_export(t_command *cmd, char **envp)
+// DONE Can rename this to become the real ms_export soon.
+void	ms_export(t_command *cmd, char **envp)
 {
 	char	*evar_name;
 	char	*evar_newvalue;

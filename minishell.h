@@ -77,7 +77,6 @@ char	*grab_control_seq(const char *cmd, int *posn);
 
 // builtins.c
 int			ms_pwd(void);
-void		ms_export(t_command *cmd, char **envp);
 void		ms_unset(t_command *cmd, char **envp);
 void		ms_echo(t_command *cmd);
 void		int_unset(char *unset_var, char **envp);
@@ -87,7 +86,7 @@ void		copy_envp(char **src_envp, char **dst_envp);
 // ms_export.c - and related helpers
 char		*get_export_name(char *str);
 char		*get_export_value(char *str);
-void		ms_alt_export(t_command *cmd, char **envp);
+void		ms_export(t_command *cmd, char **envp);
 
 // parse.c - functions to read and interpret user input
 t_command	*parse(char *cmdline);
