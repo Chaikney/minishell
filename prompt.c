@@ -60,8 +60,8 @@ char	*get_status_for_prompt(void)
 }
 
 // DONE Add (a part of) the wd to prompt
-// TODO Shorten the wd.
-// FIXME Too many variables.
+// DONE Shorten the wd.
+// FIXED Too many variables.
 // DONE Add username to prompt
 // TODO Check that the terminal is colour-capable before using control codes
 // This returns a text string to be dsiplayed by readline
@@ -72,13 +72,10 @@ char	*get_prompt(char **envp)
 	char	*prompt;
 	char	*status;
 	char	*tmp_part;
-	char	*uname;
 	char	*cwd;
 	char	*tmp2;
 
-	uname = getenv("USER");
-	if (uname)
-		tmp_part = ft_strjoin(uname, " in ");
+	tmp_part = ft_strjoin(getenv("USER"), " in ");
 	cwd = get_shrt_wd(envp);
 	tmp2 = ft_strjoin(tmp_part, cwd);
 	free (tmp_part);
