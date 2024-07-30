@@ -62,6 +62,10 @@ t_builtin parse_builtin(t_command *cmd, int posn)
 // NOTE This is not an issue, we do the same as bash does.
 // NOTE we Initialise / NULLify the end values for memory safety.
 // FIXED export MS_TEST="can have spaces" is being split and should not be.
+// FIXME The following is not working with the split.
+// [ ]	export hola=que'tal
+// [ ]	export hola='que'tal
+// [ ]	export hola='que tal'
 char	**quote_aware_split(const char *cmdline)
 {
 	char	**params;
@@ -167,6 +171,7 @@ int	count_tokens(char **arr)
 // Return NULL when we finish.
 // This would retain the I/O redir but remove the pipes.(replaced with the ->next)
 // NOTE We copy the values to make it easier to can wipe all tokens.
+// FIXME build_command has too many lines
 t_command	*build_command(char **tokens)
 {
 	static int	i;
@@ -216,18 +221,12 @@ int	count_pipes(char **arr)
 // Returns the first cmd in a list of them.
 // Variables:
 //  - cmdline:	string from readline
-// FIXED Ensure that we free *all* parts of token once cmd is complete
 // TODO Give this a more descriptive name; we parse lots of things now.
 // NOTE malloc'd variables used in this function:
 // - cmdline:  set by readline in main
 // - tokens:	list of strings mallocd to a set size
 // - cmd_trim:	copy of cmdline without leading / trailing spaces; freed here
-// DONE Create the t_command list explicitly here (not later split)
-// FIXME make parse function shorter
-// DONE Perhaps the trim of cmdline should happen elsewhere?
-// DONE Split out "count pipes" functioning
-// DONE Must free tokens if the checks do not pass.
-// FIXED Too many variables in parse.
+// FIXME make parse function shorter has too many lines
 t_command	*parse(char *cmdline)
 {
 	char		**tokens;

@@ -47,23 +47,20 @@ char	*grab_control_seq(const char *cmd, int *posn)
 // - step over initial spaces, avoiding the end marker
 // - copy characters
 // - null-term and return
-// DONE handle some escape characters in this function: if \, copy the next char
 // TODO Consider if this should stop at a ' or "
 // (they would be misplaced, but...)
 // NOTE Fish and bash react to echo 'thing but opening multiline input.
 // ....really don't see a way to achieving that.
-// NOTE It is *only* this function which loses memory. What is the difference?
 // DONE Handle case when we have > < without spaces to the next
 // DONE Handle command *ending* with a control char, i.e. Test ls> test
+// FIXME get_raw_param has too many lines
 char	*get_raw_param(const char *cmd, int *posn)
 {
 	int		i;
 	char	*par;
 
-	// have we started at a control char?
 	if (is_control_char(cmd[*posn]) == 1)
 		par = grab_control_seq(cmd, posn);
-	// this is the part that copies.
 	else
 	{
 		par = malloc(sizeof(char) * 256);
@@ -71,17 +68,14 @@ char	*get_raw_param(const char *cmd, int *posn)
 			return (NULL);
 		ft_bzero(par, 256);
 		i = 0;
-		while ((cmd[*posn] != '\0') && (cmd[*posn] != ' ') && (is_control_char(cmd[*posn]) == 0))
+		while ((cmd[*posn] != '\0') && (cmd[*posn] != ' ') &&
+			   (is_control_char(cmd[*posn]) == 0))
 		{
 			if (cmd[*posn] == '\\')
-			{
 				(*posn)++;
-				// copy the next char
-			}
 			if (cmd[*posn] == '\"')
 			{
 				(*posn)++;
-				// copy until next one
 				while ((cmd[*posn] != '\"') && (cmd[*posn] != '\0'))
 					par[i++] = cmd[(*posn)++];
 			}
