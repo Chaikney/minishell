@@ -63,11 +63,8 @@ char	*grab_control_seq(const char *cmd, int *posn)
 // DONE handle some escape characters in this function: if \, copy the next char
 // TODO Consider if this should stop at a ' or "
 // (they would be misplaced, but...)
-// NOTE Fish and bash react to echo 'thing but opening multiline input.
-// ....really don't see a way to achieving that.
-// NOTE It is *only* this function which loses memory. What is the difference?
-// DONE Handle case when we have > < without spaces to the next
-// DONE Handle command *ending* with a control char, i.e. Test ls> test
+// NOTE Fish and bash react to echo 'thing by opening multiline input.
+// But we do not have to handle unclosed quotes, says the subject PDF.
 char	*get_raw_param(const char *cmd, int *posn)
 {
 	int		i;
@@ -79,10 +76,7 @@ char	*get_raw_param(const char *cmd, int *posn)
 	// this is the part that copies.
 	else
 	{
-		par = malloc(sizeof(char) * 256);
-		if (!par)
-			return (NULL);
-		ft_bzero(par, 256);
+		par = get_blank_param();
 		i = 0;
 		while ((cmd[*posn] != '\0') && (cmd[*posn] != ' ') && (is_control_char(cmd[*posn]) == 0))
 		{

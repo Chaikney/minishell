@@ -46,6 +46,8 @@ int	needs_sub(char *str)
 // - alloc a string
 // - copy characters
 // FIXME Function too long. Can I do this with fewer vars?
+// TODO Nothing calls this. Is it obsolete?
+// TODO This should step over the name in the outer string
 char	*get_var_name(const char *str)
 {
 	int		name_len;
