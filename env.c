@@ -111,6 +111,7 @@ char	*make_env_string(char *name, char *value)
 // Returns the line index number (in eviornment)
 // for the requested var name.
 // If variable not found, returns -1
+// FIXED This can SEGFAULT if envp is not there.
 int	find_env_var(char **envp, const char *var)
 {
 	size_t	len;
@@ -119,6 +120,8 @@ int	find_env_var(char **envp, const char *var)
 	len = 0;
 	i = 0;
 	len = ft_strlen(var);
+	if (!envp)
+		return (-1);
 	while (envp[i] != NULL)
 	{
 		if (ft_strncmp(envp[i], var, len) == 0 && envp[i][len] == '=')
