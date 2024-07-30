@@ -241,19 +241,32 @@ void	add_value_into_param(char *par, int *posn, const char *cmdline)
 		vvalue = getenv(vname);
 		while (name_len-- > 0)
 			(*posn)++;
-		while (*vvalue != '\0')
+		if (vvalue)
 		{
-			*par = *vvalue;
-			par++;
-			vvalue++;
+			while (*vvalue != '\0')
+			{
+				*par = *vvalue;
+				par++;
+				vvalue++;
+			}
 		}
 		free (vname);
 	}
 }
+void	copy_freely(char *param, int *posn, const char *cmdline)
+{
+	while ((cmdline[*posn] != '\0') && (cmdline[*posn] != '\''))
+		*param++ = cmdline[(*posn)++];
+	if (cmdline[*posn] != '\0')
+		(*posn)++;
+}
+
 // p_mode (parsing style)
 // 0 - raw
 // 1 - "weak"
-// 2 - 'strong'
+// 2 - 'strong'		copy everything in the quotes, unaltered
+// FIXED Every cmd line with " or ' gives a blank parameter (or a space?)
+// FIXME echo '$HOME' is an instant segfault. Reaches add_value_into_param and should not.
 char	*get_any_parameter(const char *cmdline, int *posn)
 {
 	char	*param;
@@ -269,17 +282,31 @@ char	*get_any_parameter(const char *cmdline, int *posn)
 	else
 	{	// FIXME This needs to be mode-aware...
 		// FIXME we need a wrapping while as well...
-		while (ft_strchr(stops, cmdline[*posn]) == NULL)
-			param[i++] = cmdline[(*posn)++];
-		if ((cmdline[*posn] == '\'') || (cmdline[*posn] == '\"'))
-			change_parse_mode(cmdline[*posn], &p_mode, posn);
-		if (((is_control_char(cmdline[*posn]) == 1) && (p_mode ==  0)) ||
-			((p_mode == 0) && (cmdline[*posn]) == ' ') ||
-			(cmdline[*posn] == '\0'))
-			return (param);
-		if ((cmdline[*posn] == '$') && (p_mode != 2))
-			add_value_into_param(param, posn, cmdline);
-
+		while (cmdline[*posn] != '\0')
+		{
+			if (ft_strchr(stops, cmdline[*posn]) == NULL)
+				param[i++] = cmdline[(*posn)++];
+			else
+			{
+				if (cmdline[*posn] == '\0')
+					return (param);
+				if ((cmdline[*posn] == '\'') || (cmdline[*posn] == '\"'))
+					change_parse_mode(cmdline[*posn], &p_mode, posn);
+				if (p_mode == 2)
+				{
+					// FIXME Why does echo '$HOME?' print nothing???!?
+					copy_freely(param, posn, cmdline);
+					p_mode = 0;
+				}
+				else if (((is_control_char(cmdline[*posn]) == 1) && (p_mode ==  0)) ||
+					((p_mode == 0) && (cmdline[*posn]) == ' ') ||
+					(cmdline[*posn] == '\0'))
+					return (param);
+				else if ((cmdline[*posn] == '$') && (p_mode != 2))
+					add_value_into_param(param, posn, cmdline);
+				(*posn)++;
+			}
+		}
 	}
 	return (param);
 }
