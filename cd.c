@@ -16,7 +16,6 @@
 // and return the target to use.
 // NOTE This is mainly so we can use ~ as an alias for $HOME
 // ....but other things might be possible?
-// FIXME The g_procstatus call does not set the status right.
 static char	*get_cd_target(t_command *cmd)
 {
 	char	*target;
@@ -24,7 +23,10 @@ static char	*get_cd_target(t_command *cmd)
 	if (cmd->argc != 2)
 	{
 		fprintf(stderr, "cd: One single argument required\n");
-		g_procstatus = errno;
+		if (cmd->argc > 2)
+			g_procstatus = E2BIG;
+		else
+			g_procstatus = EINVAL;
 		return (NULL);
 	}
 	else if (ft_strncmp(cmd->argv[1], "~", 2) == 0)
