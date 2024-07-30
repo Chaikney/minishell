@@ -62,19 +62,21 @@ t_builtin parse_builtin(t_command *cmd, int posn)
 // NOTE This is not an issue, we do the same as bash does.
 // NOTE we Initialise / NULLify the end values for memory safety.
 // FIXED export MS_TEST="can have spaces" is being split and should not be.
-// FIXME The following is not working with the split.
-// [ ]	export hola=que'tal
-// [ ]	export hola='que'tal
-// [ ]	export hola='que tal'
+// FIXME The following cases do not work with the split.
+// [x]	export hola=que'tal				some horrible waiting for matching ' thing.
+// [x]	export hola=que"tal				Subject says "not interpret unclosed quotes!"
+// [ ]	export hola='que tal'			MS_TEST=que tal in env
+// [ ]	export MS_TEST='hola'quetal		MS_TEST=holaquetal in env
+// [ ]	export MS_TEST='ho la'quetal	MS_TEST=ho laquetal in env
 char	**quote_aware_split(const char *cmdline)
 {
 	char	**params;
-	int	p_num;
-	int	cmd_pos;
+	int		p_num;
+	int		cmd_pos;
 
 	p_num = 0;
 	cmd_pos = 0;
-	params = malloc (sizeof (char *) * MAXARGS);	// FIXED? These are still not (always?) freed.
+	params = malloc (sizeof (char *) * MAXARGS);
 	if (!params)
 		return (NULL);
 	while ((p_num < MAXARGS))
