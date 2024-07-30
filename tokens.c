@@ -228,8 +228,10 @@ void	change_parse_mode(char c, int *mode, int *pos)
 	(*pos)++;
 }
 
-// FIXED Triggers segfault
 // Find a variable and add its value into the parameter.
+// FIXED This is not adding things in the right place. resets.
+// EG wecho "$HOME to cover"
+// FIXME Does this even move the pointers forwards?
 void	add_value_into_param(char *par, int *posn, const char *cmdline)
 {
 	char	*vname;
@@ -237,12 +239,14 @@ void	add_value_into_param(char *par, int *posn, const char *cmdline)
 	int		name_len;
 
 	vname = get_var_name(&cmdline[*posn]);	// FIXME But probably not quote aware!
+	printf("subsituing %s", vname);
 	if (vname)
 	{
 		name_len = ft_strlen(vname) + 1;
 		vvalue = getenv(vname);
 		while (name_len-- > 0)
 			(*posn)++;
+		printf("subsituing %s", vvalue);
 		if (vvalue)
 		{
 			while (*vvalue != '\0')
@@ -255,6 +259,45 @@ void	add_value_into_param(char *par, int *posn, const char *cmdline)
 		free (vname);
 	}
 }
+
+// TODO Use this or lose it
+void	copy_rawly(char *param, int *posn, const char *cmdline)
+{
+	char	stops[8] = "|><$ \'\"\\";
+
+	while ((cmdline[*posn] != '\0') && (ft_strchr(stops, cmdline[*posn]) == NULL))
+	{
+		if (cmdline[*posn] == '$')
+			add_value_into_param(param, posn, cmdline);
+		else
+			*param++ = cmdline[(*posn)++];
+	}
+	if (cmdline[*posn] != '\0')
+		(*posn)++;
+}
+
+// for var subs
+// TODO Get this used where it should be used!
+// FIXED? with the variables it *always overwrites a " at the start.
+// FIXME echo " $HOME jame" overwrites to jame/chaikney
+void	copy_weakly(char *param, int *posn, const char *cmdline)
+{
+//	char	stops[1] = "\"";
+
+//	while ((cmdline[*posn] != '\0') && (ft_strchr(stops, cmdline[*posn]) == NULL))
+	while ((cmdline[*posn] != '\0') && (cmdline[*posn] != '\"'))
+	{
+		if (cmdline[*posn] == '$')
+			add_value_into_param(param, posn, cmdline);
+		else
+			*param++ = cmdline[(*posn)++];
+	}
+	if (cmdline[*posn] != '\0')
+		(*posn)++;
+}
+
+// This is equivalent to strong quoting 'single quotes'
+// It copies straight to the parameter.
 void	copy_freely(char *param, int *posn, const char *cmdline)
 {
 	while ((cmdline[*posn] != '\0') && (cmdline[*posn] != '\''))
@@ -268,46 +311,46 @@ void	copy_freely(char *param, int *posn, const char *cmdline)
 // 1 - "weak"
 // 2 - 'strong'		copy everything in the quotes, unaltered
 // FIXED Every cmd line with " or ' gives a blank parameter (or a space?)
-// FIXME echo '$HOME' is an instant segfault. Reaches add_value_into_param and should not.
+// FIXED echo '$HOME' is an instant segfault. Reaches add_value_into_param and should not.
+// FIXME echo one'with space' gives output of with space (loses the chars before ')
+// NOTE Careful with the slippage between i as index and raw pointers in other pieces...
 char	*get_any_parameter(const char *cmdline, int *posn)
 {
 	char	*param;
+	char	*ptr;
 	int		p_mode;
-	int		i;
 	char	stops[8] = "|><$ \'\"\\";
 
 	p_mode = 0;
 	param = get_blank_param();
-	i = 0;
 	if (cmdline[*posn] == '\0')
 		param = NULL;
 	else
 	{	// FIXME This needs to be mode-aware...
-		// FIXME we need a wrapping while as well...
+		ptr = param;
 		while (cmdline[*posn] != '\0')
 		{
-			if (ft_strchr(stops, cmdline[*posn]) == NULL)
-				param[i++] = cmdline[(*posn)++];
-			else
+			while (ft_strchr(stops, cmdline[*posn]) == NULL)
+				*ptr++ = cmdline[(*posn)++];
+			if (cmdline[*posn] == '\0')
+				return (param);
+			if ((cmdline[*posn] == '\'') || (cmdline[*posn] == '\"'))
+				change_parse_mode(cmdline[*posn], &p_mode, posn);
+			if (p_mode == 2)
 			{
-				if (cmdline[*posn] == '\0')
-					return (param);
-				if ((cmdline[*posn] == '\'') || (cmdline[*posn] == '\"'))
-					change_parse_mode(cmdline[*posn], &p_mode, posn);
-				if (p_mode == 2)
-				{
-					// FIXME Why does echo '$HOME?' print nothing???!?
-					copy_freely(param, posn, cmdline);
-					p_mode = 0;
-				}
-				else if (((is_control_char(cmdline[*posn]) == 1) && (p_mode ==  0)) ||
-					((p_mode == 0) && (cmdline[*posn]) == ' ') ||
-					(cmdline[*posn] == '\0'))
-					return (param);
-				else if ((cmdline[*posn] == '$') && (p_mode != 2))
-					add_value_into_param(param, posn, cmdline);
-				(*posn)++;
+				copy_freely(ptr, posn, cmdline);
+				p_mode = 0;
 			}
+			if (p_mode == 1)
+			{
+				copy_weakly(ptr, posn, cmdline);
+				p_mode = 0;
+			}
+			if (((is_control_char(cmdline[*posn]) == 1) && (p_mode ==  0)) ||
+					 ((p_mode == 0) && (cmdline[*posn]) == ' ') ||
+					 (cmdline[*posn] == '\0'))
+				return (param);
+			(*posn)++; 	// FIXME Could be the cause of invalid reads.
 		}
 	}
 	return (param);
