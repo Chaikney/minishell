@@ -227,13 +227,14 @@ void	change_parse_mode(char c, int *mode, int *pos)
 	(*pos)++;
 }
 
-void	add_value_into_param(char *par, int *posn)
+// FIXED Triggers segfault
+void	add_value_into_param(char *par, int *posn, const char *cmdline)
 {
 	char	*vname;
 	char	*vvalue;
 	int		name_len;
 
-	vname = get_var_name(par);	// FIXME But probably not quote aware!
+	vname = get_var_name(&cmdline[*posn]);	// FIXME But probably not quote aware!
 	if (vname)
 	{
 		name_len = ft_strlen(vname) + 1;
@@ -247,7 +248,6 @@ void	add_value_into_param(char *par, int *posn)
 			vvalue++;
 		}
 		free (vname);
-		free (vvalue); 	// yes, here we go again.
 	}
 }
 // p_mode (parsing style)
@@ -268,14 +268,17 @@ char	*get_any_parameter(const char *cmdline, int *posn)
 		param = NULL;
 	else
 	{	// FIXME This needs to be mode-aware...
+		// FIXME we need a wrapping while as well...
 		while (ft_strchr(stops, cmdline[*posn]) == NULL)
 			param[i++] = cmdline[(*posn)++];
-		if (is_control_char(cmdline[*posn]) == 1)
-			return (param);	// TODO Must also null-term? Or no because the bzeros?
-		if ((cmdline[*posn] == '$') && (p_mode != 2))
-			add_value_into_param(param, posn);
 		if ((cmdline[*posn] == '\'') || (cmdline[*posn] == '\"'))
 			change_parse_mode(cmdline[*posn], &p_mode, posn);
+		if (((is_control_char(cmdline[*posn]) == 1) && (p_mode ==  0)) ||
+			((p_mode == 0) && (cmdline[*posn]) == ' ') ||
+			(cmdline[*posn] == '\0'))
+			return (param);
+		if ((cmdline[*posn] == '$') && (p_mode != 2))
+			add_value_into_param(param, posn, cmdline);
 
 	}
 	return (param);
