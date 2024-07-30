@@ -22,6 +22,10 @@
 // [x] cd ..								move up one level
 // [x] cd ../..							move up two levels
 // [x] cd ../other_folder					Move to sibling folder
+// [ ] cd ~									go to $HOME
+// FIXED? oldpwd needs freed (but not immediately!)
+// FIXED? new_pwd needs freed (but not immediately!)
+// FIXME cd followed by a non-existent command leaks memory (e.g. cd .. then grp)
 void	ms_cd(t_command *cmd, char **envp)
 {
 	int		pwd_posn;
@@ -44,6 +48,8 @@ void	ms_cd(t_command *cmd, char **envp)
 			new_pwd = ft_strjoin("PWD=", wd);
 			free(wd);
 			ms_export_cd(envp, oldpwd, new_pwd);
+			free (oldpwd);
+			free(new_pwd);
 		}
 	}
 	return ;
@@ -118,8 +124,8 @@ void	ms_export_cd(char **envp, char *oldpwd, char *new_pwd)
 			return ;
 		}
 		copy_envp(envp, new_envp);
-		new_envp[env_len++] = oldpwd;
-		new_envp[env_len++] = new_pwd;
+		new_envp[env_len++] = ft_strdup(oldpwd);
+		new_envp[env_len++] = ft_strdup(new_pwd);
 		new_envp[env_len] = NULL;
 		copy_envp(new_envp, envp);
 		int_unset("PWD", envp);
