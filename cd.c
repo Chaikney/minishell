@@ -22,7 +22,7 @@
 // [x] cd ..								move up one level
 // [x] cd ../..							move up two levels
 // [x] cd ../other_folder					Move to sibling folder
-// [ ] cd ~									go to $HOME
+// [x] cd ~									go to $HOME
 // FIXED? oldpwd needs freed (but not immediately!)
 // FIXED? new_pwd needs freed (but not immediately!)
 // FIXME cd followed by a non-existent command leaks memory (e.g. cd .. then grp)
@@ -32,12 +32,17 @@ void	ms_cd(t_command *cmd, char **envp)
 	char	*oldpwd;
 	char	*new_pwd;
 	char	*wd;
+	char	*target;
 
-	if (cmd->argc < 2)
-		fprintf(stderr, "cd: missing argument\n");
+	if (cmd->argc != 2)
+		fprintf(stderr, "cd: One single argument required\n");
 	else
 	{
-		if (chdir(cmd->argv[1]) != 0)
+		if (ft_strncmp(cmd->argv[1], "~", 2) == 0)
+			target = getenv("HOME");
+		else
+			target = cmd->argv[1];
+		if (chdir(target) != 0)
 			printf("wrong address\n");
 		else
 		{
@@ -98,7 +103,6 @@ void	copy_envp(char **src_envp, char **dst_envp)
 // - unset PWD to remove the first (old) PWD variable in envp
 // free new_envp
 // TODO Unify error handling in ms_export_cd
-// TODO ms_export_cd is a misleading name
 // NOTE Variables used:
 // -  new_envp:	expanded temporary copy of envp (to be freed)
 // -  OLDPWD	string to be written to OLDPWD (includes name=) (freeing TBC)
