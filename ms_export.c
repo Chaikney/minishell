@@ -111,15 +111,35 @@ char	*get_export_value(char *str)
 	return (value);
 }
 
+// Handle one variable in the form NAME=VALUE for export
+// - split into NAME and VALUE
+// - Find the NAME in envp using find_env_var
+// - NOTE getenv did *not* work here!
+// - - not there: add new env var
+// - - already there replace env var
+void	process_export_variable(char *cmd_txt, char **envp)
+{
+	char	*evar_name;
+	char	*evar_newvalue;
+	int		var_i;
+
+	evar_name = get_export_name(cmd_txt);
+	if ((!evar_name) || (is_legal_name(evar_name) == 0))
+		perror ("failed");
+	evar_newvalue = get_export_value(cmd_txt);
+	var_i = find_env_var(envp, evar_name);
+	if (var_i == -1)
+		add_new_env_var(evar_name, evar_newvalue, envp);
+	else
+		replace_env_var(evar_name, evar_newvalue, envp);
+	free (evar_name);
+	free (evar_newvalue);
+}
+
 // A version of ms_export that is easier to understand for me.
 // Building from the base.
 // - if no parameters, run the display function.
-// - for the rest of the parameters
-// - - split into NAME and VALUE
-// - - Find the NAME in envp using find_env_var
-// - - NOTE getenv did *not* work here!
-// - - - not there: add new env var
-// - - - already there replace env var
+// - otherwise send each paramter to process_export_variable
 // Test cases and expected (bash) behaviour:
 // [x] export MS_TEST=hola				Add variable (visible with env)
 // [x] export MS_TEST=goodbye			Change previous variable to new value.
@@ -132,10 +152,7 @@ char	*get_export_value(char *str)
 // NOTE getenv is not reliable for replacing OUR, CUSTOM variables.
 void	ms_export(t_command *cmd, char **envp)
 {
-	char	*evar_name;
-	char	*evar_newvalue;
 	int		i;
-	int		var_i;
 
 	i = 1;
 	if (cmd->argc < 2)
@@ -144,26 +161,8 @@ void	ms_export(t_command *cmd, char **envp)
 	{
 		while (i <= (cmd->argc - 1))
 		{
-			evar_name = get_export_name(cmd->argv[i]);
-			if ((!evar_name) || (is_legal_name(evar_name) == 0))
-				perror ("failed");
-			printf("\tWill act on: %s", evar_name);	// HACK for debugging
-			evar_newvalue = get_export_value(cmd->argv[i]);
-			printf("\tto change to: %s", evar_newvalue);	// HACK for debugging
-			var_i = find_env_var(envp, evar_name);
-			if (var_i == -1)
-			{
-				printf("variable not found, adding fresh.");	// HACK for debugging
-				add_new_env_var(evar_name, evar_newvalue, envp);
-			}
-			else
-			{
-				printf("variable exists, replacing (aye right)");	// HACK for debugging
-				replace_env_var(evar_name, evar_newvalue, envp);
-			}
+			process_export_variable(cmd->argv[i], envp);
 			i++;
 		}
-		free (evar_name);
-		free (evar_newvalue);
 	}
 }
