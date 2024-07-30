@@ -110,7 +110,6 @@ void	run_in_pipe(t_command *cmd, char **envp, int *i_file)
 		// NOTE: commenting out this line leads to endless loop or non-returning process
 		waitpid(child, &g_procstatus, 0);
 		*i_file = tube[0];	// Keep hold of the read end of this pipe for the next run.
-		printf("process %s finished with code: %i\n", cmd->argv[0], g_procstatus); // HACK for debugging
 	}
 }
 
@@ -147,6 +146,5 @@ void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file)
 			close(o_file);	// This makes sense if we are writing to a file *and* have access to it.
 		if ((i_file >= 0) && (i_file != STDIN_FILENO))
 			close(i_file);
-		printf("process finished with code: %i\n", g_procstatus); // HACK for debugging
 	}
 }

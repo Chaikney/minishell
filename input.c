@@ -29,6 +29,7 @@
 // FIXME Protect against if first call to line returns null
 // 		reader process never would never end!
 // 		...although that implies there is no STDIN, a bigger problem...
+// 		FIXME stopword_input has too many lines.
 int	stopword_input(t_command *cmd)
 {
 	int		fd[2];
@@ -40,7 +41,7 @@ int	stopword_input(t_command *cmd)
 	reader = fork();
 	if (reader == 0)
 	{
-		close(fd[0]);	// NOTE read end of pipe is not needed by GNL
+		close(fd[0]);
 		stopword = cmd->argv[1];
 		line = get_next_line(STDIN_FILENO);
 		while (line)
@@ -54,7 +55,7 @@ int	stopword_input(t_command *cmd)
 			free (line);
 			line = get_next_line(STDIN_FILENO);
 		}
-		free (line);	// We have written it and so it is no longer needed.?
+		free (line);
 	}
 	else
 	{
@@ -112,7 +113,6 @@ int	determine_input(t_command *cmd)
 	{
 		if (ft_strncmp(cmd->argv[i], "<", 1) == 0)
 		{
-//				print_cmd_parts(cmd);	// HACK for debugging
 			i_redir = 1;
 			if (ft_strncmp(cmd->argv[i], "<<", 2) == 0)
 				i_redir = 2;
@@ -120,6 +120,5 @@ int	determine_input(t_command *cmd)
 		}
 		i++;
 	}
-//	printf("Checked input for '%s'. fd will be: %i\n", cmd->argv[0], i_fd);
 	return (i_fd);
 }

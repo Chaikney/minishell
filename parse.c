@@ -240,7 +240,6 @@ t_command	*parse(char *cmdline)
 	free (cmdline);
 	if (!tokens)
 		return (NULL);
-	print_tokens(tokens);	// HACK for debugging, remove later.
 	if (check_tokens(tokens) == -1)
 	{
 		wipe_tokens(tokens);
@@ -255,11 +254,9 @@ t_command	*parse(char *cmdline)
 		cmd_ptr->next = next_cmd;
 		num_pipes--;
 		cmd_ptr = cmd_ptr->next;
-		print_cmd_parts(next_cmd);	// HACK for debugging, remove later
 	}
 	wipe_tokens(tokens);
 	if (cmd_head->argv[0] == NULL)
 		return (NULL);
-	print_cmd_parts(cmd_head);	// HACK for debugging
     return (cmd_head);
 }

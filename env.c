@@ -55,8 +55,8 @@ static void	ms_ed_with_var(char *c, char *split_point)
 // display NAME
 // if value, display "=VALUE"
 // if no value, only newline
-// DONE Handle empty values (if no equals, stop there.)
-// FIXED Too many lines in ms_export_display
+// TODO Bash prints export vars alphabetically !
+// Need something that orders the names first, then feeds them to the loop here..
 void	ms_export_display(char **envp)
 {
 	char	*line_split;
@@ -111,7 +111,6 @@ char	*make_env_string(char *name, char *value)
 // Returns the line index number (in eviornment)
 // for the requested var name.
 // If variable not found, returns -1
-// FIXED This can SEGFAULT if envp is not there.
 int	find_env_var(char **envp, const char *var)
 {
 	size_t	len;

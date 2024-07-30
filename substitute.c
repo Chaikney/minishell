@@ -45,7 +45,8 @@ int	needs_sub(char *str)
 // - count length (until a space)
 // - alloc a string
 // - copy characters
-// FIXME Function too long. Can I do this with fewer vars?
+// FIXME Function get_var_name is too long. Can I do this with fewer vars?
+// NOTE Could remove the is '$' check.
 char	*get_var_name(const char *str)
 {
 	int		name_len;
@@ -86,10 +87,8 @@ char	*get_var_name(const char *str)
 // - step over the variable name
 // - copy the rest of the original string
 // NOTE We do not free the string passed; that is for the caller
-// KILL out of scope here Have to remove " and ' characters from the final cmd
-// NOTE Does that get cut out of what we do here, or passed to the command to let that handle it¿???
-// NOTE Adds a space for missing values, not needed? bash collapses it to a single space
-// FIXED Too many lines in this function.
+// NOTE Adds a space for missing values, not needed?
+// ....bash collapses it to a single space
 char	*ms_strsub(char *str, char *old_sub, char *new_sub)
 {
 	int		len;

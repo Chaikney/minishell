@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-// FIXME Too many functions in this file. Move some elsewhere!
+// FIXME Too many functions in ms_export. Move some elsewhere!
 
 // Take a name and value and add this  to the envp.
 // the Named value should not already exist.
@@ -53,7 +53,6 @@ void	replace_env_var(char *name, char *value, char **envp)
 		printf("\nVariable %s not found to replace", name);	// HACK for debugging
 	else
 	{
-		printf("\nupdating %s with %s", name, value);	// HACK for debugging
 		int_unset(name, envp);
 		add_new_env_var(name, value, envp);
 	}
@@ -130,10 +129,7 @@ char	*get_export_value(char *str)
 // [ ] export MS_TEST=					Add blank "" variable		FAIL env then shows "", unlike bash
 // [x] export MS_TEST					Adds var visible export but not env
 // [x] export							displays all vars in specific format.
-// FIXED There is a problem in replacing OUR, CUSTOM variables.
-// ....getenv is not reliable for that!
-// FIXME Too many lines (might be the printfs...)
-// DONE Can rename this to become the real ms_export soon.
+// NOTE getenv is not reliable for replacing OUR, CUSTOM variables.
 void	ms_export(t_command *cmd, char **envp)
 {
 	char	*evar_name;
