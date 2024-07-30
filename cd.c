@@ -65,7 +65,7 @@ void	ms_cd(t_command *cmd, char **envp)
 			oldpwd = ft_strjoin("OLD", envp[pwd_posn]);
 			new_pwd = ft_strjoin("PWD=", wd);
 			free(wd);
-			ms_export_cd(envp, oldpwd, new_pwd);
+			update_pwd(envp, oldpwd, new_pwd);
 			free (oldpwd);
 			free(new_pwd);
 		}
@@ -121,7 +121,7 @@ void	copy_envp(char **src_envp, char **dst_envp)
 // -  OLDPWD	string to be written to OLDPWD (includes name=) (freeing TBC)
 // -  new_pwd:	(string to be written to PWD (includes name=) (freeing TBC)
 // - env_len:	Number of lines in the environment
-void	ms_export_cd(char **envp, char *oldpwd, char *new_pwd)
+void	update_pwd(char **envp, char *oldpwd, char *new_pwd)
 {
 	char	**new_envp;
 	size_t	env_len;

@@ -134,7 +134,7 @@ int		find_env_var(char **envp, const char *var);
 
 // cd.c - change wd, set new value of PWD
 void	ms_cd(t_command *cmd, char **envp);
-void	ms_export_cd(char **envp, char *oldpwd, char *newpwd);
+void	update_pwd(char **envp, char *oldpwd, char *newpwd);
 
 // prompt.c - functions to enhance the readline prompt
 char	*get_shrt_wd(char **envp);
