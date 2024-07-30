@@ -65,8 +65,8 @@ t_builtin parse_builtin(t_command *cmd, int posn)
 char	**quote_aware_split(const char *cmdline)
 {
 	char	**params;
-	int	p_num;
-	int	cmd_pos;
+	int		p_num;
+	int		cmd_pos;
 
 	p_num = 0;
 	cmd_pos = 0;
@@ -78,20 +78,28 @@ char	**quote_aware_split(const char *cmdline)
 		goto_stop_char(cmdline, &cmd_pos);
 		if (cmdline[cmd_pos] == '\0')
 			params[p_num] = NULL;
-		else if (cmdline[cmd_pos] == '\"')
-		{
-			params[p_num] = get_weak_param(cmdline, &cmd_pos);
-			if (needs_sub(params[p_num]) != -1)
-				params[p_num] = substitute_variables(params[p_num]);
-		}
-		else if (cmdline[cmd_pos] == '\'')
-			params[p_num] = get_strong_param(cmdline, &cmd_pos);
+		else if (is_control_char(cmdline[cmd_pos]) == 1)
+			params[p_num] = grab_control_seq(cmdline, &cmd_pos);
 		else
 		{
-			params[p_num] = get_raw_param(cmdline, &cmd_pos);
-			if (needs_sub(params[p_num]) != -1)
-				params[p_num] = substitute_variables(params[p_num]);
+			params[p_num] = get_any_parameter(cmdline, &cmd_pos);
 		}
+
+		/* } */
+		/* else if (cmdline[cmd_pos] == '\"') */
+		/* { */
+		/* 	params[p_num] = get_weak_param(cmdline, &cmd_pos); */
+		/* 	if (needs_sub(params[p_num]) != -1) */
+		/* 		params[p_num] = substitute_variables(params[p_num]); */
+		/* } */
+		/* else if (cmdline[cmd_pos] == '\'') */
+		/* 	params[p_num] = get_strong_param(cmdline, &cmd_pos); */
+		/* else */
+		/* { */
+		/* 	params[p_num] = get_raw_param(cmdline, &cmd_pos); */
+		/* 	if (needs_sub(params[p_num]) != -1) */
+		/* 		params[p_num] = substitute_variables(params[p_num]); */
+		/* } */
 		if (params[p_num] == NULL)
 			break ;
 		p_num++;

@@ -14,6 +14,19 @@
 
 // Functions used to break up the readline input into tokens for parsing.
 
+// Initialiase a string to copy the parts of the line to.
+// NOTE 256 is abitary and might better as compile-time constant.
+char	*get_blank_param(void)
+{
+	char	*par;
+
+	par = malloc(sizeof(char) * 256);
+	if (!par)
+		return (NULL);
+	ft_bzero(par, 256);
+	return (par);
+}
+
 // Return the whole of the control sequence landed on.
 // It will be either < << > >> or |
 // And since we know where we started the question is do we take the
@@ -197,4 +210,73 @@ void	remove_cmd_parts(t_command *cmd, char *target)
 	}
 	cmd->argv[i] = cmd->argv[i + to_go];
 	cmd->argc = cmd->argc - to_go;
+}
+
+// When we reach a quote, work out what the change is.
+// What takes priority and what is right behaviour?
+void	change_parse_mode(char c, int *mode, int *pos)
+{
+	if ((c == '\'') && (*mode != 2))
+		*mode = 2;
+	if ((c == '\'') && (*mode == 2))
+		*mode = 0;
+	if ((c == '\"') && (*mode != 1))
+		*mode = 1;
+	if ((c == '\"') && (*mode == 1))
+		*mode = 0;
+	(*pos)++;
+}
+
+void	add_value_into_param(char *par, int *posn)
+{
+	char	*vname;
+	char	*vvalue;
+	int		name_len;
+
+	vname = get_var_name(par);	// FIXME But probably not quote aware!
+	if (vname)
+	{
+		name_len = ft_strlen(vname) + 1;
+		vvalue = getenv(vname);
+		while (name_len-- > 0)
+			(*posn)++;
+		while (*vvalue != '\0')
+		{
+			*par = *vvalue;
+			par++;
+			vvalue++;
+		}
+		free (vname);
+		free (vvalue); 	// yes, here we go again.
+	}
+}
+// p_mode (parsing style)
+// 0 - raw
+// 1 - "weak"
+// 2 - 'strong'
+char	*get_any_parameter(const char *cmdline, int *posn)
+{
+	char	*param;
+	int		p_mode;
+	int		i;
+	char	stops[8] = "|><$ \'\"\\";
+
+	p_mode = 0;
+	param = get_blank_param();
+	i = 0;
+	if (cmdline[*posn] == '\0')
+		param = NULL;
+	else
+	{	// FIXME This needs to be mode-aware...
+		while (ft_strchr(stops, cmdline[*posn]) == NULL)
+			param[i++] = cmdline[(*posn)++];
+		if (is_control_char(cmdline[*posn]) == 1)
+			return (param);	// TODO Must also null-term? Or no because the bzeros?
+		if ((cmdline[*posn] == '$') && (p_mode != 2))
+			add_value_into_param(param, posn);
+		if ((cmdline[*posn] == '\'') || (cmdline[*posn] == '\"'))
+			change_parse_mode(cmdline[*posn], &p_mode, posn);
+
+	}
+	return (param);
 }
