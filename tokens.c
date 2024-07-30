@@ -214,20 +214,22 @@ void	remove_cmd_parts(t_command *cmd, char *target)
 
 // When we reach a quote, work out what the change is.
 // What takes priority and what is right behaviour?
+// Either way, we step past the character after processing it.
 void	change_parse_mode(char c, int *mode, int *pos)
 {
 	if ((c == '\'') && (*mode != 2))
 		*mode = 2;
-	if ((c == '\'') && (*mode == 2))
+	else if ((c == '\'') && (*mode == 2))
 		*mode = 0;
-	if ((c == '\"') && (*mode != 1))
+	else if ((c == '\"') && (*mode != 1))
 		*mode = 1;
-	if ((c == '\"') && (*mode == 1))
+	else if ((c == '\"') && (*mode == 1))
 		*mode = 0;
 	(*pos)++;
 }
 
 // FIXED Triggers segfault
+// Find a variable and add its value into the parameter.
 void	add_value_into_param(char *par, int *posn, const char *cmdline)
 {
 	char	*vname;
