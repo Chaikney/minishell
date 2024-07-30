@@ -12,15 +12,22 @@
 
 #include "minishell.h"
 
-// Examine the argument passed to our CD builtin and return the
-// target to use.
+// Examine the argument passed to our CD builtin
+// and return the target to use.
 // NOTE This is mainly so we can use ~ as an alias for $HOME
 // ....but other things might be possible?
+// FIXME The g_procstatus call does not set the status right.
 static char	*get_cd_target(t_command *cmd)
 {
-	char 	*target;
+	char	*target;
 
-	if (ft_strncmp(cmd->argv[1], "~", 2) == 0)
+	if (cmd->argc != 2)
+	{
+		fprintf(stderr, "cd: One single argument required\n");
+		g_procstatus = errno;
+		return (NULL);
+	}
+	else if (ft_strncmp(cmd->argv[1], "~", 2) == 0)
 		target = getenv("HOME");
 	else
 		target = cmd->argv[1];
@@ -29,7 +36,6 @@ static char	*get_cd_target(t_command *cmd)
 
 // BUILTIN cd command
 // Triggered by user action. Most work done in ms_export_cd
-// TODO Error in CD should set g_procstatus?
 // NOTE Check both oldpwd and newpwd for memleaks!
 /// Tests and edge cases we have to handle.
 // [x] cd [directory that exists]			move to that place
@@ -40,8 +46,8 @@ static char	*get_cd_target(t_command *cmd)
 // [x] cd ~									go to $HOME
 // FIXED? oldpwd needs freed (but not immediately!)
 // FIXED? new_pwd needs freed (but not immediately!)
-// FIXME cd followed by a non-existent command leaks memory (e.g. cd .. then grp)
-// FIXME ms_cd has too many lines!
+// FIXME cd followed by a non-existent command leaks memory
+// 		(e.g. cd .. then grp)
 void	ms_cd(t_command *cmd, char **envp)
 {
 	int		pwd_posn;
@@ -50,27 +56,23 @@ void	ms_cd(t_command *cmd, char **envp)
 	char	*wd;
 	char	*target;
 
-	if (cmd->argc != 2)
-		fprintf(stderr, "cd: One single argument required\n");
+	target = get_cd_target(cmd);
+	if (!target)
+		return ;
+	if (chdir(target) != 0)
+		printf("wrong address\n");
 	else
 	{
-		target = get_cd_target(cmd);
-		if (chdir(target) != 0)
-			printf("wrong address\n");
-		else
-		{
-			wd = NULL;
-			wd = getcwd(wd, 0);
-			pwd_posn = find_env_var(envp, "PWD");
-			oldpwd = ft_strjoin("OLD", envp[pwd_posn]);
-			new_pwd = ft_strjoin("PWD=", wd);
-			free(wd);
-			update_pwd(envp, oldpwd, new_pwd);
-			free (oldpwd);
-			free(new_pwd);
-		}
+		wd = NULL;
+		wd = getcwd(wd, 0);
+		pwd_posn = find_env_var(envp, "PWD");
+		oldpwd = ft_strjoin("OLD", envp[pwd_posn]);
+		new_pwd = ft_strjoin("PWD=", wd);
+		free(wd);
+		update_pwd(envp, oldpwd, new_pwd);
+		free (oldpwd);
+		free(new_pwd);
 	}
-	return ;
 }
 
 // free whatever vars need to be freed.
