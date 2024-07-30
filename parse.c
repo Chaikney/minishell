@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+// FIXME Multiple NORM failures in parse.c!
+
 // Read the given command argument and if it matches a builtin, set the flag.
 // (posn will be 0 except when there is input redirection)
 // FIXME Lines are too long for norminette - a match function needed?

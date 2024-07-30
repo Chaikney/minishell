@@ -87,6 +87,8 @@ void		copy_envp(char **src_envp, char **dst_envp);
 char		*get_export_name(char *str);
 char		*get_export_value(char *str);
 void		ms_export(t_command *cmd, char **envp);
+void	add_new_env_var(char *name, char *value, char **envp);
+void	replace_env_var(char *name, char *value, char **envp);
 
 // parse.c - functions to read and interpret user input
 t_command	*parse(char *cmdline);

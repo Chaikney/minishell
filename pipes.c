@@ -97,6 +97,7 @@ t_command	*split_pipe(t_command *cmd)
 // - free to_split?
 // DONE Add a list pointer to t_command
 // DONE Fix numbering this will overflow.
+// FIXME I think make_cmd_list is obsolete and can be removed.
 t_command	*make_cmd_list(t_command *to_split, int n)
 {
 	t_command	*cmd_head;

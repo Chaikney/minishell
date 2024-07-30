@@ -50,6 +50,7 @@ static char	*get_cd_target(t_command *cmd)
 // FIXED? new_pwd needs freed (but not immediately!)
 // FIXME cd followed by a non-existent command leaks memory
 // 		(e.g. cd .. then grp)
+// NOTE	This is so annoying. SHould be able to use replace_env_var but cannot
 void	ms_cd(t_command *cmd, char **envp)
 {
 	int		pwd_posn;
@@ -119,7 +120,7 @@ void	copy_envp(char **src_envp, char **dst_envp)
 // - copy new_envp (back) to envp
 // - unset PWD to remove the first (old) PWD variable in envp
 // free new_envp
-// TODO Unify error handling in ms_export_cd
+// TODO Unify error handling in update_pwd
 // NOTE Variables used:
 // -  new_envp:	expanded temporary copy of envp (to be freed)
 // -  OLDPWD	string to be written to OLDPWD (includes name=) (freeing TBC)
