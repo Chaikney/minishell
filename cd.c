@@ -12,6 +12,21 @@
 
 #include "minishell.h"
 
+// Examine the argument passed to our CD builtin and return the
+// target to use.
+// NOTE This is mainly so we can use ~ as an alias for $HOME
+// ....but other things might be possible?
+static char	*get_cd_target(t_command *cmd)
+{
+	char 	*target;
+
+	if (ft_strncmp(cmd->argv[1], "~", 2) == 0)
+		target = getenv("HOME");
+	else
+		target = cmd->argv[1];
+	return (target);
+}
+
 // BUILTIN cd command
 // Triggered by user action. Most work done in ms_export_cd
 // TODO Error in CD should set g_procstatus?
@@ -26,6 +41,7 @@
 // FIXED? oldpwd needs freed (but not immediately!)
 // FIXED? new_pwd needs freed (but not immediately!)
 // FIXME cd followed by a non-existent command leaks memory (e.g. cd .. then grp)
+// FIXME ms_cd has too many lines!
 void	ms_cd(t_command *cmd, char **envp)
 {
 	int		pwd_posn;
@@ -38,10 +54,7 @@ void	ms_cd(t_command *cmd, char **envp)
 		fprintf(stderr, "cd: One single argument required\n");
 	else
 	{
-		if (ft_strncmp(cmd->argv[1], "~", 2) == 0)
-			target = getenv("HOME");
-		else
-			target = cmd->argv[1];
+		target = get_cd_target(cmd);
 		if (chdir(target) != 0)
 			printf("wrong address\n");
 		else
