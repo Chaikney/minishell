@@ -14,36 +14,32 @@
 
 // Return a part of the working directory to show in prompt
 // linesize limits how many characters we show
-// FIXME This does not get updated when we change directory?
+// FIXED This does not get updated when we change directory?
 // FIXME Too many lines in function.
 // Yet ENV shows a new PWD...
-char	*get_shrt_wd(void)
+char	*get_shrt_wd(char **envp)
 {
-	char	*wd;
+	int		wd_line;
 	char	*cut_wd;
-	int		len;
+	char	*ptr;
 	int		i;
 	int		linesize;
 
 	linesize = 15;
+	i = 0;
 	cut_wd = malloc (sizeof(char) * linesize + 1);
-	wd = getenv("PWD");
-	len = ft_strlen(wd);
-	if (len < linesize)
-		cut_wd = wd;
-	else
+	wd_line = find_env_var(envp, "PWD");
+	if (wd_line == -1)
+		return (NULL);
+	ptr = ft_strrchr(envp[wd_line], '/');
+	if (!ptr)
+		return (NULL);
+	while (*ptr != '\0')
 	{
-		i = linesize;
-		cut_wd[linesize] = '\0';
-		while (i != 0)
-		{
-			cut_wd[i] = wd[len];
-			i--;
-			len--;
-		}
-		cut_wd[0] = '.';
-		cut_wd[1] = '.';
+		cut_wd[i++] = *ptr++;
 	}
+	while (i < linesize)
+		cut_wd[i++] = '\0';
 	return (cut_wd);
 }
 
@@ -66,13 +62,12 @@ char	*get_status_for_prompt(void)
 // DONE Add (a part of) the wd to prompt
 // TODO Shorten the wd.
 // FIXME Too many variables.
-// FIXME Too many lines
 // DONE Add username to prompt
 // TODO Check that the terminal is colour-capable before using control codes
 // This returns a text string to be dsiplayed by readline
 // when waiting for user input
 // NOTE Once a variable has been used in strjoin it can (should) be freed.
-char	*get_prompt(void)
+char	*get_prompt(char **envp)
 {
 	char	*prompt;
 	char	*status;
@@ -84,7 +79,7 @@ char	*get_prompt(void)
 	uname = getenv("USER");
 	if (uname)
 		tmp_part = ft_strjoin(uname, " in ");
-	cwd = get_shrt_wd();
+	cwd = get_shrt_wd(envp);
 	tmp2 = ft_strjoin(tmp_part, cwd);
 	free (tmp_part);
 	free(cwd);
@@ -95,9 +90,7 @@ char	*get_prompt(void)
 		free (status);
 	}
 	else
-	{
 		prompt = ft_strjoin(tmp2, " > ");
-	}
 	free (tmp2);
 	return (prompt);
 }

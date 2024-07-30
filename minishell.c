@@ -56,7 +56,7 @@ int	main(int argc, char **argv, char **envp)
 		setup_signals();
 		while (1)
 		{
-			prompt = get_prompt();
+			prompt = get_prompt(envp);
 			cmdline = readline(prompt);
 			free (prompt);
 			if (cmdline == NULL)

@@ -137,9 +137,9 @@ void	ms_cd(t_command *cmd, char **envp);
 void	ms_export_cd(char **envp, char *oldpwd, char *newpwd);
 
 // prompt.c - functions to enhance the readline prompt
-char	*get_shrt_wd(void);
+char	*get_shrt_wd(char **envp);
 char	*get_status_for_prompt(void);
-char	*get_prompt(void);
+char	*get_prompt(char **envp);
 
 // debug.c - functions to use in development
 void	print_tokens(char **arr);
