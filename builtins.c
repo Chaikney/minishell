@@ -37,6 +37,7 @@ int	ms_pwd(void)
 // ...what do we mean by "unset"? AND how does this work?
 // - Finds the line in envp where the variable is.
 // - copies the next lines over it.
+// FIXME I think that variables being unset should be freed.
 void	int_unset(char *unset_var, char **envp)
 {
 	int	var_index;
@@ -82,6 +83,7 @@ void	ms_unset(t_command *cmd, char **envp)
 	if (cmd->argc < 2)
 	{
 		perror("unset: missing argument\n");
+		g_procstatus = EINVAL;
 		return ;
 	}
 	else
@@ -90,7 +92,10 @@ void	ms_unset(t_command *cmd, char **envp)
 		{
 			var_name = get_export_name(cmd->argv[i]);
 			if ((!var_name) || (is_legal_name(var_name) == 0))
-				perror ("failed");
+			{
+				perror ("unset failed");
+				g_procstatus = ENOMEM;
+			}
 			int_unset(var_name, envp);
 			i++;
 		}

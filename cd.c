@@ -22,7 +22,7 @@ static char	*get_cd_target(t_command *cmd)
 
 	if (cmd->argc != 2)
 	{
-		fprintf(stderr, "cd: One single argument required\n");
+		perror("cd: One single argument required\n");
 		if (cmd->argc > 2)
 			g_procstatus = E2BIG;
 		else
@@ -73,8 +73,8 @@ void	ms_cd(t_command *cmd, char **envp)
 		new_pwd = ft_strjoin("PWD=", wd);
 		free(wd);
 		update_pwd(envp, oldpwd, new_pwd);
-		free (oldpwd);
-		free(new_pwd);
+		/* free (oldpwd); */
+		/* free(new_pwd); */
 	}
 }
 
@@ -126,6 +126,10 @@ void	copy_envp(char **src_envp, char **dst_envp)
 // -  OLDPWD	string to be written to OLDPWD (includes name=) (freeing TBC)
 // -  new_pwd:	(string to be written to PWD (includes name=) (freeing TBC)
 // - env_len:	Number of lines in the environment
+// NOTE I don't know whether strdup or pointers are better for adding to env
+// Either way seems impossible to free the memory in certain cases....
+// ...how do we *know*? The original envp pieces are statically allocated.
+// ...should ours be too??
 void	update_pwd(char **envp, char *oldpwd, char *new_pwd)
 {
 	char	**new_envp;
@@ -146,8 +150,10 @@ void	update_pwd(char **envp, char *oldpwd, char *new_pwd)
 			return ;
 		}
 		copy_envp(envp, new_envp);
-		new_envp[env_len++] = ft_strdup(oldpwd);
-		new_envp[env_len++] = ft_strdup(new_pwd);
+		/* new_envp[env_len++] = ft_strdup(oldpwd); */
+		/* new_envp[env_len++] = ft_strdup(new_pwd); */
+		new_envp[env_len++] = (oldpwd);
+		new_envp[env_len++] = (new_pwd);
 		new_envp[env_len] = NULL;
 		copy_envp(new_envp, envp);
 		int_unset("PWD", envp);

@@ -122,6 +122,17 @@ pwd must therefore amount to "print this thing from my ENV"
 cd  = change value in env
 note  that the prompt line is probably reading from this as well.
 Also note: there are permitted functions that do some of these things without having to directly manipulate PATH (which is not a file, remember),
+*** [2024-07-30 Tue] Reason why getenv is unrealiable in minishell
+
+#+begin_quote
+    The getenv function returns a pointer to a string associated with the matched list member. The string pointed to shall not be modified by the program but may be overwritten by a subsequent call to the getenv function.
+
+This paragraph gives an implementation the latitude, for example, to return a pointer to a statically allocated buffer. Consequently, do not store this pointer because the string data it points to may be overwritten by a subsequent call to the getenv() function or invalidated by modifications to the environment. This string should be referenced immediately and discarded. If later use is anticipated, the string should be copied so the copy can be safely referenced as needed.
+
+The getenv() function is not thread-safe. Make sure to address any possible race conditions resulting from the use of this function.
+#+end_quote
+
+https://wiki.sei.cmu.edu/confluence/display/c/ENV34-C.+Do+not+store+pointers+returned+by+certain+functions
 ** making a prompt
 - what should it show?
   current directory.
