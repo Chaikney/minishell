@@ -13,6 +13,7 @@
 #include "minishell.h"
 
 // return 1 if the variable name is present in the env
+// TODO There are places where this should be called to check (e.g unset)
 int	is_in_envt(char *name, t_env *envt)
 {
 	t_env	*ptr;
@@ -51,25 +52,9 @@ char	*get_value_of_env(char *name, t_env *envt)
 	return (NULL);
 }
 
-// Builtin ENV command.
-// FIXED env should not display empty variables, unlike export.
-// DONE Ensure bash-compatibility
-// NOTE running env > bashenv and env > msenv is an OK test
-// ...but order and exact variables are different...
-// TODO can be replaced.
-void	ms_env(char **envp)
-{
-	while (*envp)
-	{
-		if (ft_strchr(*envp, '='))
-			printf("%s\n", *envp);
-		envp++;
-	}
-	return ;
-}
-
 // Turn the t_env variables back into a list of string like envp
 // This means that they would work with execve.
+// NOTE Untested, but shoulld be used to  pass to run_command etc
 char	**serialise_env(t_env *env)
 {
 	char	**env_list;
@@ -110,6 +95,10 @@ void	ms_env_t(t_env *environ)
 	printf("%s=%s\n", ptr->vname, ptr->value);
 }
 
+// Sets up a new t_env node to be added
+// NOTE This function is best suited for the initial parsing.
+// Perhaps a version where the vname and value are already split
+// would work better sometimes.
 t_env	*init_new_env(char *str)
 {
 	t_env	*new_env;
@@ -121,6 +110,7 @@ t_env	*init_new_env(char *str)
 	return (new_env);
 }
 
+// Adds a t_env node to the set.
 void	add_to_env_list(t_env *lsthead, t_env *to_add)
 {
 	t_env	*ptr;
@@ -137,6 +127,7 @@ void	add_to_env_list(t_env *lsthead, t_env *to_add)
 // - find value
 // - set marker to next t_env
 // TODO Move to a setup file or similar.
+// TODO Consider duplicating all values so wwe can free them at the end
 t_env	*parse_env(char **envp)
 {
 	t_env	*ptr;
@@ -160,28 +151,6 @@ t_env	*parse_env(char **envp)
 	return (NULL);
 }
 
-// Display a line part for ms_export_display when the variable is
-// not empty.
-// NAME="VALUE"
-// TODO can remove
-static void	ms_ed_with_var(char *c, char *split_point)
-{
-	while (c != split_point)
-	{
-		printf("%c", *c);
-		c++;
-	}
-	printf("%c", *c);
-	c++;
-	printf("\"");
-	while (*c != '\0')
-	{
-		printf("%c", *c);
-		c++;
-	}
-	printf("\"\n");
-}
-
 // TODO HAndle the case where there is no value
 void	ms_export_display_t(t_env *envt)
 {
@@ -196,48 +165,13 @@ void	ms_export_display_t(t_env *envt)
 	printf("declare -x %s = %s\n", ptr->vname, ptr->value);
 }
 
-// Handle the display of ENV variables when EXPORT is called
-// with 0 arguments.
-// display "declare -x "
-// display NAME
-// if value, display "=VALUE"
-// if no value, only newline
-// DONE Handle empty values (if no equals, stop there.)
-// FIXED Too many lines in ms_export_display
-// TODO Can remove this one
-void	ms_export_display(char **envp)
-{
-	char	*line_split;
-	char	*c;
-
-	while (*envp)
-	{
-		c = *envp;
-		line_split = ft_strchr(*envp, '=');
-		printf("declare -x ");
-		if (line_split)
-		{
-			ms_ed_with_var(c, line_split);
-		}
-		else
-		{
-			while (*c != '\0')
-			{
-				printf("%c", *c);
-				c++;
-			}
-			printf("\n");
-		}
-		envp++;
-	}
-}
-
 // Takes a  name and a value; returns a string formatted suitable
 // for storing as an environment variable.
 // Variables:
 // len:	length needed for string. 1 for null and 1 for the =
 // name:	of the environment variable
 // value:	of the environment variable
+// Used for display and serialising purposes now.
 char	*make_env_string(char *name, char *value)
 {
 	char	*env_str;
@@ -254,31 +188,4 @@ char	*make_env_string(char *name, char *value)
 	env_str = ft_strjoin(tmp, value);
 	free (tmp);
 	return (env_str);
-}
-
-// Returns the line index number (in eviornment)
-// for the requested var name.
-// If variable not found, returns -1
-// FIXED This can SEGFAULT if envp is not there.
-// FIXME This does not locate our added variables.
-// TODO This can be removedd.
-int	find_env_var(char **envp, const char *var)
-{
-	size_t	len;
-	int		i;
-
-	len = 0;
-	i = 0;
-	len = ft_strlen(var);
-	if (!envp)
-		return (-1);
-	while (envp[i] != NULL)
-	{
-		if (ft_strncmp(envp[i], var, len) == 0 && envp[i][len] == '=')
-			return (i);
-		else if (ft_strncmp(envp[i], var, len) == 0 && envp[i][len] != '=')
-			return (i);
-		i++;
-	}
-	return (-1);
 }

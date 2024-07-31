@@ -87,7 +87,6 @@ int			ms_pwd(void);
 void		ms_unset(t_command *cmd, t_env *enviro);
 void		ms_echo(t_command *cmd);
 void		int_unset(char *unset_var, t_env *enviro);
-void		ms_export_display(char **envp);
 void		ms_export_display_t(t_env *envt);
 void		copy_envp(char **src_envp, char **dst_envp);
 
@@ -146,9 +145,8 @@ void	exit_successful_pipe(t_command *cmd);
 void	exit_failed_pipe(t_command *cmd, int fd_in, int fd_out);
 
 // env.c - ENV builtin and environment variable helpers
-void	ms_env(char **envp);
+//void	ms_env(char **envp);
 char	*make_env_string(char *name, char *value);
-int		find_env_var(char **envp, const char *var);
 t_env	*parse_env(char **envp);
 void	ms_env_t(t_env *environ);
 char	**serialise_env(t_env *env);
