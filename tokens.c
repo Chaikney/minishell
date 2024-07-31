@@ -137,10 +137,7 @@ int	add_value_into_param(char **par, int *r_posn, const char *cmdline)
 		{
 			val_len = ft_strlen(vvalue);
 			while (*vvalue != '\0')
-			{
-				printf("\ncopying %c\t", *vvalue);
 				*(*par)++ = *vvalue++;
-			}
 		}
 		free (vname);
 	}

@@ -112,6 +112,8 @@ char	*make_env_string(char *name, char *value)
 // for the requested var name.
 // If variable not found, returns -1
 // FIXED This can SEGFAULT if envp is not there.
+// FIXME This does not locate our added variables.
+//
 int	find_env_var(char **envp, const char *var)
 {
 	size_t	len;
