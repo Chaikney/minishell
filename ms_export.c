@@ -206,7 +206,7 @@ void	ms_export(t_command *cmd, char **envp)
 		free (evar_newvalue);
 	}
 }
-void	ms_export_t(t_command *cmd, t_env *envt)
+void	ms_export_t(t_command *cmd, t_env **envt)
 {
 	char	*evar_name;
 	char	*evar_newvalue;
@@ -214,7 +214,7 @@ void	ms_export_t(t_command *cmd, t_env *envt)
 
 	i = 1;
 	if (cmd->argc < 2)
-		ms_export_display_t(envt);
+		ms_export_display_t(*envt);
 	else
 	{
 		while (i <= (cmd->argc - 1))
@@ -225,15 +225,15 @@ void	ms_export_t(t_command *cmd, t_env *envt)
 			printf("\tWill act on: %s", evar_name);	// HACK for debugging
 			evar_newvalue = get_export_value(cmd->argv[i]);
 			printf("\tto change to: %s", evar_newvalue);	// HACK for debugging
-			if (is_in_envt(evar_name, envt) == 0)
+			if (is_in_envt(evar_name, *envt) == 0)
 			{
 				printf("variable not found, adding fresh.");	// HACK for debugging
-				t_add_new_env_var(evar_name, evar_newvalue, envt);
+				t_add_new_env_var(evar_name, evar_newvalue, *envt);
 			}
 			else
 			{
 				printf("variable exists, replacing (aye right)");	// HACK for debugging
-				t_replace_env_var(evar_name, evar_newvalue, &envt);
+				t_replace_env_var(evar_name, evar_newvalue, envt);
 			}
 			i++;
 		}
