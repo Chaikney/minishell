@@ -57,6 +57,10 @@ int	main(int argc, char **argv, char **envp)
 		setup_signals();
 		enviro = parse_env(envp);
 		ms_env_t(enviro);
+		sort_env(enviro);
+		printf("and after sorting:\n");
+		ms_env_t(enviro);
+
 		while (1)
 		{
 			prompt = get_prompt(envp);
