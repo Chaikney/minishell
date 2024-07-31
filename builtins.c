@@ -38,7 +38,6 @@ int	ms_pwd(void)
 // - Finds the line in envp where the variable is.
 // - copies the next lines over it.
 // FIXME I think that variables being unset should be freed.
-// TODO Make *full* and exclusive use of enviro
 void	int_unset(char *unset_var, t_env *enviro)
 {
 	t_env	*to_unset;

@@ -81,7 +81,6 @@ void	remove_node(t_env **first, t_env *target)
 
 	before = *first;
 	ptr = before->next;
-    // FIXME this match would not work? or would it
 	while ((ptr->vname != target->vname) && (ptr->next != NULL))
 	{
 		before = before->next;

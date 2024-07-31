@@ -44,6 +44,8 @@ void	eval(char *cmdline, char **envp, t_env *envt)
 // TODO Ensure that *all* commands run quit or return to here.
 // NOTE Exit called by user does not need to free prompt
 // ....as we destory it before eval
+// FIXME the g_procstatus var $? needs to get special treatment.
+// TODO Does enviro need to be freed on exit?
 int	main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;
