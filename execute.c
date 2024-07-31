@@ -25,13 +25,13 @@
 // - i.e. they are valid and null-terminated.
 // - Any fork-ing needed has been handled before calling this.
 // NOTE The lines at the end are only reached if execve fails
-void	run_command(t_command *cmd, char **envp)
+void	run_command(t_command *cmd, char **envp, t_env *envt)
 {
 	char	*prog;
 
 	if (cmd->builtin != NONE)
 	{
-		execute_builtin(cmd, envp);
+		execute_builtin(cmd, envp, envt);
 		exit_successful_pipe(cmd); 	// TODO Should a successful exit here reset g_procstatus?
 	}
 	if (access(cmd->argv[0], X_OK) == 0)
@@ -61,8 +61,11 @@ void	run_command(t_command *cmd, char **envp)
 //  [x] env, no options or args
 //  [x] export
 //  [x] exit no options.
-//void	execute_builtin(t_command *cmd, char **envp, t_env *enviro)
-void	execute_builtin(t_command *cmd, char **envp)
+//  TODO switch EXPORT to work with t_env
+//  TODO switch UNSET to work with t_env
+//  TODO switch CD to work with t_env
+void	execute_builtin(t_command *cmd, char **envp, t_env *enviro)
+//void	execute_builtin(t_command *cmd, char **envp)
 {
 	if (cmd->builtin == CD)
 		ms_cd(cmd, envp);
@@ -77,8 +80,8 @@ void	execute_builtin(t_command *cmd, char **envp)
 	else if (cmd->builtin == UNSET)
 		ms_unset(cmd, envp);
 	else if (cmd->builtin == ENV)
-//		ms_env_t(enviro);
-		ms_env(envp);
+		ms_env_t(enviro);
+//		ms_env(envp);
 	else
 	{
 		printf("Unknown builtin command\n");

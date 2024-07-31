@@ -22,7 +22,7 @@ int	g_procstatus;
 // - EXIT has to be an exit from the shell.
 // - EXPORT has to change values in the process above.
 // TODO Move some of direct_complex_command back here?
-void	eval(char *cmdline, char **envp)
+void	eval(char *cmdline, char **envp, t_env *envt)
 {
 	t_command	*cmd;
 	char		*trimmed;
@@ -34,7 +34,7 @@ void	eval(char *cmdline, char **envp)
 	cmd = parse(trimmed);
 	if (cmd)
 	{
-		direct_complex_command(cmd, envp);
+		direct_complex_command(cmd, envp, envt);
 		clear_t_command(cmd);
 	}
 }
@@ -60,7 +60,6 @@ int	main(int argc, char **argv, char **envp)
 		sort_env(enviro);
 		printf("and after sorting:\n");
 		ms_env_t(enviro);
-
 		while (1)
 		{
 			prompt = get_prompt(envp);
@@ -71,7 +70,7 @@ int	main(int argc, char **argv, char **envp)
 			if ((cmdline[0] != '\0'))
 			{
 				add_history((const char *) cmdline);
-				eval(cmdline, envp);
+				eval(cmdline, envp, enviro);
 			}
 		}
 	}
