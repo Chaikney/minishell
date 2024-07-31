@@ -158,4 +158,10 @@ void	print_cmd_parts(t_command *cmd);
 void	run_command(t_command *cmd, char **envp);
 void	execute_builtin(t_command *cmd, char **envp);
 //void	execute_builtin(t_command *cmd, char **envp, t_env env);
+
+//sort.c
+void swap(t_env *a, t_env *b);
+void sort_env(t_env *head);
+void append(t_env **head_ref, char *new_vname, char *new_value);
+void print_list(t_env *node);
 #endif
