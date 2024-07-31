@@ -56,6 +56,7 @@ int	main(int argc, char **argv, char **envp)
 	{
 		setup_signals();
 		enviro = parse_env(envp);
+		sort_env(enviro);
 		while (1)
 		{
 			prompt = get_prompt(envp);
