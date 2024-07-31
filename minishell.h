@@ -145,6 +145,8 @@ int		find_env_var(char **envp, const char *var);
 t_env	*parse_env(char **envp);
 void	ms_env_t(t_env *environ);
 char	**serialise_env(t_env *env);
+t_env	*init_new_env(char *str);	// TODO Better to take separate name / value
+void	add_to_env_list(t_env *lsthead, t_env *to_add);
 
 // cd.c - change wd, set new value of PWD
 void	ms_cd(t_command *cmd, char **envp);

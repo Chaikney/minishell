@@ -16,6 +16,19 @@
 
 // Take a name and value and add this  to the envp.
 // the Named value should not already exist.
+// New version using t_env
+void	t_add_new_env_var(char *name, char *value, t_env *env)
+{
+	char	*to_write;
+	t_env	*new_entry;
+
+	to_write = make_env_string(name, value);
+	new_entry = init_new_env(to_write);
+	add_to_env_list(env, new_entry);
+}
+
+// Take a name and value and add this  to the envp.
+// the Named value should not already exist.
 // If value is NULL, add only the name.
 // - Similar to editing pwd,
 // - copy envp to somewhere that has space for one more line
@@ -133,7 +146,7 @@ char	*get_export_value(char *str)
 // FIXED There is a problem in replacing OUR, CUSTOM variables.
 // ....getenv is not reliable for that!
 // FIXME Too many lines (might be the printfs...)
-// DONE Can rename this to become the real ms_export soon.
+// TODO Adapt to work with t_env instead.
 void	ms_export(t_command *cmd, char **envp)
 {
 	char	*evar_name;

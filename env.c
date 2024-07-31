@@ -80,6 +80,16 @@ t_env	*init_new_env(char *str)
 	return (new_env);
 }
 
+void	add_to_env_list(t_env *lsthead, t_env *to_add)
+{
+	t_env	*ptr;
+
+	ptr = lsthead;
+	while (ptr->next != NULL)
+		ptr = ptr->next;
+	ptr->next = to_add;
+}
+
 // read the Starting environment into a variable to access.
 // for line in envp
 // - find name (all up to =)
