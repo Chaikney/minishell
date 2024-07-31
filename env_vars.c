@@ -67,12 +67,15 @@ void	t_add_new_env_var(char *name, char *value, t_env *env)
 
 // return the value of the env. variaable with name.
 // NULL if not present.
+// Now with the special variable $?
 char	*get_value_of_env(char *name, t_env *envt)
 {
 	t_env	*ptr;
 	int	len;
 
 	len = ft_strlen(name);
+	if (ft_strncmp(name, "?", len) == 0)
+		return (ft_itoa(g_procstatus));
 	ptr = envt;
 	while (ptr->next != NULL)
 	{

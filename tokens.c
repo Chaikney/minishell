@@ -113,8 +113,6 @@ void	change_parse_mode(char c, int *mode, int *pos)
 }
 
 // Find a variable and add its value into the parameter.
-// FIXME Does not retrieve custom-set variables.
-// FIXME But probably not quote aware!
 // FIXME function too long (check without printfs)
 // TODO Plug the ENVIRONMENT into this to get values from it
 int	add_value_into_param(char **par, int *r_posn, const char *cmdline, t_env *envt)
