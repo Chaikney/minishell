@@ -114,6 +114,8 @@ void	change_parse_mode(char c, int *mode, int *pos)
 
 // Find a variable and add its value into the parameter.
 // FIXME Does not retrieve custom-set variables.
+// FIXME But probably not quote aware!
+// FIXME function too long (check without printfs)
 int	add_value_into_param(char **par, int *r_posn, const char *cmdline)
 {
 	char	*vname;
@@ -121,7 +123,7 @@ int	add_value_into_param(char **par, int *r_posn, const char *cmdline)
 	int		name_len;
 	int		val_len;
 
-	vname = get_var_name(&cmdline[*r_posn]);	// FIXME But probably not quote aware!
+	vname = get_var_name(&cmdline[*r_posn]);
 	val_len = 0;
 	printf("subsituing %s", vname);
 	if (vname)
@@ -159,21 +161,20 @@ char	*get_any_parameter(const char *cmdline, int *posn)
 	char	*param;
 	char	*ptr;
 	int		p_mode;
-	char	stops[8] = "|><$ \'\"\\";
 
 	p_mode = 0;
 	param = get_blank_param();
 	ptr = param;
 	while (cmdline[*posn] != '\0')
 	{
-		if ((p_mode == 0) &&
-			((is_control_char(cmdline[*posn]) == 1) || ((p_mode == 0) && (cmdline[*posn]) == ' ')))
+		if ((p_mode == 0) && ((is_control_char(cmdline[*posn]) == 1)
+				|| ((p_mode == 0) && (cmdline[*posn]) == ' ')))
 			break ;
 		while ((p_mode == 2) && (ft_strchr("\''\0", cmdline[*posn]) == NULL))
 			*ptr++ = cmdline[(*posn)++];
 		while ((p_mode == 1) && (ft_strchr("\"$", cmdline[*posn]) == NULL))
 			*ptr++ = cmdline[(*posn)++];
-		while ((p_mode == 0) && (ft_strchr(stops, cmdline[*posn]) == NULL))
+		while ((p_mode == 0) && (!ft_strchr("|><$ \'\"", cmdline[*posn])))
 			*ptr++ = cmdline[(*posn)++];
 		if ((p_mode != 2) && (cmdline[*posn] == '$'))
 			add_value_into_param(&ptr, posn, cmdline);
