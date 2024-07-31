@@ -12,46 +12,6 @@
 
 #include "minishell.h"
 
-// return 1 if the variable name is present in the env
-// TODO There are places where this should be called to check (e.g unset)
-int	is_in_envt(char *name, t_env *envt)
-{
-	t_env	*ptr;
-	int	len;
-
-	len = ft_strlen(name);
-	ptr =  envt;
-	while (ptr->next != NULL)
-	{
-		if (ft_strncmp(name, ptr->vname, len) == 0)
-			return (1);
-		ptr = ptr->next;
-	}
-	if (ft_strncmp(name, ptr->vname, len) == 0)
-		return (1);
-	return (0);
-}
-
-// return the value of the env. variaable with name.
-// NULL if not present.
-char	*get_value_of_env(char *name, t_env *envt)
-{
-	t_env	*ptr;
-	int	len;
-
-	len = ft_strlen(name);
-	ptr = envt;
-	while (ptr->next != NULL)
-	{
-		if (ft_strncmp(name, ptr->vname, len) == 0)
-			return (ptr->value);
-		ptr = ptr->next;
-	}
-	if (ft_strncmp(name, ptr->vname, len) == 0)
-		return (ptr->value);
-	return (NULL);
-}
-
 // Turn the t_env variables back into a list of string like envp
 // This means that they would work with execve.
 // NOTE Untested, but shoulld be used to  pass to run_command etc
@@ -149,20 +109,6 @@ t_env	*parse_env(char **envp)
 		return (first);
 	}
 	return (NULL);
-}
-
-// TODO HAndle the case where there is no value
-void	ms_export_display_t(t_env *envt)
-{
-	t_env	*ptr;
-
-	ptr = envt;
-	while (ptr->next != NULL)
-	{
-		printf("declare -x %s = %s\n", ptr->vname, ptr->value);
-		ptr = ptr->next;
-	}
-	printf("declare -x %s = %s\n", ptr->vname, ptr->value);
 }
 
 // Takes a  name and a value; returns a string formatted suitable

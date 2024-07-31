@@ -87,16 +87,13 @@ int			ms_pwd(void);
 void		ms_unset(t_command *cmd, t_env *enviro);
 void		ms_echo(t_command *cmd);
 void		int_unset(char *unset_var, t_env *enviro);
-void		ms_export_display_t(t_env *envt);
 void		copy_envp(char **src_envp, char **dst_envp);
 
 // ms_export.c - and related helpers
 char		*get_export_name(char *str);
 char		*get_export_value(char *str);
-//void		ms_export(t_command *cmd, char **envp);
+void		ms_export_display_t(t_env *envt);
 void		ms_export_t(t_command *cmd, t_env **envt);
-//void	add_new_env_var(char *name, char *value, char **envp);
-//void	replace_env_var(char *name, char *value, char **envp);
 
 // parse.c - functions to read and interpret user input
 //t_command	*parse(char *cmdline);
@@ -149,22 +146,20 @@ void	ms_env_t(t_env *environ);
 char	**serialise_env(t_env *env);
 t_env	*init_new_env(char *str);	// TODO Better to take separate name / value
 void	add_to_env_list(t_env *lsthead, t_env *to_add);
-char	*get_value_of_env(char *name, t_env *envt);
 
 // env_vars.c - Query and manipulate ENV variables
 int		is_in_envt(char *name, t_env *envt);
 void	t_add_new_env_var(char *name, char *value, t_env *env);
 void	t_replace_env_var(char *name, char *value, t_env **envt);
+char	*get_value_of_env(char *name, t_env *envt);
 
 // cd.c - change wd, set new value of PWD
 void	ms_cd(t_command *cmd, t_env *envt);
 void	update_pwd(char *oldpwd, char *newpwd, t_env *envt);
 
 // prompt.c - functions to enhance the readline prompt
-//char	*get_shrt_wd(char **envp);
 char	*get_shrt_wd(t_env *envt);
 char	*get_status_for_prompt(void);
-//char	*get_prompt(char **envp);
 char	*get_prompt(t_env *envt);
 
 // debug.c - functions to use in development

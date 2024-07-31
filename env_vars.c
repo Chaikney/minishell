@@ -62,3 +62,23 @@ void	t_add_new_env_var(char *name, char *value, t_env *env)
 	new_entry = init_new_env(to_write);
 	add_to_env_list(env, new_entry);
 }
+
+// return the value of the env. variaable with name.
+// NULL if not present.
+char	*get_value_of_env(char *name, t_env *envt)
+{
+	t_env	*ptr;
+	int	len;
+
+	len = ft_strlen(name);
+	ptr = envt;
+	while (ptr->next != NULL)
+	{
+		if (ft_strncmp(name, ptr->vname, len) == 0)
+			return (ptr->value);
+		ptr = ptr->next;
+	}
+	if (ft_strncmp(name, ptr->vname, len) == 0)
+		return (ptr->value);
+	return (NULL);
+}
