@@ -39,7 +39,7 @@ int	ms_pwd(void)
 // - copies the next lines over it.
 // FIXME I think that variables being unset should be freed.
 // TODO Make *full* and exclusive use of enviro
-void	int_unset(char *unset_var, char **envp, t_env *enviro)
+void	int_unset(char *unset_var, t_env *enviro)
 {
 	t_env	*to_unset;
 	int		len;
@@ -53,9 +53,6 @@ void	int_unset(char *unset_var, char **envp, t_env *enviro)
 		remove_node(&enviro, to_unset);
 	else
 		printf("could not find node to unset");
-	(void) envp;	// HACK for compilation
-	// find the target node
-//	delete_node(&enviro, unset_var);
 }
 
 // This is UNSET as called directly by the user.
@@ -64,21 +61,11 @@ void	int_unset(char *unset_var, char **envp, t_env *enviro)
 // TEST cases and expected (bash) behaviour:
 // [x] unset a variable that we set previously using export
 // [x] unset a variable that was inherited
-// FIXED ms_unset should not segfault
-// DONE Use perror not printf when cmd fails?
-// TODO If this fails, should we set g_procstatus?
 // TODO Do we need to free memory for var_name?
-// FIXED ms_unset has too many lines
 // DONE UNSET should act to act on multiple vars, space separated,.
-// NOTE This *works* but I don't understand why...
-// - Make variable name from cmd parameter
-// - Look for the name in ENVP
-// - - if not there, do nothing
-// - - if there:
-// - - copy the next line over this one, and so on to end of envp
-void	ms_unset(t_command *cmd, char **envp, t_env *enviro)
+void	ms_unset(t_command *cmd, t_env *enviro)
 {
-	int	i;
+	int		i;
 	char	*var_name;
 
 	i = 1;
@@ -86,7 +73,6 @@ void	ms_unset(t_command *cmd, char **envp, t_env *enviro)
 	{
 		perror("unset: missing argument\n");
 		g_procstatus = EINVAL;
-		return ;
 	}
 	else
 	{
@@ -98,7 +84,8 @@ void	ms_unset(t_command *cmd, char **envp, t_env *enviro)
 				perror ("unset failed");
 				g_procstatus = ENOMEM;
 			}
-			int_unset(var_name, envp, enviro);
+			if (is_in_envt(var_name, enviro) == 1)
+				int_unset(var_name, enviro);
 			i++;
 		}
 	}

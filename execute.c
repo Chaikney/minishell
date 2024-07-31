@@ -79,7 +79,7 @@ void	execute_builtin(t_command *cmd, char **envp, t_env *enviro)
 		ms_export_t(cmd, &enviro);
 //		ms_export(cmd, envp);
 	else if (cmd->builtin == UNSET)
-		ms_unset(cmd, envp, enviro);
+		ms_unset(cmd, enviro);
 	else if (cmd->builtin == ENV)
 		ms_env_t(enviro);
 //		ms_env(envp);

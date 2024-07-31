@@ -84,9 +84,9 @@ int	add_value_into_param(char **par, int *r_posn, const char *cmdline, t_env *en
 
 // builtins.c
 int			ms_pwd(void);
-void		ms_unset(t_command *cmd, char **envp, t_env *enviro);
+void		ms_unset(t_command *cmd, t_env *enviro);
 void		ms_echo(t_command *cmd);
-void		int_unset(char *unset_var, char **envp, t_env *enviro);
+void		int_unset(char *unset_var, t_env *enviro);
 void		ms_export_display(char **envp);
 void		ms_export_display_t(t_env *envt);
 void		copy_envp(char **src_envp, char **dst_envp);

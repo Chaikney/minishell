@@ -143,8 +143,8 @@ void	update_pwd(char **envp, char *oldpwd, char *new_pwd, t_env *envt)
 		cd_error("Missing value for PWD update.", NULL, NULL, oldpwd);
 	else
 	{
-		int_unset("OLDPWD", envp, envt);
-		int_unset("PWD", envp, envt);
+		int_unset("OLDPWD", envt);
+		int_unset("PWD", envt);
 		t_add_new_env_var("PWD", new_pwd, envt);
 		t_add_new_env_var("OLDPWD", oldpwd, envt);
 	}
