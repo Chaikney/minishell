@@ -73,7 +73,6 @@ void	replace_env_var(char *name, char *value, char **envp)
 }
 // Take a name change the value in the envp to the one given.
 // TODO If value is NULL, what should replace_env_var do?
-// FIXED? This only *adds* values, it does not remove them.
 void	t_replace_env_var(char *name, char *value, t_env **envt)
 {
 	t_env	*ptr;
@@ -81,15 +80,20 @@ void	t_replace_env_var(char *name, char *value, t_env **envt)
 
 	ptr = *envt;
 	len = ft_strlen(name);
-	printf("\nupdating %s with %s", name, value);	// HACK for debugging
 	while (ptr->next != NULL)
 	{
 		if (ft_strncmp(name, ptr->vname, len) == 0)
 		{
-			ptr->value = value;
+			printf("\nupdating %s with %s", name, value);	// HACK for debugging
+			ptr->value = ft_strdup(value);
 			break ;
 		}
 		ptr = ptr->next;
+	}
+	if (ft_strncmp(name, ptr->vname, len) == 0)
+	{
+		printf("\nupdating %s with %s", name, value);	// HACK for debugging
+		ptr->value = ft_strdup(value);
 	}
 }
 
