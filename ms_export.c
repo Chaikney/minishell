@@ -53,14 +53,14 @@ void	ms_export_display_t(t_env *envt)
 	{
 		printf("declare -x %s", ptr->vname);
 		if (ptr->value)
-			   printf("= %s\n", ptr->value);
+			   printf("=%s\n", ptr->value);
 		else
 			   printf("\n");
 		ptr = ptr->next;
 	}
 	printf("declare -x %s", ptr->vname);
 	if (ptr->value)
-		printf("= %s\n", ptr->value);
+		printf("=%s\n", ptr->value);
 	else
 		printf("\n");
 }
