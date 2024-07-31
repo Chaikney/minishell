@@ -123,8 +123,6 @@ int		is_legal_name(char *str);
 int		is_control_char(char c);
 
 // pipes.c
-t_command	*split_pipe(t_command *cmd);
-t_command	*make_cmd_list(t_command *to_split, int n);
 t_command	*init_new_command(void);
 
 // signals.c - catch and manage signals like CTRL-C
