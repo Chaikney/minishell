@@ -41,18 +41,28 @@ char	*get_export_name(char *str)
 	return (name);
 }
 
-// TODO HAndle the case where there is no value
+// EXPORT with no options displays an ordered list of the
+// environment variables in a specific format.
 void	ms_export_display_t(t_env *envt)
 {
 	t_env	*ptr;
 
+	sort_env(envt);
 	ptr = envt;
 	while (ptr->next != NULL)
 	{
-		printf("declare -x %s = %s\n", ptr->vname, ptr->value);
+		printf("declare -x %s", ptr->vname);
+		if (ptr->value)
+			   printf("= %s\n", ptr->value);
+		else
+			   printf("\n");
 		ptr = ptr->next;
 	}
-	printf("declare -x %s = %s\n", ptr->vname, ptr->value);
+	printf("declare -x %s", ptr->vname);
+	if (ptr->value)
+		printf("= %s\n", ptr->value);
+	else
+		printf("\n");
 }
 
 // return the VALUE part of a NAME=VALUE pair to process in EXPORT
@@ -79,6 +89,10 @@ char	*get_export_value(char *str)
 	return (value);
 }
 
+// Builtin EXPORT command.
+// With options, it sets (adds or updates) variables in the
+// process environment.
+// Without options, it displays those options in a particular format.
 void	ms_export_t(t_command *cmd, t_env **envt)
 {
 	char	*evar_name;

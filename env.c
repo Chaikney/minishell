@@ -42,6 +42,7 @@ char	**serialise_env(t_env *env)
 }
 
 // The ENV builtin, but using a t_env
+// Does not display "empty" variables (unlike export)
 void	ms_env_t(t_env *environ)
 {
 	t_env	*ptr;
@@ -49,10 +50,12 @@ void	ms_env_t(t_env *environ)
 	ptr = environ;
 	while (ptr->next != NULL)
 	{
-		printf("%s=%s\n", ptr->vname, ptr->value);
+		if (ptr->value)
+			printf("%s=%s\n", ptr->vname, ptr->value);
 		ptr = ptr->next;
 	}
-	printf("%s=%s\n", ptr->vname, ptr->value);
+	if (ptr->value)
+		printf("%s=%s\n", ptr->vname, ptr->value);
 }
 
 // Sets up a new t_env node to be added
