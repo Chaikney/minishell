@@ -12,6 +12,26 @@
 
 #include "minishell.h"
 
+// return 1 if the variable name is present in the env
+int	is_in_envt(char *name, t_env *envt)
+{
+	t_env	*ptr;
+	int	len;
+
+	len = ft_strlen(name);
+	ptr =  envt;
+	while (ptr->next != NULL)
+	{
+		if (ft_strncmp(name, ptr->vname, len) == 0)
+			return (1);
+		ptr = ptr->next;
+	}
+	if (ft_strncmp(name, ptr->vname, len) == 0)
+		if (ptr->vname[len] == '=')
+			return (1);
+	return (0);
+}
+
 // Builtin ENV command.
 // FIXED env should not display empty variables, unlike export.
 // DONE Ensure bash-compatibility
@@ -137,6 +157,20 @@ static void	ms_ed_with_var(char *c, char *split_point)
 		c++;
 	}
 	printf("\"\n");
+}
+
+// TODO HAndle the case where there is no value
+void	ms_export_display_t(t_env *envt)
+{
+	t_env	*ptr;
+
+	ptr = envt;
+	while (ptr->next != NULL)
+	{
+		printf("declare -x %s = %s\n", ptr->vname, ptr->value);
+		ptr = ptr->next;
+	}
+	printf("declare -x %s = %s\n", ptr->vname, ptr->value);
 }
 
 // Handle the display of ENV variables when EXPORT is called

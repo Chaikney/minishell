@@ -87,6 +87,7 @@ void		ms_unset(t_command *cmd, char **envp);
 void		ms_echo(t_command *cmd);
 void		int_unset(char *unset_var, char **envp);
 void		ms_export_display(char **envp);
+void		ms_export_display_t(t_env *envt);
 void		copy_envp(char **src_envp, char **dst_envp);
 
 // ms_export.c - and related helpers
@@ -147,6 +148,7 @@ void	ms_env_t(t_env *environ);
 char	**serialise_env(t_env *env);
 t_env	*init_new_env(char *str);	// TODO Better to take separate name / value
 void	add_to_env_list(t_env *lsthead, t_env *to_add);
+int	is_in_envt(char *name, t_env *envt);
 
 // cd.c - change wd, set new value of PWD
 void	ms_cd(t_command *cmd, char **envp);
