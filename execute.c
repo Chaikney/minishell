@@ -61,27 +61,22 @@ void	run_command(t_command *cmd, char **envp, t_env *envt)
 //  [x] env, no options or args
 //  [x] export
 //  [x] exit no options.
-//  TODO switch EXPORT to work with t_env
-//  TODO switch UNSET to work with t_env
-//  TODO switch CD to work with t_env
 void	execute_builtin(t_command *cmd, t_env *enviro)
 {
 	if (cmd->builtin == CD)
 		ms_cd(cmd, enviro);
 	else if (cmd->builtin == EXIT)
-		ms_exit(cmd);
+		ms_exit(cmd, enviro);
 	else if ((cmd->builtin == ECHON) || (cmd->builtin == ECHO))
 		ms_echo(cmd);
 	else if (cmd->builtin == PWD)
 		ms_pwd();
 	else if (cmd->builtin == EXP)
 		ms_export_t(cmd, &enviro);
-//		ms_export(cmd, envp);
 	else if (cmd->builtin == UNSET)
 		ms_unset(cmd, enviro);
 	else if (cmd->builtin == ENV)
 		ms_env_t(enviro);
-//		ms_env(envp);
 	else
 	{
 		printf("Unknown builtin command\n");

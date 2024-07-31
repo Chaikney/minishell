@@ -63,7 +63,7 @@ int	main(int argc, char **argv, char **envp)
 			cmdline = readline(prompt);
 			free (prompt);
 			if (cmdline == NULL)
-				ms_exit(NULL);
+				ms_exit(NULL, enviro);
 			if ((cmdline[0] != '\0'))
 			{
 				add_history((const char *) cmdline);

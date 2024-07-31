@@ -53,6 +53,7 @@ void	t_replace_env_var(char *name, char *value, t_env **envt)
 // Take a name and value and add this  to the envp.
 // the Named value should not already exist.
 // New version using t_env
+// FIXME This is silly. It creates a string then decomposes it!
 void	t_add_new_env_var(char *name, char *value, t_env *env)
 {
 	char	*to_write;
@@ -61,6 +62,7 @@ void	t_add_new_env_var(char *name, char *value, t_env *env)
 	to_write = make_env_string(name, value);
 	new_entry = init_new_env(to_write);
 	add_to_env_list(env, new_entry);
+	free (to_write);
 }
 
 // return the value of the env. variaable with name.

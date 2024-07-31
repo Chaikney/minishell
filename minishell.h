@@ -135,7 +135,9 @@ int		setup_signals(void);
 
 // exit.c - freeing memory and exiting cleanly
 void	clear_t_command(t_command *cmd);
-void	ms_exit(t_command *cmd);
+void	ms_exit(t_command *cmd, t_env *envt);
+void	clear_environment(t_env *envt);
+//void	ms_exit(t_command *cmd);
 void	exit_successful_pipe(t_command *cmd);
 void	exit_failed_pipe(t_command *cmd, int fd_in, int fd_out);
 

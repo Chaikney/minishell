@@ -18,11 +18,39 @@
 // - free cmd
 // - what about the readline input variable?
 // TODO If this is called from main, we have a char* to free
-void	ms_exit(t_command *cmd)
+void	ms_exit(t_command *cmd, t_env *envt)
 {
 	printf("Agurrrr....\n");
 	clear_t_command(cmd);
+	clear_environment(envt);
 	exit(EXIT_SUCCESS);
+}
+
+// Our copy of the environment should all be dynamically
+// allocated by us, so we free it.
+// DO check the memory free-ing of clear_envrionment
+// - works for the full environment
+// - need to free individual blocks when UNSET
+void	clear_environment(t_env *envt)
+{
+	t_env	*ptr;
+
+	if (envt)
+	{
+		while (envt->next != NULL)
+		{
+			free (envt->vname);
+			if (envt->value)
+				free (envt->value);
+			ptr = envt;
+			envt = envt->next;
+			free (ptr);
+		}
+		free (envt->vname);
+		if (envt->value)
+			free (envt->value);
+		free (envt);
+	}
 }
 
 // Call this when we need to exit from a successful process that
@@ -33,6 +61,7 @@ void	ms_exit(t_command *cmd)
 void	exit_successful_pipe(t_command *cmd)
 {
 	clear_t_command(cmd);
+	g_procstatus = 0;
 	exit (EXIT_SUCCESS);
 }
 
