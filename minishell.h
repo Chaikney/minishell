@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 13:48:26 by chaikney          #+#    #+#             */
-/*   Updated: 2024/06/06 13:48:36 by chaikney         ###   ########.fr       */
+/*   Updated: 2024/07/31 20:05:53 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,9 +83,9 @@ char	*get_any_parameter(const char *cmdline, int *posn);
 
 // builtins.c
 int			ms_pwd(void);
-void		ms_unset(t_command *cmd, char **envp);
+void		ms_unset(t_command *cmd, char **envp, t_env *enviro);
 void		ms_echo(t_command *cmd);
-void		int_unset(char *unset_var, char **envp);
+void		int_unset(char *unset_var, char **envp, t_env *enviro);
 void		ms_export_display(char **envp);
 void		copy_envp(char **src_envp, char **dst_envp);
 
@@ -169,6 +169,7 @@ void	execute_builtin(t_command *cmd, char **envp, t_env *env);
 
 //sort.c
 void swap(t_env *a, t_env *b);
+void delete_node(t_env **head_ref, const char *vname);
 void sort_env(t_env *head);
 void append(t_env **head_ref, char *new_vname, char *new_value);
 void print_list(t_env *node);
