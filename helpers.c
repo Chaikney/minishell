@@ -24,36 +24,6 @@ int	is_control_char(char c)
 		return (0);
 }
 
-// Look through a parsed set of commands and see if it contains
-// flow control parameters: | > < >> or <<
-// They would be separate from commands either side.
-// (locates, it is up to the outer loop to re-identify what the thing is)
-// FIXME Segfaults if cmdset (or any part of it) is null, add protection
-// TODO find_flow_control could be removed now, or find other use of it.
-int	find_flow_control(t_command *cmdset)
-{
-	int	i;
-
-	i = 0;
-	while (cmdset->argv[i])
-	{
-		if (ft_strncmp(cmdset->argv[i], ">>", 2) == 0)
-			break ;
-		else if (ft_strncmp(cmdset->argv[i], "<<", 2) == 0)
-			break ;
-		else if (ft_strncmp(cmdset->argv[i], ">", 1) == 0)
-			break ;
-		else if (ft_strncmp(cmdset->argv[i], "<", 1) == 0)
-			break ;
-		else if (ft_strncmp(cmdset->argv[i], "|", 1) == 0)
-			break ;
-		i++;
-	}
-	if (i == cmdset->argc)
-		i = -1;
-	return (i);
-}
-
 // Moves the *posn pointer forward through a command line
 // until it reaches a stop character (which is badly named because we
 // use this to find a place to *start* parsing).

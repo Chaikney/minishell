@@ -22,6 +22,7 @@ int	g_procstatus;
 // - EXIT has to be an exit from the shell.
 // - EXPORT has to change values in the process above.
 // TODO Move some of direct_complex_command back here?
+// TODO Can we remove envp?
 void	eval(char *cmdline, char **envp, t_env *envt)
 {
 	t_command	*cmd;
@@ -45,7 +46,6 @@ void	eval(char *cmdline, char **envp, t_env *envt)
 // NOTE Exit called by user does not need to free prompt
 // ....as we destory it before eval
 // FIXME the g_procstatus var $? needs to get special treatment.
-// TODO Does enviro need to be freed on exit?
 int	main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;

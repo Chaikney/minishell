@@ -119,7 +119,6 @@ void	remove_cmd_parts(t_command *cmd, char *target);
 // helpers.c - finder and helper functions
 char	*search_in_path(char *cmd);
 void	goto_stop_char(const char *cmdline, int *posn);
-int		find_flow_control(t_command *cmdset);
 int		is_legal_name(char *str);
 int		is_control_char(char c);
 

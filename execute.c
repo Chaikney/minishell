@@ -33,7 +33,7 @@ void	run_command(t_command *cmd, char **envp, t_env *envt)
 	if (cmd->builtin != NONE)
 	{
 		execute_builtin(cmd, envt);
-		exit_successful_pipe(cmd); 	// TODO Should a successful exit here reset g_procstatus?
+		exit_successful_pipe(cmd);
 	}
 	if (access(cmd->argv[0], X_OK) == 0)
 		prog = cmd->argv[0];
