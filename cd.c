@@ -50,15 +50,19 @@ static char	*get_cd_target(t_command *cmd)
 // FIXED? new_pwd needs freed (but not immediately!)
 // FIXME cd followed by a non-existent command leaks memory
 // 		(e.g. cd .. then grp)
-// NOTE	This is so annoying. SHould be able to use replace_env_var but cannot
-void	ms_cd(t_command *cmd, char **envp)
+// DONE Adapt to t_env
+// TODO Check memory use of new form.
+void	ms_cd(t_command *cmd, char **envp, t_env *envt)
 {
-	int		pwd_posn;
+//	int		pwd_posn;
 	char	*oldpwd;
 	char	*new_pwd;
-	char	*wd;
+//	char	*wd;
 	char	*target;
 
+
+	oldpwd = NULL;
+	oldpwd = getcwd(oldpwd, 0);
 	target = get_cd_target(cmd);
 	if (!target)
 		return ;
@@ -66,13 +70,13 @@ void	ms_cd(t_command *cmd, char **envp)
 		printf("wrong address\n");
 	else
 	{
-		wd = NULL;
-		wd = getcwd(wd, 0);
-		pwd_posn = find_env_var(envp, "PWD");
-		oldpwd = ft_strjoin("OLD", envp[pwd_posn]);
-		new_pwd = ft_strjoin("PWD=", wd);
-		free(wd);
-		update_pwd(envp, oldpwd, new_pwd);
+		new_pwd = NULL;
+		new_pwd = getcwd(new_pwd, 0);
+		/* pwd_posn = find_env_var(envp, "PWD"); */
+		/* oldpwd = ft_strjoin("OLD", envp[pwd_posn]); */
+		/* new_pwd = ft_strjoin("PWD=", wd); */
+		/* free(wd); */
+		update_pwd(envp, oldpwd, new_pwd, envt);
 		/* free (oldpwd); */
 		/* free(new_pwd); */
 	}
@@ -97,6 +101,7 @@ static void	cd_error(char *errmsg, char *wd, char **new_envp, char *oldpwd)
 // Copy the envp from src_envp to dst_envp
 // Ensures null-termination
 // but does *not* check that dst_envp is big enough!
+// TODO Probably will be obsolete later
 void	copy_envp(char **src_envp, char **dst_envp)
 {
 	int	i;
@@ -130,33 +135,17 @@ void	copy_envp(char **src_envp, char **dst_envp)
 // Either way seems impossible to free the memory in certain cases....
 // ...how do we *know*? The original envp pieces are statically allocated.
 // ...should ours be too??
-void	update_pwd(char **envp, char *oldpwd, char *new_pwd)
+void	update_pwd(char **envp, char *oldpwd, char *new_pwd, t_env *envt)
 {
-	char	**new_envp;
-	size_t	env_len;
 
+	(void) envp;	//  HACK for compilation, remove var
 	if ((oldpwd == NULL) || (new_pwd == NULL))
 		cd_error("Missing value for PWD update.", NULL, NULL, oldpwd);
 	else
 	{
-		int_unset("OLDPWD", envp);
-		env_len = 0;
-		while (envp[env_len] != NULL)
-			env_len++;
-		new_envp = malloc(sizeof(char *) * (env_len + 3));
-		if (new_envp == NULL)
-		{
-			cd_error("malloc", NULL, NULL, NULL);
-			return ;
-		}
-		copy_envp(envp, new_envp);
-		/* new_envp[env_len++] = ft_strdup(oldpwd); */
-		/* new_envp[env_len++] = ft_strdup(new_pwd); */
-		new_envp[env_len++] = (oldpwd);
-		new_envp[env_len++] = (new_pwd);
-		new_envp[env_len] = NULL;
-		copy_envp(new_envp, envp);
-		int_unset("PWD", envp);
-		free(new_envp);
+		int_unset("OLDPWD", envp, envt);
+		int_unset("PWD", envp, envt);
+		t_add_new_env_var("PWD", new_pwd, envt);
+		t_add_new_env_var("OLDPWD", oldpwd, envt);
 	}
 }

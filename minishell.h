@@ -94,10 +94,12 @@ void		copy_envp(char **src_envp, char **dst_envp);
 // ms_export.c - and related helpers
 char		*get_export_name(char *str);
 char		*get_export_value(char *str);
-void		ms_export(t_command *cmd, char **envp);
+//void		ms_export(t_command *cmd, char **envp);
 void		ms_export_t(t_command *cmd, t_env **envt);
-void	add_new_env_var(char *name, char *value, char **envp);
-void	replace_env_var(char *name, char *value, char **envp);
+//void	add_new_env_var(char *name, char *value, char **envp);
+//void	replace_env_var(char *name, char *value, char **envp);
+void	t_add_new_env_var(char *name, char *value, t_env *env);
+void	t_replace_env_var(char *name, char *value, t_env **envt);
 
 // parse.c - functions to read and interpret user input
 //t_command	*parse(char *cmdline);
@@ -156,8 +158,10 @@ int	is_in_envt(char *name, t_env *envt);
 char	*get_value_of_env(char *name, t_env *envt);
 
 // cd.c - change wd, set new value of PWD
-void	ms_cd(t_command *cmd, char **envp);
-void	update_pwd(char **envp, char *oldpwd, char *newpwd);
+void	ms_cd(t_command *cmd, char **envp, t_env *envt);
+//void	ms_cd(t_command *cmd, char **envp);
+void	update_pwd(char **envp, char *oldpwd, char *newpwd, t_env *envt);
+//void	update_pwd(char **envp, char *oldpwd, char *newpwd);
 
 // prompt.c - functions to enhance the readline prompt
 char	*get_shrt_wd(char **envp);

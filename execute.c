@@ -68,7 +68,7 @@ void	execute_builtin(t_command *cmd, char **envp, t_env *enviro)
 //void	execute_builtin(t_command *cmd, char **envp)
 {
 	if (cmd->builtin == CD)
-		ms_cd(cmd, envp);
+		ms_cd(cmd, envp, enviro);
 	else if (cmd->builtin == EXIT)
 		ms_exit(cmd);
 	else if ((cmd->builtin == ECHON) || (cmd->builtin == ECHO))
