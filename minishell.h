@@ -97,8 +97,6 @@ char		*get_export_value(char *str);
 void		ms_export_t(t_command *cmd, t_env **envt);
 //void	add_new_env_var(char *name, char *value, char **envp);
 //void	replace_env_var(char *name, char *value, char **envp);
-void	t_add_new_env_var(char *name, char *value, t_env *env);
-void	t_replace_env_var(char *name, char *value, t_env **envt);
 
 // parse.c - functions to read and interpret user input
 //t_command	*parse(char *cmdline);
@@ -145,15 +143,18 @@ void	exit_successful_pipe(t_command *cmd);
 void	exit_failed_pipe(t_command *cmd, int fd_in, int fd_out);
 
 // env.c - ENV builtin and environment variable helpers
-//void	ms_env(char **envp);
 char	*make_env_string(char *name, char *value);
 t_env	*parse_env(char **envp);
 void	ms_env_t(t_env *environ);
 char	**serialise_env(t_env *env);
 t_env	*init_new_env(char *str);	// TODO Better to take separate name / value
 void	add_to_env_list(t_env *lsthead, t_env *to_add);
-int	is_in_envt(char *name, t_env *envt);
 char	*get_value_of_env(char *name, t_env *envt);
+
+// env_vars.c - Query and manipulate ENV variables
+int		is_in_envt(char *name, t_env *envt);
+void	t_add_new_env_var(char *name, char *value, t_env *env);
+void	t_replace_env_var(char *name, char *value, t_env **envt);
 
 // cd.c - change wd, set new value of PWD
 void	ms_cd(t_command *cmd, t_env *envt);
