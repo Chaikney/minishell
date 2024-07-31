@@ -164,9 +164,11 @@ void	update_pwd(char **envp, char *oldpwd, char *newpwd, t_env *envt);
 //void	update_pwd(char **envp, char *oldpwd, char *newpwd);
 
 // prompt.c - functions to enhance the readline prompt
-char	*get_shrt_wd(char **envp);
+//char	*get_shrt_wd(char **envp);
+char	*get_shrt_wd(t_env *envt);
 char	*get_status_for_prompt(void);
-char	*get_prompt(char **envp);
+//char	*get_prompt(char **envp);
+char	*get_prompt(t_env *envt);
 
 // debug.c - functions to use in development
 void	print_tokens(char **arr);

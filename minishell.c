@@ -59,7 +59,7 @@ int	main(int argc, char **argv, char **envp)
 		sort_env(enviro);
 		while (1)
 		{
-			prompt = get_prompt(envp);
+			prompt = get_prompt(enviro);
 			cmdline = readline(prompt);
 			free (prompt);
 			if (cmdline == NULL)

@@ -14,30 +14,27 @@
 
 // Return a part of the working directory to show in prompt
 // linesize limits how many characters we show
-// FIXED This does not get updated when we change directory?
-// FIXME Too many lines in function.
-// Yet ENV shows a new PWD...
-char	*get_shrt_wd(char **envp)
+// DONE make work with t_env
+// TODO Do I need to free full_wd?
+char	*get_shrt_wd(t_env *envt)
 {
-	int		wd_line;
 	char	*cut_wd;
 	char	*ptr;
 	int		i;
 	int		linesize;
+	char	*full_wd;
 
 	linesize = 15;
 	i = 0;
+	full_wd = get_value_of_env("PWD", envt);
 	cut_wd = malloc (sizeof(char) * linesize + 1);
-	wd_line = find_env_var(envp, "PWD");
-	if (wd_line == -1)
+	if (!full_wd)
 		return (NULL);
-	ptr = ft_strrchr(envp[wd_line], '/');
+	ptr = ft_strrchr(full_wd, '/');
 	if (!ptr)
 		return (NULL);
 	while (*ptr != '\0')
-	{
 		cut_wd[i++] = *ptr++;
-	}
 	while (i < linesize)
 		cut_wd[i++] = '\0';
 	return (cut_wd);
@@ -67,7 +64,7 @@ char	*get_status_for_prompt(void)
 // This returns a text string to be dsiplayed by readline
 // when waiting for user input
 // NOTE Once a variable has been used in strjoin it can (should) be freed.
-char	*get_prompt(char **envp)
+char	*get_prompt(t_env *envt)
 {
 	char	*prompt;
 	char	*status;
@@ -76,7 +73,7 @@ char	*get_prompt(char **envp)
 	char	*tmp2;
 
 	tmp_part = ft_strjoin(getenv("USER"), " in ");
-	cwd = get_shrt_wd(envp);
+	cwd = get_shrt_wd(envt);
 	tmp2 = ft_strjoin(tmp_part, cwd);
 	free (tmp_part);
 	free(cwd);
