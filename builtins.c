@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 19:47:34 by chaikney          #+#    #+#             */
-/*   Updated: 2024/07/18 19:47:39 by chaikney         ###   ########.fr       */
+/*   Updated: 2024/07/31 20:06:59 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	ms_pwd(void)
 // - Finds the line in envp where the variable is.
 // - copies the next lines over it.
 // FIXME I think that variables being unset should be freed.
-void	int_unset(char *unset_var, char **envp)
+void	int_unset(char *unset_var, char **envp, t_env *enviro)
 {
 	int	var_index;
 
@@ -51,6 +51,7 @@ void	int_unset(char *unset_var, char **envp)
 			envp[var_index] = envp[var_index + 1];
 			var_index++;
 		}
+		delete_node(&enviro, unset_var);
 	}
 	else
 		printf("unset: variable %s not found\n", unset_var);
@@ -74,7 +75,7 @@ void	int_unset(char *unset_var, char **envp)
 // - - if not there, do nothing
 // - - if there:
 // - - copy the next line over this one, and so on to end of envp
-void	ms_unset(t_command *cmd, char **envp)
+void	ms_unset(t_command *cmd, char **envp, t_env *enviro)
 {
 	int	i;
 	char	*var_name;
@@ -96,7 +97,7 @@ void	ms_unset(t_command *cmd, char **envp)
 				perror ("unset failed");
 				g_procstatus = ENOMEM;
 			}
-			int_unset(var_name, envp);
+			int_unset(var_name, envp, enviro);
 			i++;
 		}
 	}

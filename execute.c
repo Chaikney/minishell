@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 12:37:50 by chaikney          #+#    #+#             */
-/*   Updated: 2024/07/29 12:37:53 by chaikney         ###   ########.fr       */
+/*   Updated: 2024/07/31 19:46:30 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	execute_builtin(t_command *cmd, char **envp, t_env *enviro)
 		ms_export_t(cmd, &enviro);
 //		ms_export(cmd, envp);
 	else if (cmd->builtin == UNSET)
-		ms_unset(cmd, envp);
+		ms_unset(cmd, envp, enviro);
 	else if (cmd->builtin == ENV)
 		ms_env_t(enviro);
 //		ms_env(envp);
