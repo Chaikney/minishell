@@ -1,7 +1,7 @@
 #include "minishell.h"
 
 // Query and manipulate ENV variables
-//
+
 //TODO add 42 header
 //
 // return 1 if the variable name is present in the env
@@ -53,7 +53,7 @@ void	t_replace_env_var(char *name, char *value, t_env **envt)
 // Take a name and value and add this  to the envp.
 // the Named value should not already exist.
 // New version using t_env
-// FIXME This is silly. It creates a string then decomposes it!
+// HACK This is silly. It creates a string then decomposes it!
 void	t_add_new_env_var(char *name, char *value, t_env *env)
 {
 	char	*to_write;

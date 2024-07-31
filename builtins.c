@@ -50,7 +50,13 @@ void	int_unset(char *unset_var, t_env *enviro)
 		   ft_strncmp(to_unset->vname, unset_var, len) != 0)
 		to_unset = to_unset->next;
 	if (to_unset)
+	{
 		remove_node(&enviro, to_unset);
+		free (to_unset->vname);
+		if (to_unset->value)
+			free (to_unset->value);
+		free(to_unset);
+	}
 	else
 		printf("could not find node to unset");
 }
@@ -87,6 +93,7 @@ void	ms_unset(t_command *cmd, t_env *enviro)
 			if (is_in_envt(var_name, enviro) == 1)
 				int_unset(var_name, enviro);
 			i++;
+			free (var_name);
 		}
 	}
 }

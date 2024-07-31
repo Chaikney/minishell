@@ -72,6 +72,8 @@ void	append(t_env **head_ref, char *new_vname, char *new_value)
 	last->next = new_node;
 }
 
+// Removes a t_env from our environment list.
+// It does not (yet?) free the node
 void	remove_node(t_env **first, t_env *target)
 {
  	t_env	*before;
