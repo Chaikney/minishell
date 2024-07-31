@@ -38,23 +38,24 @@ int	ms_pwd(void)
 // - Finds the line in envp where the variable is.
 // - copies the next lines over it.
 // FIXME I think that variables being unset should be freed.
+// TODO Make *full* and exclusive use of enviro
 void	int_unset(char *unset_var, char **envp, t_env *enviro)
 {
-	int	var_index;
+	t_env	*to_unset;
+	int		len;
 
-	var_index = 0;
-	var_index = find_env_var(envp, unset_var);
-	if (var_index >= 0)
-	{
-		while (envp[var_index] != NULL)
-		{
-			envp[var_index] = envp[var_index + 1];
-			var_index++;
-		}
-		delete_node(&enviro, unset_var);
-	}
+	to_unset = enviro;
+	len = ft_strlen(unset_var);
+	while ((to_unset) &&
+		   ft_strncmp(to_unset->vname, unset_var, len) != 0)
+		to_unset = to_unset->next;
+	if (to_unset)
+		remove_node(&enviro, to_unset);
 	else
-		printf("unset: variable %s not found\n", unset_var);
+		printf("could not find node to unset");
+	(void) envp;	// HACK for compilation
+	// find the target node
+//	delete_node(&enviro, unset_var);
 }
 
 // This is UNSET as called directly by the user.

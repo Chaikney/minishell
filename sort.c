@@ -72,6 +72,30 @@ void	append(t_env **head_ref, char *new_vname, char *new_value)
 	last->next = new_node;
 }
 
+void	remove_node(t_env **first, t_env *target)
+{
+ 	t_env	*before;
+	t_env	*ptr;
+
+	before = *first;
+	ptr = before->next;
+    // FIXME this match would not work? or would it
+	while ((ptr->vname != target->vname) && (ptr->next != NULL))
+	{
+		before = before->next;
+		ptr = ptr->next;
+	}
+	if (before->next == NULL)
+		exit (EXIT_FAILURE);
+	if (target != *first)
+		before->next = target->next;
+	else
+		*first = target->next;
+}
+
+// FIXME strcmp is forbidden function
+// FIXME mulitple Norm fixes needed.
+// FIXME not sure this even works
 void delete_node(t_env **head_ref, const char *vname)
 {
     t_env *temp = *head_ref, *prev = NULL;
