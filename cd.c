@@ -50,8 +50,6 @@ static char	*get_cd_target(t_command *cmd)
 // FIXED? new_pwd needs freed (but not immediately!)
 // FIXME cd followed by a non-existent command leaks memory
 // 		(e.g. cd .. then grp)
-// DONE Adapt to t_env
-// TODO Check memory use of new form.
 void	ms_cd(t_command *cmd, t_env *envt)
 {
 	char	*oldpwd;
@@ -70,7 +68,9 @@ void	ms_cd(t_command *cmd, t_env *envt)
 		new_pwd = NULL;
 		new_pwd = getcwd(new_pwd, 0);
 		update_pwd(oldpwd, new_pwd, envt);
+		free (new_pwd);
 	}
+	free (oldpwd);
 }
 
 // free whatever vars need to be freed.
