@@ -48,12 +48,15 @@ int	main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;
 	char	*prompt;
+	t_env	*enviro;
 
 	(void) argv;
 	cmdline = NULL;
 	if (argc == 1)
 	{
 		setup_signals();
+		enviro = parse_env(envp);
+		ms_env_t(enviro);
 		while (1)
 		{
 			prompt = get_prompt(envp);

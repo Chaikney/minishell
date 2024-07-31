@@ -61,6 +61,7 @@ void	run_command(t_command *cmd, char **envp)
 //  [x] env, no options or args
 //  [x] export
 //  [x] exit no options.
+//void	execute_builtin(t_command *cmd, char **envp, t_env *enviro)
 void	execute_builtin(t_command *cmd, char **envp)
 {
 	if (cmd->builtin == CD)
@@ -76,6 +77,7 @@ void	execute_builtin(t_command *cmd, char **envp)
 	else if (cmd->builtin == UNSET)
 		ms_unset(cmd, envp);
 	else if (cmd->builtin == ENV)
+//		ms_env_t(enviro);
 		ms_env(envp);
 	else
 	{

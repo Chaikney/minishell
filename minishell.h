@@ -59,6 +59,13 @@ typedef struct s_command
 	t_builtin	builtin;
 }	t_command;
 
+typedef struct	s_env
+{
+	char	*vname;
+	char	*value;
+	struct s_env	*next;
+}	t_env;
+
 // various functions
 void	eval(char *cmdline, char **envp);
 int		determine_output(t_command *cmd);
@@ -131,6 +138,8 @@ void	exit_failed_pipe(t_command *cmd, int fd_in, int fd_out);
 void	ms_env(char **envp);
 char	*make_env_string(char *name, char *value);
 int		find_env_var(char **envp, const char *var);
+t_env	*parse_env(char **envp);
+void	ms_env_t(t_env *environ);
 
 // cd.c - change wd, set new value of PWD
 void	ms_cd(t_command *cmd, char **envp);
@@ -148,4 +157,5 @@ void	print_cmd_parts(t_command *cmd);
 // execute.c -functions to execute commands
 void	run_command(t_command *cmd, char **envp);
 void	execute_builtin(t_command *cmd, char **envp);
+//void	execute_builtin(t_command *cmd, char **envp, t_env env);
 #endif

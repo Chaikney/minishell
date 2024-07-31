@@ -28,6 +28,58 @@ void	ms_env(char **envp)
 	return ;
 }
 
+void	ms_env_t(t_env *environ)
+{
+	t_env	*ptr;
+
+	ptr = environ;
+	while (ptr->next != NULL)
+	{
+		printf("%s=%s\n", ptr->vname, ptr->value);
+		ptr = ptr->next;
+	}
+	printf("%s=%s\n", ptr->vname, ptr->value);
+}
+
+t_env	*init_new_env(char *str)
+{
+	t_env	*new_env;
+
+	new_env = malloc(sizeof(t_env));	// FIXED? Memory allocated here is not freed
+	new_env->next = NULL;
+	new_env->vname = get_export_name(str);
+	new_env->value = get_export_value(str);
+	return (new_env);
+}
+
+// read the Starting environment into a variable to access.
+// for line in envp
+// - find name (all up to =)
+// - find value
+// - set marker to next t_env
+t_env	*parse_env(char **envp)
+{
+	t_env	*ptr;
+	t_env	*first;
+	t_env	*next;
+
+	if (*envp)
+	{
+		first = init_new_env(*envp);
+		ptr = first;
+		envp++;
+		while (*envp)
+		{
+			next = init_new_env(*envp);
+			ptr->next = next;
+			ptr = ptr->next;
+			envp++;
+		}
+		return (first);
+	}
+	return (NULL);
+}
+
 // Display a line part for ms_export_display when the variable is
 // not empty.
 // NAME="VALUE"
