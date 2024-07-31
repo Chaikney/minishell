@@ -79,7 +79,8 @@ int		needs_sub(char *str);
 
 // tokens.c - break up line according to "quote" 'styles'
 char	*grab_control_seq(const char *cmd, int *posn);
-char	*get_any_parameter(const char *cmdline, int *posn);
+char	*get_any_parameter(const char *cmdline, int *posn, t_env *envt);
+int	add_value_into_param(char **par, int *r_posn, const char *cmdline, t_env *envt);
 
 // builtins.c
 int			ms_pwd(void);
@@ -99,8 +100,10 @@ void	add_new_env_var(char *name, char *value, char **envp);
 void	replace_env_var(char *name, char *value, char **envp);
 
 // parse.c - functions to read and interpret user input
-t_command	*parse(char *cmdline);
-char		**quote_aware_split(const char *cmdline);
+//t_command	*parse(char *cmdline);
+t_command	*parse(char *cmdline, t_env *envt);
+//char		**quote_aware_split(const char *cmdline);
+char	**quote_aware_split(const char *cmdline, t_env *envt);
 void		direct_complex_command(t_command *cmd, char **envp, t_env *envt);
 //void		direct_complex_command(t_command *cmd, char **envp);
 t_builtin	parse_builtin(t_command *cmd, int posn);
@@ -150,6 +153,7 @@ char	**serialise_env(t_env *env);
 t_env	*init_new_env(char *str);	// TODO Better to take separate name / value
 void	add_to_env_list(t_env *lsthead, t_env *to_add);
 int	is_in_envt(char *name, t_env *envt);
+char	*get_value_of_env(char *name, t_env *envt);
 
 // cd.c - change wd, set new value of PWD
 void	ms_cd(t_command *cmd, char **envp);

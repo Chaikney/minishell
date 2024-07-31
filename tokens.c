@@ -116,7 +116,8 @@ void	change_parse_mode(char c, int *mode, int *pos)
 // FIXME Does not retrieve custom-set variables.
 // FIXME But probably not quote aware!
 // FIXME function too long (check without printfs)
-int	add_value_into_param(char **par, int *r_posn, const char *cmdline)
+// TODO Plug the ENVIRONMENT into this to get values from it
+int	add_value_into_param(char **par, int *r_posn, const char *cmdline, t_env *envt)
 {
 	char	*vname;
 	char	*vvalue;
@@ -129,7 +130,7 @@ int	add_value_into_param(char **par, int *r_posn, const char *cmdline)
 	if (vname)
 	{
 		name_len = ft_strlen(vname) + 1;
-		vvalue = getenv(vname);
+		vvalue = get_value_of_env(vname, envt);
 		while (name_len-- > 0)
 			(*r_posn)++;
 		printf("subsituing %s", vvalue);
@@ -153,7 +154,7 @@ int	add_value_into_param(char **par, int *r_posn, const char *cmdline)
 // FIXED echo one'with space' gives output of with space (loses the chars before ')
 // FIXED raw quote does not engage variable sub
 // FIXED variable sub is just generally WEIRD the pointer don't move.
-char	*get_any_parameter(const char *cmdline, int *posn)
+char	*get_any_parameter(const char *cmdline, int *posn, t_env *envt)
 {
 	char	*param;
 	char	*ptr;
@@ -174,7 +175,7 @@ char	*get_any_parameter(const char *cmdline, int *posn)
 		while ((p_mode == 0) && (!ft_strchr("|><$ \'\"", cmdline[*posn])))
 			*ptr++ = cmdline[(*posn)++];
 		if ((p_mode != 2) && (cmdline[*posn] == '$'))
-			add_value_into_param(&ptr, posn, cmdline);
+			add_value_into_param(&ptr, posn, cmdline, envt);
 		if ((cmdline[*posn] == '\'') || (cmdline[*posn] == '\"'))
 			change_parse_mode(cmdline[*posn], &p_mode, posn);
 	}

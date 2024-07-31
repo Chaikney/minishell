@@ -27,9 +27,28 @@ int	is_in_envt(char *name, t_env *envt)
 		ptr = ptr->next;
 	}
 	if (ft_strncmp(name, ptr->vname, len) == 0)
-		if (ptr->vname[len] == '=')
-			return (1);
+		return (1);
 	return (0);
+}
+
+// return the value of the env. variaable with name.
+// NULL if not present.
+char	*get_value_of_env(char *name, t_env *envt)
+{
+	t_env	*ptr;
+	int	len;
+
+	len = ft_strlen(name);
+	ptr = envt;
+	while (ptr->next != NULL)
+	{
+		if (ft_strncmp(name, ptr->vname, len) == 0)
+			return (ptr->value);
+		ptr = ptr->next;
+	}
+	if (ft_strncmp(name, ptr->vname, len) == 0)
+		return (ptr->value);
+	return (NULL);
 }
 
 // Builtin ENV command.
@@ -37,6 +56,7 @@ int	is_in_envt(char *name, t_env *envt)
 // DONE Ensure bash-compatibility
 // NOTE running env > bashenv and env > msenv is an OK test
 // ...but order and exact variables are different...
+// TODO can be replaced.
 void	ms_env(char **envp)
 {
 	while (*envp)
@@ -76,6 +96,7 @@ char	**serialise_env(t_env *env)
 	return (env_list);
 }
 
+// The ENV builtin, but using a t_env
 void	ms_env_t(t_env *environ)
 {
 	t_env	*ptr;
@@ -115,6 +136,7 @@ void	add_to_env_list(t_env *lsthead, t_env *to_add)
 // - find name (all up to =)
 // - find value
 // - set marker to next t_env
+// TODO Move to a setup file or similar.
 t_env	*parse_env(char **envp)
 {
 	t_env	*ptr;
@@ -141,6 +163,7 @@ t_env	*parse_env(char **envp)
 // Display a line part for ms_export_display when the variable is
 // not empty.
 // NAME="VALUE"
+// TODO can remove
 static void	ms_ed_with_var(char *c, char *split_point)
 {
 	while (c != split_point)
@@ -181,6 +204,7 @@ void	ms_export_display_t(t_env *envt)
 // if no value, only newline
 // DONE Handle empty values (if no equals, stop there.)
 // FIXED Too many lines in ms_export_display
+// TODO Can remove this one
 void	ms_export_display(char **envp)
 {
 	char	*line_split;
@@ -237,7 +261,7 @@ char	*make_env_string(char *name, char *value)
 // If variable not found, returns -1
 // FIXED This can SEGFAULT if envp is not there.
 // FIXME This does not locate our added variables.
-//
+// TODO This can be removedd.
 int	find_env_var(char **envp, const char *var)
 {
 	size_t	len;

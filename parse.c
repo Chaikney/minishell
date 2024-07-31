@@ -62,7 +62,7 @@ t_builtin parse_builtin(t_command *cmd, int posn)
 // NOTE This is not an issue, we do the same as bash does.
 // NOTE we Initialise / NULLify the end values for memory safety.
 // FIXED export MS_TEST="can have spaces" is being split and should not be.
-char	**quote_aware_split(const char *cmdline)
+char	**quote_aware_split(const char *cmdline, t_env *envt)
 {
 	char	**params;
 	int		p_num;
@@ -82,7 +82,7 @@ char	**quote_aware_split(const char *cmdline)
 			params[p_num] = grab_control_seq(cmdline, &cmd_pos);
 		else
 		{
-			params[p_num] = get_any_parameter(cmdline, &cmd_pos);
+			params[p_num] = get_any_parameter(cmdline, &cmd_pos, envt);
 		}
 
 		/* } */
@@ -236,7 +236,7 @@ int	count_pipes(char **arr)
 // DONE Split out "count pipes" functioning
 // DONE Must free tokens if the checks do not pass.
 // FIXED Too many variables in parse.
-t_command	*parse(char *cmdline)
+t_command	*parse(char *cmdline, t_env *envt)
 {
 	char		**tokens;
 	t_command	*next_cmd;
@@ -244,7 +244,7 @@ t_command	*parse(char *cmdline)
 	t_command	*cmd_head;
 	int			num_pipes;
 
-	tokens = quote_aware_split(cmdline);
+	tokens = quote_aware_split(cmdline, envt);
 	free (cmdline);
 	if (!tokens)
 		return (NULL);
