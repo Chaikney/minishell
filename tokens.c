@@ -223,12 +223,8 @@ void	change_parse_mode(char c, int *mode, int *pos)
 }
 
 // Find a variable and add its value into the parameter.
-// FIXED This is not adding things in the right place. resets.
-// EG wecho "$HOME to cover"
-// FIXME Does this even move the pointers forwards? only once??
-// Aabsolutley fuck this shitty function.
 // FIXME Does not retrieve custom-set variables.
-int	add_value_into_param(char *par, int *r_posn, const char *cmdline)
+int	add_value_into_param(char **par, int *r_posn, const char *cmdline)
 {
 	char	*vname;
 	char	*vvalue;
@@ -251,68 +247,13 @@ int	add_value_into_param(char *par, int *r_posn, const char *cmdline)
 			while (*vvalue != '\0')
 			{
 				printf("\ncopying %c\t", *vvalue);
-				*par++ = *vvalue++;
+				*(*par)++ = *vvalue++;
 			}
 		}
 		free (vname);
 	}
 	return (val_len);
 }
-
-/* // TODO Use this or lose it */
-/* void	copy_rawly(char *param, int *posn, const char *cmdline) */
-/* { */
-/* 	char	stops[8] = "|><$ \'\"\\"; */
-
-/* 	while ((cmdline[*posn] != '\0') && (ft_strchr(stops, cmdline[*posn]) == NULL)) */
-/* 	{ */
-/* 		if (cmdline[*posn] == '$') */
-/* 			add_value_into_param(param, posn, cmdline); */
-/* 		else */
-/* 			*param++ = cmdline[(*posn)++]; */
-/* 	} */
-/* 	if (cmdline[*posn] != '\0') */
-/* 		(*posn)++; */
-/* } */
-
-/* // TODO Get this used where it should be used! */
-/* // FIXED? with the variables it *always overwrites a " at the start. */
-/* // FIXME echo " $HOME jame" overwrites to jame/chaikney */
-/* // NOTE should these be one character at a time? Would that help not skip pieces? */
-/* void	copy_weakly(char *param, int *r_posn, const char *cmdline) */
-/* { */
-/* //	char	stops[1] = "\""; */
-/* 	int	subd_in; */
-
-/* //	while ((cmdline[*posn] != '\0') && (ft_strchr(stops, cmdline[*posn]) == NULL)) */
-/* 	printf("\tcopy in weak quote mode..."); */
-/* 	while ((cmdline[*r_posn] != '\0') && (cmdline[*r_posn] != '\"')) */
-/* 	{ */
-/* 		if (cmdline[*r_posn] == '$') */
-/* 		{ */
-/* 			printf("\tbefore var sub cmd is at %c and param %c", cmdline[*r_posn], *param); */
-/* 			subd_in = add_value_into_param(param, r_posn, cmdline);	// FIXME param does not move!! WHY?! */
-/* 			while (subd_in-- > 0) */
-/* 				param++; */
-/* 			printf("\tafter var sub cmd is at %c and param %c", cmdline[*r_posn], *param); */
-/* 		} */
-/* 		else */
-/* 			*param++ = cmdline[(*r_posn++)]; */
-/* 	} */
-/* 	printf("\texiting weakly at %c las copied %c", cmdline[*r_posn], *param); */
-/* 	if (cmdline[*r_posn] != '\0') */
-/* 		(*r_posn)++; */
-/* } */
-
-/* // This is equivalent to strong quoting 'single quotes' */
-/* // It copies straight to the parameter. */
-/* void	copy_freely(char *param, int *posn, const char *cmdline) */
-/* { */
-/* 	while ((cmdline[*posn] != '\0') && (cmdline[*posn] != '\'')) */
-/* 		*param++ = cmdline[(*posn)++]; */
-/* 	if (cmdline[*posn] != '\0') */
-/* 		(*posn)++; */
-/* } */
 
 // p_mode (parsing style)
 // 0 - raw
@@ -322,49 +263,32 @@ int	add_value_into_param(char *par, int *r_posn, const char *cmdline)
 // FIXED echo '$HOME' is an instant segfault. Reaches add_value_into_param and should not.
 // FIXED echo one'with space' gives output of with space (loses the chars before ')
 // FIXED raw quote does not engage variable sub
-// FIXME variable sub is just generally WEIRD the pointer don't move.
+// FIXED variable sub is just generally WEIRD the pointer don't move.
 char	*get_any_parameter(const char *cmdline, int *posn)
 {
 	char	*param;
 	char	*ptr;
 	int		p_mode;
-	int		len;
 	char	stops[8] = "|><$ \'\"\\";
 
 	p_mode = 0;
-	len = 0;
 	param = get_blank_param();
-	if (cmdline[*posn] == '\0')
-		param = NULL;
-	else
+	ptr = param;
+	while (cmdline[*posn] != '\0')
 	{
-		ptr = param;
-		while (cmdline[*posn] != '\0')
-		{
-			while ((p_mode == 2) && (ft_strchr("\''\0", cmdline[*posn]) == NULL))
-				*ptr++ = cmdline[(*posn)++];
-			while ((p_mode == 1) && (ft_strchr("\"$", cmdline[*posn]) == NULL))
-				*ptr++ = cmdline[(*posn)++];
-			while ((p_mode == 0) && (ft_strchr(stops, cmdline[*posn]) == NULL))
-				*ptr++ = cmdline[(*posn)++];
-			if (cmdline[*posn] == '\0')
-				break ;
-			if ((cmdline[*posn] == '\'') || (cmdline[*posn] == '\"'))
-				change_parse_mode(cmdline[*posn], &p_mode, posn);
-			printf("\nnow at %c", cmdline[*posn]);
-			if (cmdline[*posn] == '\0')
-				break ;
-			if ((p_mode != 2) && (cmdline[*posn] == '$'))
-			{
-				len = add_value_into_param(ptr, posn, cmdline);
-				while (len-- > 0)
-					ptr++;
-			}
-			if (((is_control_char(cmdline[*posn]) == 1) && (p_mode ==  0)) ||
-					 ((p_mode == 0) && (cmdline[*posn]) == ' ') ||
-					 (cmdline[*posn] == '\0'))
-				break ;
-		}
+		if ((p_mode == 0) &&
+			((is_control_char(cmdline[*posn]) == 1) || ((p_mode == 0) && (cmdline[*posn]) == ' ')))
+			break ;
+		while ((p_mode == 2) && (ft_strchr("\''\0", cmdline[*posn]) == NULL))
+			*ptr++ = cmdline[(*posn)++];
+		while ((p_mode == 1) && (ft_strchr("\"$", cmdline[*posn]) == NULL))
+			*ptr++ = cmdline[(*posn)++];
+		while ((p_mode == 0) && (ft_strchr(stops, cmdline[*posn]) == NULL))
+			*ptr++ = cmdline[(*posn)++];
+		if ((p_mode != 2) && (cmdline[*posn] == '$'))
+			add_value_into_param(&ptr, posn, cmdline);
+		if ((cmdline[*posn] == '\'') || (cmdline[*posn] == '\"'))
+			change_parse_mode(cmdline[*posn], &p_mode, posn);
 	}
 	return (param);
 }
