@@ -31,7 +31,7 @@ void	run_command(t_command *cmd, char **envp, t_env *envt)
 
 	if (cmd->builtin != NONE)
 	{
-		execute_builtin(cmd, envp, envt);
+		execute_builtin(cmd, envt);
 		exit_successful_pipe(cmd); 	// TODO Should a successful exit here reset g_procstatus?
 	}
 	if (access(cmd->argv[0], X_OK) == 0)
@@ -64,11 +64,10 @@ void	run_command(t_command *cmd, char **envp, t_env *envt)
 //  TODO switch EXPORT to work with t_env
 //  TODO switch UNSET to work with t_env
 //  TODO switch CD to work with t_env
-void	execute_builtin(t_command *cmd, char **envp, t_env *enviro)
-//void	execute_builtin(t_command *cmd, char **envp)
+void	execute_builtin(t_command *cmd, t_env *enviro)
 {
 	if (cmd->builtin == CD)
-		ms_cd(cmd, envp, enviro);
+		ms_cd(cmd, enviro);
 	else if (cmd->builtin == EXIT)
 		ms_exit(cmd);
 	else if ((cmd->builtin == ECHON) || (cmd->builtin == ECHO))

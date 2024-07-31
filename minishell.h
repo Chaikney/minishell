@@ -158,10 +158,8 @@ int	is_in_envt(char *name, t_env *envt);
 char	*get_value_of_env(char *name, t_env *envt);
 
 // cd.c - change wd, set new value of PWD
-void	ms_cd(t_command *cmd, char **envp, t_env *envt);
-//void	ms_cd(t_command *cmd, char **envp);
-void	update_pwd(char **envp, char *oldpwd, char *newpwd, t_env *envt);
-//void	update_pwd(char **envp, char *oldpwd, char *newpwd);
+void	ms_cd(t_command *cmd, t_env *envt);
+void	update_pwd(char *oldpwd, char *newpwd, t_env *envt);
 
 // prompt.c - functions to enhance the readline prompt
 //char	*get_shrt_wd(char **envp);
@@ -176,9 +174,7 @@ void	print_cmd_parts(t_command *cmd);
 
 // execute.c -functions to execute commands
 void	run_command(t_command *cmd, char **envp, t_env *envt);
-//void	run_command(t_command *cmd, char **envp);
-//void	execute_builtin(t_command *cmd, char **envp);
-void	execute_builtin(t_command *cmd, char **envp, t_env *env);
+void	execute_builtin(t_command *cmd, t_env *env);
 
 //sort.c
 void swap(t_env *a, t_env *b);

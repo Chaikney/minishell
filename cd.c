@@ -52,14 +52,11 @@ static char	*get_cd_target(t_command *cmd)
 // 		(e.g. cd .. then grp)
 // DONE Adapt to t_env
 // TODO Check memory use of new form.
-void	ms_cd(t_command *cmd, char **envp, t_env *envt)
+void	ms_cd(t_command *cmd, t_env *envt)
 {
-//	int		pwd_posn;
 	char	*oldpwd;
 	char	*new_pwd;
-//	char	*wd;
 	char	*target;
-
 
 	oldpwd = NULL;
 	oldpwd = getcwd(oldpwd, 0);
@@ -72,13 +69,7 @@ void	ms_cd(t_command *cmd, char **envp, t_env *envt)
 	{
 		new_pwd = NULL;
 		new_pwd = getcwd(new_pwd, 0);
-		/* pwd_posn = find_env_var(envp, "PWD"); */
-		/* oldpwd = ft_strjoin("OLD", envp[pwd_posn]); */
-		/* new_pwd = ft_strjoin("PWD=", wd); */
-		/* free(wd); */
-		update_pwd(envp, oldpwd, new_pwd, envt);
-		/* free (oldpwd); */
-		/* free(new_pwd); */
+		update_pwd(oldpwd, new_pwd, envt);
 	}
 }
 
@@ -135,10 +126,9 @@ void	copy_envp(char **src_envp, char **dst_envp)
 // Either way seems impossible to free the memory in certain cases....
 // ...how do we *know*? The original envp pieces are statically allocated.
 // ...should ours be too??
-void	update_pwd(char **envp, char *oldpwd, char *new_pwd, t_env *envt)
+void	update_pwd(char *oldpwd, char *new_pwd, t_env *envt)
 {
 
-	(void) envp;	//  HACK for compilation, remove var
 	if ((oldpwd == NULL) || (new_pwd == NULL))
 		cd_error("Missing value for PWD update.", NULL, NULL, oldpwd);
 	else

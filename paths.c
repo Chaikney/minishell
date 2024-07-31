@@ -72,7 +72,7 @@ void	direct_complex_command(t_command *cmd, char **envp, t_env *envt)
 	o_redir = determine_output(cmd);
 	remove_cmd_parts(cmd, ">");
 	if (cmd->builtin != NONE)
-		execute_builtin(cmd, envp, envt);
+		execute_builtin(cmd, envt);
 	else
 		run_final_cmd(cmd, envp, i_redir, o_redir, envt);
 }
