@@ -28,6 +28,34 @@ void	ms_env(char **envp)
 	return ;
 }
 
+// Turn the t_env variables back into a list of string like envp
+// This means that they would work with execve.
+char	**serialise_env(t_env *env)
+{
+	char	**env_list;
+	t_env	*ptr;
+	int		len;
+	int	i;
+
+	len = 0;
+	ptr = env;
+	while (ptr->next != NULL)
+	{
+		len++;
+		ptr = ptr->next;
+	}
+	len++;
+	env_list = malloc (sizeof(char *) * (len + 1));
+	i = 0;
+	while (env->next != NULL)
+	{
+		env_list[i++] = make_env_string(env->vname, env->value);
+		env = env->next;
+	}
+	env_list[i] = NULL;
+	return (env_list);
+}
+
 void	ms_env_t(t_env *environ)
 {
 	t_env	*ptr;
