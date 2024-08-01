@@ -124,10 +124,6 @@ int	count_tokens(char **arr)
 
 // Parse input from cmdline into a command struct
 // Returns the first cmd in a list of them.
-// Variables:
-//  - cmdline:	string from readline
-// FIXED Ensure that we free *all* parts of token once cmd is complete
-// TODO Give this a more descriptive name; we parse lots of things now.
 // NOTE malloc'd variables used in this function:
 // - cmdline:  set by readline in main
 // - tokens:	list of strings mallocd to a set size

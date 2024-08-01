@@ -17,7 +17,7 @@
 // NOTE This is different from exits in pipes or failed commands.
 // - free cmd
 // - what about the readline input variable?
-// TODO If this is called from main, we have a char* to free
+// TODO If this is triggered from main, we have a char* to free
 void	ms_exit(t_command *cmd, t_env *envt)
 {
 	printf("Agurrrr....\n");
@@ -55,9 +55,9 @@ void	clear_environment(t_env *envt)
 
 // Call this when we need to exit from a successful process that
 // ran in a pipe but hasn't otherwise (i.e. via execve) been exited.
-// SO, the builtins, basicallyy.
-// TODO Ensure this works as expected and clears everything.
+// SO, the builtins, basically.
 // (File descriptors were handled before calling this.)
+// NOTE Do not need to clear_environment because it persists.
 void	exit_successful_pipe(t_command *cmd)
 {
 	clear_t_command(cmd);

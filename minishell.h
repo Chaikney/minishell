@@ -67,9 +67,8 @@ typedef struct s_env
 	struct s_env	*prev;
 }	t_env;
 
-// various functions
+// Early stage functions
 void		eval(char *cmdline, t_env *envt);
-int			determine_output(t_command *cmd);
 t_env		*parse_env(char **envp);
 
 // substitute.c - variable substitution
@@ -111,6 +110,7 @@ void		run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt);
 void		direct_complex_command(t_command *cmd, t_env *envt);
 void		run_in_pipe(t_command *cmd, int *i_file, t_env *envt);
 void		remove_cmd_parts(t_command *cmd, char *target);
+int			determine_output(t_command *cmd);
 
 // helpers.c - finder and helper functions
 char		*search_in_path(char *cmd);
@@ -133,7 +133,6 @@ int			setup_signals(void);
 void		clear_t_command(t_command *cmd);
 void		ms_exit(t_command *cmd, t_env *envt);
 void		clear_environment(t_env *envt);
-//void	ms_exit(t_command *cmd);
 void		exit_successful_pipe(t_command *cmd);
 void		exit_failed_pipe(t_command *cmd, int in, int out, t_env *envt);
 

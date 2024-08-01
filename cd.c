@@ -55,10 +55,6 @@ static char	*get_cd_target(t_command *cmd)
 // [x] cd ../..							move up two levels
 // [x] cd ../other_folder					Move to sibling folder
 // [x] cd ~									go to $HOME
-// FIXED? oldpwd needs freed (but not immediately!)
-// FIXED? new_pwd needs freed (but not immediately!)
-// FIXME cd followed by a non-existent command leaks memory
-// 		(e.g. cd .. then grp)
 void	ms_cd(t_command *cmd, t_env *envt)
 {
 	char	*oldpwd;
