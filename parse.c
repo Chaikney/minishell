@@ -16,29 +16,34 @@
 
 // Read the given command argument and if it matches a builtin, set the flag.
 // (posn will be 0 except when there is input redirection)
+// First we check whether the first letter matches one of the builtin names.
 // FIXME Lines are too long for norminette - a match function needed?
-t_builtin parse_builtin(t_command *cmd, int posn)
+// FIXME Function has too many lines
+t_builtin	parse_builtin(t_command *cmd, int posn)
 {
+	int	len;
+
 	if ((cmd->argc == 0) || (cmd->argc < posn))
 		return (NONE);
-	if ((ft_strncmp(cmd->argv[posn], "cd", 2) == 0) && (ft_strlen(cmd->argv[posn]) == 2))
+	if (ft_strchr("cepu", cmd->argv[posn][0]) == NULL)
+		return (NONE);
+	len = ft_strlen(cmd->argv[posn]);
+	if ((ft_strncmp(cmd->argv[posn], "cd", 2) == 0) && (len == 2))
 		return (CD);
-	else if ((ft_strncmp(cmd->argv[posn], "exit", 4) == 0) && (ft_strlen(cmd->argv[posn]) == 4) && (cmd->argv[posn + 1] == NULL))
+	else if ((ft_strncmp(cmd->argv[posn], "exit", 4) == 0) && (len == 4) && (cmd->argv[posn + 1] == NULL))
 		return (EXIT);
-	else if ((ft_strncmp(cmd->argv[posn], "echo", 4) == 0)&& (ft_strlen(cmd->argv[posn]) == 4) && (cmd->argv[posn + 1] != NULL))
-	{
-		if ((ft_strncmp(cmd->argv[posn + 1], "-n", 2) == 0)&& (ft_strlen(cmd->argv[posn + 1]) == 2))
+	else if ((ft_strncmp(cmd->argv[posn], "echo", 4) == 0) && (len == 4) && (cmd->argv[posn + 1] != NULL))
+		if ((ft_strncmp(cmd->argv[posn + 1], "-n", 2) == 0) && (ft_strlen(cmd->argv[posn + 1]) == 2))
 			return (ECHON);
 		else
 			return (ECHO);
-	}
-	else if ((ft_strncmp(cmd->argv[posn], "pwd", 3) == 0) && (ft_strlen(cmd->argv[posn]) == 3) && (cmd->argv[posn + 1] == NULL))
+	else if ((ft_strncmp(cmd->argv[posn], "pwd", 3) == 0) && (len == 3) && (cmd->argv[posn + 1] == NULL))
 		return (PWD);
-	else if ((ft_strncmp(cmd->argv[posn], "export", 6) == 0)&& (ft_strlen(cmd->argv[posn]) == 6) )
+	else if ((ft_strncmp(cmd->argv[posn], "export", 6) == 0) && (len == 6) )
 		return (EXP);
-	else if ((ft_strncmp(cmd->argv[posn], "unset", 5) == 0)&& (ft_strlen(cmd->argv[posn]) == 5))
+	else if ((ft_strncmp(cmd->argv[posn], "unset", 5) == 0) && (len == 5))
 		return (UNSET);
-	else if ((ft_strncmp(cmd->argv[posn], "env", 3) == 0)&& (ft_strlen(cmd->argv[posn]) == 3) && (cmd->argv[posn + 1] == NULL) )
+	else if ((ft_strncmp(cmd->argv[posn], "env", 3) == 0) && (len == 3) && (cmd->argv[posn + 1] == NULL) )
 		return (ENV);
 	return (NONE);
 }
