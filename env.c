@@ -23,7 +23,7 @@ char	**serialise_env(t_env *env)
 	char	**env_list;
 	t_env	*ptr;
 	int		len;
-	int	i;
+	int		i;
 
 	len = 0;
 	ptr = env;
@@ -69,7 +69,7 @@ t_env	*init_new_env(char *str)
 {
 	t_env	*new_env;
 
-	new_env = malloc(sizeof(t_env));	// FIXED? Memory allocated here is not freed
+	new_env = malloc(sizeof(t_env));
 	new_env->next = NULL;
 	new_env->vname = get_export_name(str);
 	new_env->value = get_export_value(str);

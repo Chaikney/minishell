@@ -122,7 +122,6 @@ int	determine_input(t_command *cmd)
 	{
 		if (ft_strncmp(cmd->argv[i], "<", 1) == 0)
 		{
-//				print_cmd_parts(cmd);	// HACK for debugging
 			i_redir = 1;
 			if (ft_strncmp(cmd->argv[i], "<<", 2) == 0)
 				i_redir = 2;
@@ -130,6 +129,5 @@ int	determine_input(t_command *cmd)
 		}
 		i++;
 	}
-//	printf("Checked input for '%s'. fd will be: %i\n", cmd->argv[0], i_fd);
 	return (i_fd);
 }

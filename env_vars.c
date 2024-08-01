@@ -19,10 +19,10 @@
 int	is_in_envt(char *name, t_env *envt)
 {
 	t_env	*ptr;
-	int	len;
+	int		len;
 
 	len = ft_strlen(name);
-	ptr =  envt;
+	ptr = envt;
 	while (ptr->next != NULL)
 	{
 		if (ft_strncmp(name, ptr->vname, len) == 0)
@@ -47,7 +47,6 @@ void	t_replace_env_var(char *name, char *value, t_env **envt)
 	{
 		if (ft_strncmp(name, ptr->vname, len) == 0)
 		{
-			printf("\nupdating %s with %s", name, value);	// HACK for debugging
 			if (ptr->value)
 				free (ptr->value);
 			ptr->value = ft_strdup(value);
@@ -78,7 +77,7 @@ void	t_add_new_env_var(char *name, char *value, t_env *env)
 char	*get_value_of_env(char *name, t_env *envt)
 {
 	t_env	*ptr;
-	int	len;
+	int		len;
 
 	len = ft_strlen(name);
 	if (ft_strncmp(name, "?", len) == 0)

@@ -53,9 +53,9 @@ void	ms_export_display_t(t_env *envt)
 	{
 		printf("declare -x %s", ptr->vname);
 		if (ptr->value)
-			   printf("=\"%s""\"\n",ptr->value);
+			printf("=\"%s""\"\n", ptr->value);
 		else
-			   printf("\n");
+			printf("\n");
 		ptr = ptr->next;
 	}
 	printf("declare -x %s", ptr->vname);
@@ -109,19 +109,11 @@ void	ms_export_t(t_command *cmd, t_env **envt)
 			evar_name = get_export_name(cmd->argv[i]);
 			if ((!evar_name) || (is_legal_name(evar_name) == 0))
 				perror ("failed");
-			printf("\tWill act on: %s", evar_name);	// HACK for debugging
 			evar_newvalue = get_export_value(cmd->argv[i]);
-			printf("\tto change to: %s", evar_newvalue);	// HACK for debugging
 			if (is_in_envt(evar_name, *envt) == 0)
-			{
-				printf("variable not found, adding fresh.");	// HACK for debugging
 				t_add_new_env_var(evar_name, evar_newvalue, *envt);
-			}
 			else
-			{
-				printf("variable exists, replacing (aye right)");	// HACK for debugging
 				t_replace_env_var(evar_name, evar_newvalue, envt);
-			}
 			i++;
 			free (evar_name);
 			free (evar_newvalue);

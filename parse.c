@@ -12,7 +12,8 @@
 
 #include "minishell.h"
 
-// FIXME Multiple NORM failures in parse.c!
+// Functions to parse the command line into an array of
+// strings / tokens.
 
 // Quotation-aware command line split / tokenising
 // 3 modes: raw, "weak" quoting and 'strong' quoting
@@ -113,12 +114,12 @@ void	wipe_tokens(char **arr)
 // Returns the number of parsed tokens in the array.
 int	count_tokens(char **arr)
 {
-    int	i;
+	int	i;
 
-    i = 0;
-    while (arr[i] != NULL)
-        i++;
-    return (i);
+	i = 0;
+	while (arr[i] != NULL)
+		i++;
+	return (i);
 }
 
 // Parse input from cmdline into a command struct
@@ -149,5 +150,5 @@ t_command	*parse_input(char *cmdline, t_env *envt)
 	wipe_tokens(tokens);
 	if (cmd_head->argv[0] == NULL)
 		return (NULL);
-    return (cmd_head);
+	return (cmd_head);
 }
