@@ -83,6 +83,7 @@ char	*get_any_parameter(const char *cmdline, int *posn, t_env *envt);
 
 // builtins.c
 int			ms_pwd(void);
+t_builtin	parse_builtin(t_command *cmd, int posn);
 void		ms_unset(t_command *cmd, t_env *enviro);
 void		ms_echo(t_command *cmd);
 void		int_unset(char *unset_var, t_env *enviro);
@@ -100,7 +101,6 @@ t_command	*parse(char *cmdline, t_env *envt);
 char	**quote_aware_split(const char *cmdline, t_env *envt);
 void		direct_complex_command(t_command *cmd, char **envp, t_env *envt);
 //void		direct_complex_command(t_command *cmd, char **envp);
-t_builtin	parse_builtin(t_command *cmd, int posn);
 
 // input.c - functions for redirecting input
 int		stopword_input(t_command *cmd);
