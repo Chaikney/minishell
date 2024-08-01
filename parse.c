@@ -13,6 +13,7 @@
 #include "minishell.h"
 
 // FIXME Multiple NORM failures in parse.c!
+// FIXME Too many functions in parse.c
 
 // The more complicated / slower parsing that we need to do to identify
 // a builtin.

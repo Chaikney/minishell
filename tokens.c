@@ -12,8 +12,6 @@
 
 #include "minishell.h"
 
-// FIXME Too many functions in tokens.c
-
 // Functions used to break up the readline input into tokens for parsing.
 
 // Initialize a string to copy the parts of the line to.
@@ -113,45 +111,10 @@ void	change_parse_mode(char c, int *mode, int *pos)
 	(*pos)++;
 }
 
-// Find a variable and add its value into the parameter we are preparing.
-// FIXME function too long (check without printfs)
-int	add_value_into_param(char **par, int *r_posn, const char *cmdline, t_env *envt)
-{
-	char	*vname;
-	char	*vvalue;
-	int		name_len;
-	int		val_len;
-
-	vname = get_var_name(&cmdline[*r_posn]);
-	val_len = 0;
-	printf("subsituing %s", vname);	// HACK for debugging remove later
-	if (vname)
-	{
-		name_len = ft_strlen(vname) + 1;
-		vvalue = get_value_of_env(vname, envt);
-		while (name_len-- > 0)
-			(*r_posn)++;
-		printf("subsituing %s", vvalue);	// HACK for debugging remove later
-		if (vvalue)
-		{
-			val_len = ft_strlen(vvalue);
-			while (*vvalue != '\0')
-				*(*par)++ = *vvalue++;
-		}
-		free (vname);
-	}
-	return (val_len);
-}
-
 // p_mode (parsing style)
 // 0 - raw
 // 1 - "weak"
 // 2 - 'strong'		copy everything in the quotes, unaltered
-// FIXED Every cmd line with " or ' gives a blank parameter (or a space?)
-// FIXED echo '$HOME' is an instant segfault. Reaches add_value_into_param and should not.
-// FIXED echo one'with space' gives output of with space (loses the chars before ')
-// FIXED raw quote does not engage variable sub
-// FIXED variable sub is just generally WEIRD the pointer don't move.
 char	*get_any_parameter(const char *cmdline, int *posn, t_env *envt)
 {
 	char	*param;

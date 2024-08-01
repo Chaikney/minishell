@@ -12,32 +12,34 @@
 
 #include "minishell.h"
 
-// Return the index of the first $ if the string needs to
-// have variable subsitution.
-// If no sub is needed, return -1
-// NOTE Attempts to ignore values within 'strong quoting'.
-// TODO needs_sub is now obsolete.
-int	needs_sub(char *str)
+// Find a variable and add its value into the parameter we are preparing.
+// FIXME function too long (check without printfs)
+int	add_value_into_param(char **par, int *r_posn, const char *cmdline, t_env *envt)
 {
-	int	i;
+	char	*vname;
+	char	*vvalue;
+	int		name_len;
+	int		val_len;
 
-	i = 0;
-	while (str[i] != '\0')
+	vname = get_var_name(&cmdline[*r_posn]);
+	val_len = 0;
+	printf("subsituing %s", vname);	// HACK for debugging remove later
+	if (vname)
 	{
-		if (str[i] == '$')
-			break ;
-		if (str[i] == '\'')
+		name_len = ft_strlen(vname) + 1;
+		vvalue = get_value_of_env(vname, envt);
+		while (name_len-- > 0)
+			(*r_posn)++;
+		printf("subsituing %s", vvalue);	// HACK for debugging remove later
+		if (vvalue)
 		{
-			while ((str[i] != '\0') && (str[i] != '\''))
-				i++;
+			val_len = ft_strlen(vvalue);
+			while (*vvalue != '\0')
+				*(*par)++ = *vvalue++;
 		}
-		if (str[i] != '\0')
-			i++;
+		free (vname);
 	}
-	if (str[i] == '$')
-		return (i);
-	else
-		return (-1);
+	return (val_len);
 }
 
 // Return the name of a $variable for later substitution
@@ -119,41 +121,4 @@ char	*ms_strsub(char *str, char *old_sub, char *new_sub)
 	while (*str != '\0')
 		*new_str++ = *str++;
 	return (cptr);
-}
-
-// Receives a string cmd and substitutes the value for any $VARIABLE
-// - find position of a variable
-// - read the name of that variable using ms_strsub and its length
-// - fetch the value of the variable
-// - put the value into the command using ms_strsub
-// - run again / recurse until we have no more things to sub
-// NOTE variable length and name do *not* include the $
-// TODO substitute_variables is now obsolete.
-char	*substitute_variables(char *cmd)
-{
-	int		s_pos;
-	int		s_len;
-	char	*var_name;
-	char	*val;
-	char	*new_cmd;
-
-	s_pos = needs_sub(cmd);
-	new_cmd = NULL;
-	while (s_pos != -1)
-	{
-		s_pos++;
-		s_len = 0;
-		while ((cmd[s_pos + s_len] != '\0') && (cmd[s_pos + s_len] != ' '))
-			s_len++;
-		var_name = ft_substr(cmd, s_pos, (s_len));
-		if (ft_strncmp(var_name, "?", 1) == 0)
-			val = ft_itoa(g_procstatus);
-		else
-			val = getenv(var_name);
-		new_cmd = ms_strsub(cmd, var_name, val);
-		free(var_name);
-		s_pos = needs_sub(new_cmd);
-		cmd = new_cmd;
-	}
-	return (cmd);
 }

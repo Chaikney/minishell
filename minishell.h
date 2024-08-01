@@ -74,14 +74,12 @@ int		determine_output(t_command *cmd);
 
 // substitute.c - variable substitution
 char	*ms_strsub(char *str, char *remove, char *replace);
-char	*substitute_variables(char *cmd);
 char	*get_var_name(const char *str);
-int		needs_sub(char *str);
+int		add_value_into_param(char **par, int *r_posn, const char *cmdline, t_env *envt);
 
 // tokens.c - break up line according to "quote" 'styles'
 char	*grab_control_seq(const char *cmd, int *posn);
 char	*get_any_parameter(const char *cmdline, int *posn, t_env *envt);
-int	add_value_into_param(char **par, int *r_posn, const char *cmdline, t_env *envt);
 
 // builtins.c
 int			ms_pwd(void);
