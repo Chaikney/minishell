@@ -21,8 +21,6 @@ int	g_procstatus;
 // as some builtins don't work in pipes!
 // - EXIT has to be an exit from the shell.
 // - EXPORT has to change values in the process above.
-// TODO Move some of direct_complex_command back here?
-// TODO Can we remove envp from eval altogether?
 void	eval(char *cmdline, t_env *envt)
 {
 	t_command	*cmd;

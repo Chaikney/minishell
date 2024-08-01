@@ -67,7 +67,6 @@ char	*grab_control_seq(const char *cmd, int *posn)
 // - Ensure last NULL is copied
 // - Adjust value of argc
 // NOTE The target parts *must* have already been processed.
-// TODO remove_cmd_parts better in another file.
 void	remove_cmd_parts(t_command *cmd, char *target)
 {
 	int	i;

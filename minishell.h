@@ -159,10 +159,6 @@ char		*get_shrt_wd(t_env *envt);
 char		*get_status_for_prompt(void);
 char		*get_prompt(t_env *envt);
 
-// debug.c - functions to use in development
-void		print_tokens(char **arr);
-void		print_cmd_parts(t_command *cmd);
-
 // execute.c -functions to execute commands
 void		run_command(t_command *cmd, t_env *envt);
 void		execute_builtin(t_command *cmd, t_env *env);
