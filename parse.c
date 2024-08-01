@@ -13,7 +13,6 @@
 #include "minishell.h"
 
 // FIXME Multiple NORM failures in parse.c!
-// FIXME Too many functions in parse.c
 
 // Quotation-aware command line split / tokenising
 // 3 modes: raw, "weak" quoting and 'strong' quoting
@@ -111,6 +110,7 @@ void	wipe_tokens(char **arr)
 	free (arr);
 }
 
+// Returns the number of parsed tokens in the array.
 int	count_tokens(char **arr)
 {
     int	i;
@@ -119,59 +119,6 @@ int	count_tokens(char **arr)
     while (arr[i] != NULL)
         i++;
     return (i);
-}
-
-// Assign tokens to parts of a command struct, include with list.
-// When it reaches a pipe character it stops.
-// Outside the function must handle ->next
-// Return NULL when we finish.
-// This would retain the I/O redir but remove the pipes.(replaced with the ->next)
-// NOTE We copy the values to make it easier to can wipe all tokens.
-// FIXME build_command has too many lines
-t_command	*build_command(char **tokens)
-{
-	static int	i;
-	int			j;
-	int			num_tokens;
-	t_command	*new_cmd;
-
-	j = 0;
-    num_tokens = count_tokens(tokens);
-	new_cmd = init_new_command();
-	while ((i < num_tokens) && (tokens[i]) && (ft_strncmp(tokens[i], "|", 1) != 0))
-	{
-		new_cmd->argv[j] = ft_strdup(tokens[i]);
-		new_cmd->argc++;
-		i++;
-		j++;
-	}
-	new_cmd->argv[new_cmd->argc] = NULL;
-	if (tokens[i] == NULL)
-		i = 0;
-	else
-		i++;	// step over the pipe.
-    // TODO Break out the builtin parsing to elsewhere.
-    // NOTE feeding this ./minishell makes it go to posn 2 and crash
-	if ((new_cmd->argv[0]) && (ft_isalpha(new_cmd->argv[0][1]) == 1))
-		new_cmd->builtin = parse_builtin(new_cmd, 0);
-	else
-		new_cmd->builtin = parse_builtin(new_cmd, 2);
-	return (new_cmd);
-}
-
-// Take an array of strings (tokens from the split cmdline)
-// Return the number of pipe characters it contains.
-int	count_pipes(char **arr)
-{
-	int	n;
-	int	i;
-
-	i = 0;
-	n = 0;
-	while (arr[i] != NULL)
-		if (ft_strncmp(arr[i++], "|", 1) == 0)
-			n++;
-	return (n);
 }
 
 // Parse input from cmdline into a command struct

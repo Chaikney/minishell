@@ -95,12 +95,11 @@ void		ms_export_display_t(t_env *envt);
 void		ms_export_t(t_command *cmd, t_env **envt);
 
 // parse.c - functions to read and interpret user input
-//t_command	*parse(char *cmdline);
 t_command	*parse(char *cmdline, t_env *envt);
-//char		**quote_aware_split(const char *cmdline);
 char	**quote_aware_split(const char *cmdline, t_env *envt);
-void		direct_complex_command(t_command *cmd, char **envp, t_env *envt);
-//void		direct_complex_command(t_command *cmd, char **envp);
+int		count_tokens(char **arr);
+int		check_tokens(char **arr);
+void	wipe_tokens(char **arr);
 
 // input.c - functions for redirecting input
 int		stopword_input(t_command *cmd);
@@ -109,6 +108,7 @@ int		determine_input(t_command *cmd);
 
 // paths.c - find and direct programs in PATH
 void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file, t_env *envt);
+void		direct_complex_command(t_command *cmd, char **envp, t_env *envt);
 //void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file);
 //void	run_in_pipe(t_command *cmd, char **envp, int *i_file);
 void	run_in_pipe(t_command *cmd, char **envp, int *i_file, t_env *envt);
@@ -122,6 +122,8 @@ int		is_control_char(char c);
 
 // pipes.c
 t_command	*init_new_command(void);
+t_command	*build_command(char **tokens);
+int			count_pipes(char **arr);
 
 // signals.c - catch and manage signals like CTRL-C
 void	handle_sigint(int sig);
