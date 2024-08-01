@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/31 19:07:37 by emedina-          #+#    #+#             */
-/*   Updated: 2024/07/31 20:07:29 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/08/01 03:17:46 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	append(t_env **head_ref, char *new_vname, char *new_value)
 // It does not (yet?) free the node
 void	remove_node(t_env **first, t_env *target)
 {
- 	t_env	*before;
+	t_env	*before;
 	t_env	*ptr;
 
 	before = *first;
@@ -87,7 +87,7 @@ void	remove_node(t_env **first, t_env *target)
 		ptr = ptr->next;
 	}
 	if (before->next == NULL)
-		exit (EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	if (target != *first)
 		before->next = target->next;
 	else
@@ -97,30 +97,7 @@ void	remove_node(t_env **first, t_env *target)
 // FIXME strcmp is forbidden function
 // FIXME mulitple Norm fixes needed.
 // FIXME not sure this even works
-void delete_node(t_env **head_ref, const char *vname)
-{
-    t_env *temp = *head_ref, *prev = NULL;
 
-    if (temp != NULL && strcmp(temp->vname, vname) == 0)
-    {
-    	*head_ref = temp->next;
-        free(temp);             
-        return;
-    }
-
-    while (temp != NULL && strcmp(temp->vname, vname) != 0)
-    {
-        prev = temp;
-        temp = temp->next;
-    }
-
-    if (temp == NULL) 
-		return;
-
-    prev->next = temp->next;
-
-    free(temp);
-}
 
 void	print_list(t_env *node)
 {

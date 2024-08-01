@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ms_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 19:22:10 by chaikney          #+#    #+#             */
-/*   Updated: 2024/07/29 19:22:11 by chaikney         ###   ########.fr       */
+/*   Updated: 2024/08/01 03:30:10 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,14 +53,14 @@ void	ms_export_display_t(t_env *envt)
 	{
 		printf("declare -x %s", ptr->vname);
 		if (ptr->value)
-			   printf("=%s\n", ptr->value);
+			   printf("=\"%s""\"\n",ptr->value);
 		else
 			   printf("\n");
 		ptr = ptr->next;
 	}
 	printf("declare -x %s", ptr->vname);
 	if (ptr->value)
-		printf("=%s\n", ptr->value);
+		printf("=\"%s""\"\n", ptr->value);
 	else
 		printf("\n");
 }
