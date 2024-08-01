@@ -45,7 +45,6 @@ int	add_value_into_param(char **par, int *r_pos, const char *cmd, t_env *envt)
 // - count length (until a space)
 // - alloc a string
 // - copy characters
-// FIXME Function too long. Can I do this with fewer vars?
 // NOTE This does not step over the name in the outer string
 char	*get_var_name(const char *str)
 {

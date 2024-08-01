@@ -18,7 +18,7 @@ t_command	*init_new_command(void)
 {
 	t_command	*new_cmd;
 
-	new_cmd = malloc(sizeof(t_command));	// FIXED? Memory allocated here is not freed
+	new_cmd = malloc(sizeof(t_command));
 	new_cmd->argc = 0;
 	new_cmd->builtin = NONE;
 	new_cmd->next = NULL;
@@ -29,9 +29,9 @@ t_command	*init_new_command(void)
 // When it reaches a pipe character it stops.
 // Outside the function must handle ->next
 // Return NULL when we finish.
-// This would retain the I/O redir but remove the pipes.(replaced with the ->next)
+// This retains the I/O redir but removes the pipes.
+// (The pipes are replaced with the ->next)
 // NOTE We copy the values to make it easier to can wipe all tokens.
-// FIXME build_command has too many lines
 t_command	*build_command(char **tokens)
 {
 	static int	i;
@@ -40,22 +40,19 @@ t_command	*build_command(char **tokens)
 	t_command	*new_cmd;
 
 	j = 0;
-    num_tokens = count_tokens(tokens);
+	num_tokens = count_tokens(tokens);
 	new_cmd = init_new_command();
-	while ((i < num_tokens) && (tokens[i]) && (ft_strncmp(tokens[i], "|", 1) != 0))
+	while ((i < num_tokens) && (tokens[i])
+		&& (ft_strncmp(tokens[i], "|", 1) != 0))
 	{
-		new_cmd->argv[j] = ft_strdup(tokens[i]);
+		new_cmd->argv[j++] = ft_strdup(tokens[i++]);
 		new_cmd->argc++;
-		i++;
-		j++;
 	}
 	new_cmd->argv[new_cmd->argc] = NULL;
 	if (tokens[i] == NULL)
 		i = 0;
 	else
-		i++;	// step over the pipe.
-    // TODO Break out the builtin parsing to elsewhere.
-    // NOTE feeding this ./minishell makes it go to posn 2 and crash
+		i++;
 	if ((new_cmd->argv[0]) && (ft_isalpha(new_cmd->argv[0][1]) == 1))
 		new_cmd->builtin = parse_builtin(new_cmd, 0);
 	else
