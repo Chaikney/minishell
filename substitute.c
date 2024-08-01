@@ -13,24 +13,21 @@
 #include "minishell.h"
 
 // Find a variable and add its value into the parameter we are preparing.
-// FIXME function too long (check without printfs)
-int	add_value_into_param(char **par, int *r_posn, const char *cmdline, t_env *envt)
+int	add_value_into_param(char **par, int *r_pos, const char *cmd, t_env *envt)
 {
 	char	*vname;
 	char	*vvalue;
 	int		name_len;
 	int		val_len;
 
-	vname = get_var_name(&cmdline[*r_posn]);
+	vname = get_var_name(&cmd[*r_pos]);
 	val_len = 0;
-	printf("subsituing %s", vname);	// HACK for debugging remove later
 	if (vname)
 	{
 		name_len = ft_strlen(vname) + 1;
 		vvalue = get_value_of_env(vname, envt);
 		while (name_len-- > 0)
-			(*r_posn)++;
-		printf("subsituing %s", vvalue);	// HACK for debugging remove later
+			(*r_pos)++;
 		if (vvalue)
 		{
 			val_len = ft_strlen(vvalue);
@@ -58,10 +55,7 @@ char	*get_var_name(const char *str)
 
 	ptr = (char *) str;
 	if (*ptr != '$')
-	{
-		printf("Tried to find a variable but you passed the wrong position");
 		return (NULL);
-	}
 	ptr++;
 	name_len = 0;
 	while ((*ptr != ' ') && (*ptr != '\"') && (*ptr != '\0'))
@@ -90,10 +84,6 @@ char	*get_var_name(const char *str)
 // - step over the variable name
 // - copy the rest of the original string
 // NOTE We do not free the string passed; that is for the caller
-// KILL out of scope here Have to remove " and ' characters from the final cmd
-// NOTE Does that get cut out of what we do here, or passed to the command to let that handle it¿???
-// NOTE Adds a space for missing values, not needed? bash collapses it to a single space
-// FIXED Too many lines in this function.
 char	*ms_strsub(char *str, char *old_sub, char *new_sub)
 {
 	int		len;
