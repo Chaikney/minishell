@@ -104,7 +104,7 @@ void	int_unset(char *unset_var, t_env *enviro)
 		to_unset = enviro;
 		len = ft_strlen(unset_var);
 		while ((to_unset)
-			   && ft_strncmp(to_unset->vname, unset_var, len) != 0)
+			&& ft_strncmp(to_unset->vname, unset_var, len) != 0)
 			to_unset = to_unset->next;
 		if (to_unset)
 		{
