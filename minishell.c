@@ -22,7 +22,7 @@ int	g_procstatus;
 // - EXIT has to be an exit from the shell.
 // - EXPORT has to change values in the process above.
 // TODO Move some of direct_complex_command back here?
-// TODO Can we remove envp?
+// TODO Can we remove envp from eval altogether?
 void	eval(char *cmdline, char **envp, t_env *envt)
 {
 	t_command	*cmd;

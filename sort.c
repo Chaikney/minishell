@@ -73,7 +73,7 @@ void	append(t_env **head_ref, char *new_vname, char *new_value)
 }
 
 // Removes a t_env from our environment list.
-// It does not (yet?) free the node
+// It does not free the node, the caller must do that.
 void	remove_node(t_env **first, t_env *target)
 {
 	t_env	*before;
@@ -93,11 +93,6 @@ void	remove_node(t_env **first, t_env *target)
 	else
 		*first = target->next;
 }
-
-// FIXME strcmp is forbidden function
-// FIXME mulitple Norm fixes needed.
-// FIXME not sure this even works
-
 
 void	print_list(t_env *node)
 {

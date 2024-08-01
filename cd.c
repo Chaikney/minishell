@@ -84,25 +84,12 @@ void	ms_cd(t_command *cmd, t_env *envt)
 }
 
 // After cd is issued, this updates the PWD and OLDPWD variables.
-// (cd happens in executeBuiltin when chdir is called)
-// - unset existing $OLDPWD
-// - make space for copy of envp and 2 more variables
-// - copy envp to new_envp
-// - add $PWD and $OLDPWD to the end of new_envp
-// - copy new_envp (back) to envp
-// - unset PWD to remove the first (old) PWD variable in envp
-// free new_envp
-// TODO Unify error handling in update_pwd
+// They are first unset, then added back.
 // NOTE Variables used:
 // - OLDPWD:	string to be written to OLDPWD (freed on return to ms_cd)
 // - new_pwd:	(string to be written to PWD (freed on return to ms_cd)
-// NOTE I don't know whether strdup or pointers are better for adding to env
-// Either way seems impossible to free the memory in certain cases....
-// ...how do we *know*? The original envp pieces are statically allocated.
-// ...should ours be too??
 void	update_pwd(char *oldpwd, char *new_pwd, t_env *envt)
 {
-
 	if ((oldpwd == NULL) || (new_pwd == NULL))
 		cd_error("Missing value for PWD update.", EINVAL);
 	else

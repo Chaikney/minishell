@@ -16,6 +16,7 @@
 // have variable subsitution.
 // If no sub is needed, return -1
 // NOTE Attempts to ignore values within 'strong quoting'.
+// TODO needs_sub is now obsolete.
 int	needs_sub(char *str)
 {
 	int	i;
@@ -46,8 +47,7 @@ int	needs_sub(char *str)
 // - alloc a string
 // - copy characters
 // FIXME Function too long. Can I do this with fewer vars?
-// TODO Nothing calls this. Is it obsolete?
-// TODO This should step over the name in the outer string
+// NOTE This does not step over the name in the outer string
 char	*get_var_name(const char *str)
 {
 	int		name_len;
@@ -128,6 +128,7 @@ char	*ms_strsub(char *str, char *old_sub, char *new_sub)
 // - put the value into the command using ms_strsub
 // - run again / recurse until we have no more things to sub
 // NOTE variable length and name do *not* include the $
+// TODO substitute_variables is now obsolete.
 char	*substitute_variables(char *cmd)
 {
 	int		s_pos;

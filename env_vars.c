@@ -1,9 +1,19 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   env_vars.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/01 10:42:53 by chaikney          #+#    #+#             */
+/*   Updated: 2024/08/01 10:43:06 by chaikney         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 // Query and manipulate ENV variables
 
-//TODO add 42 header
-//
 // return 1 if the variable name is present in the env
 // TODO There are places where this should be called to check (e.g unset)
 int	is_in_envt(char *name, t_env *envt)

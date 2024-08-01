@@ -12,10 +12,12 @@
 
 #include "minishell.h"
 
+// FIXME Too many functions in tokens.c
+
 // Functions used to break up the readline input into tokens for parsing.
 
-// Initialiase a string to copy the parts of the line to.
-// NOTE 256 is abitary and might better as compile-time constant.
+// Initialize a string to copy the parts of the line to.
+// NOTE 256 is arbitrary and might better as compile-time constant.
 char	*get_blank_param(void)
 {
 	char	*par;
@@ -58,8 +60,7 @@ char	*grab_control_seq(const char *cmd, int *posn)
 // Target can match on a single character
 // Target will be a control character (< > |)
 // < << > and >> are associated with the parameter after,
-// ...so we also remove that.
-// ...controlled with the to_go variable.
+// ...so we also remove that(controlled with the to_go variable.)
 // Method:
 // - Decide if one or two entries must be removed.
 // - Find position of the target
@@ -112,9 +113,8 @@ void	change_parse_mode(char c, int *mode, int *pos)
 	(*pos)++;
 }
 
-// Find a variable and add its value into the parameter.
+// Find a variable and add its value into the parameter we are preparing.
 // FIXME function too long (check without printfs)
-// TODO Plug the ENVIRONMENT into this to get values from it
 int	add_value_into_param(char **par, int *r_posn, const char *cmdline, t_env *envt)
 {
 	char	*vname;
@@ -124,14 +124,14 @@ int	add_value_into_param(char **par, int *r_posn, const char *cmdline, t_env *en
 
 	vname = get_var_name(&cmdline[*r_posn]);
 	val_len = 0;
-	printf("subsituing %s", vname);
+	printf("subsituing %s", vname);	// HACK for debugging remove later
 	if (vname)
 	{
 		name_len = ft_strlen(vname) + 1;
 		vvalue = get_value_of_env(vname, envt);
 		while (name_len-- > 0)
 			(*r_posn)++;
-		printf("subsituing %s", vvalue);
+		printf("subsituing %s", vvalue);	// HACK for debugging remove later
 		if (vvalue)
 		{
 			val_len = ft_strlen(vvalue);
