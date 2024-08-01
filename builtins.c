@@ -49,7 +49,7 @@ static t_builtin	detailed_parse_builtin(t_command *cmd, int posn)
 // FIXED Segfaults here given ><
 // It splits to 2 tokens but one command - should not happen?
 // but how to guard against?
-// FIXME Still a problem if >© is given.
+// FIXED Still a problem if >© is given.
 t_builtin	parse_builtin(t_command *cmd, int posn)
 {
 	t_builtin	retvalue;
