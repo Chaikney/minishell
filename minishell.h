@@ -102,7 +102,7 @@ int		check_tokens(char **arr);
 void	wipe_tokens(char **arr);
 
 // input.c - functions for redirecting input
-int		stopword_input(t_command *cmd);
+int		stopword_input(t_command *cmd, int fd[2]);
 int		setup_input(t_command *cmd, int i_lvl);
 int		determine_input(t_command *cmd);
 
