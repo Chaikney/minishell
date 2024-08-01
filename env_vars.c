@@ -43,20 +43,17 @@ void	t_replace_env_var(char *name, char *value, t_env **envt)
 
 	ptr = *envt;
 	len = ft_strlen(name);
-	while (ptr->next != NULL)
+	while (ptr)
 	{
 		if (ft_strncmp(name, ptr->vname, len) == 0)
 		{
 			printf("\nupdating %s with %s", name, value);	// HACK for debugging
+			if (ptr->value)
+				free (ptr->value);
 			ptr->value = ft_strdup(value);
 			break ;
 		}
 		ptr = ptr->next;
-	}
-	if (ft_strncmp(name, ptr->vname, len) == 0)
-	{
-		printf("\nupdating %s with %s", name, value);	// HACK for debugging
-		ptr->value = ft_strdup(value);
 	}
 }
 

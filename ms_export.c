@@ -123,8 +123,8 @@ void	ms_export_t(t_command *cmd, t_env **envt)
 				t_replace_env_var(evar_name, evar_newvalue, envt);
 			}
 			i++;
+			free (evar_name);
+			free (evar_newvalue);
 		}
-		free (evar_name);
-		free (evar_newvalue);
 	}
 }
