@@ -99,21 +99,24 @@ void	int_unset(char *unset_var, t_env *enviro)
 	t_env	*to_unset;
 	int		len;
 
-	to_unset = enviro;
-	len = ft_strlen(unset_var);
-	while ((to_unset)
-		&& ft_strncmp(to_unset->vname, unset_var, len) != 0)
-		to_unset = to_unset->next;
-	if (to_unset)
+	if (is_in_envt(unset_var, enviro) == 1)
 	{
-		remove_node(&enviro, to_unset);
-		free (to_unset->vname);
-		if (to_unset->value)
-			free (to_unset->value);
-		free(to_unset);
+		to_unset = enviro;
+		len = ft_strlen(unset_var);
+		while ((to_unset)
+			   && ft_strncmp(to_unset->vname, unset_var, len) != 0)
+			to_unset = to_unset->next;
+		if (to_unset)
+		{
+			remove_node(&enviro, to_unset);
+			free (to_unset->vname);
+			if (to_unset->value)
+				free (to_unset->value);
+			free(to_unset);
+		}
+		else
+			printf("could not find node to unset");
 	}
-	else
-		printf("could not find node to unset");
 }
 
 // This is UNSET as called directly by the user.

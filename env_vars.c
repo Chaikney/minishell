@@ -15,7 +15,7 @@
 // Query and manipulate ENV variables
 
 // return 1 if the variable name is present in the env
-// TODO There are places where this should be called to check (e.g unset)
+// This is used in, e.g. int_unset
 int	is_in_envt(char *name, t_env *envt)
 {
 	t_env	*ptr;
