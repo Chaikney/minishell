@@ -40,6 +40,27 @@ void	eval(char *cmdline, char **envp, t_env *envt)
 	}
 }
 
+// Simple checks for the validity of launch.
+// - We must be in an interactive terminal
+// - There are no extra arguments given.
+// NOTE The argc error condition uses printf to avoid strange message
+// ": Success"
+int	startup_checks(int argc)
+{
+	if ((isatty(STDIN_FILENO) == 0) || (isatty(STDOUT_FILENO) == 0))
+	{
+		perror("minishell must run in a terminal");
+		exit (EXIT_FAILURE);
+	}
+	if (argc != 1)
+	{
+		printf("no args needed to minishell\n");
+		exit (EXIT_FAILURE);
+	}
+	setup_signals();
+	return (0);
+}
+
 // FIXME Not clear what cmdline == NULL attempts, i can't trigger it.
 // ...readline man page says this what it returns on EOF on an empty line.
 // TODO Ensure that *all* commands run quit or return to here.
@@ -53,27 +74,22 @@ int	main(int argc, char **argv, char **envp)
 	t_env	*enviro;
 
 	(void) argv;
+	startup_checks(argc);
 	cmdline = NULL;
-	if (argc == 1)
+	enviro = parse_env(envp);
+	sort_env(enviro);
+	while (1)
 	{
-		setup_signals();
-		enviro = parse_env(envp);
-		sort_env(enviro);
-		while (1)
+		prompt = get_prompt(enviro);
+		cmdline = readline(prompt);
+		free (prompt);
+		if (cmdline == NULL)
+			ms_exit(NULL, enviro);
+		if ((cmdline[0] != '\0'))
 		{
-			prompt = get_prompt(enviro);
-			cmdline = readline(prompt);
-			free (prompt);
-			if (cmdline == NULL)
-				ms_exit(NULL, enviro);
-			if ((cmdline[0] != '\0'))
-			{
-				add_history((const char *) cmdline);
-				eval(cmdline, envp, enviro);
-			}
+			add_history((const char *) cmdline);
+			eval(cmdline, envp, enviro);
 		}
 	}
-	else
-		printf("no args needed to minishell\n");
 	return (0);
 }
