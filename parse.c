@@ -71,6 +71,7 @@ char	**quote_aware_split(const char *cmdline, t_env *envt)
 // [x]	do not have more than one input directive
 // [x]	do not have more than one output directive
 // [ ]	have text after any control char
+// FIXME Too long for norm now
 int	check_tokens(char **arr)
 {
 	int	num_input;
@@ -89,13 +90,13 @@ int	check_tokens(char **arr)
 		if (ft_strncmp(arr[i], "<", 1) == 0)
 		{
 			num_input++;
-			if ((arr[i + 1]) && (is_control_char(arr[i + 1][0]) == 1))
+			if ((arr[i + 1]) && (ft_isalpha(arr[i + 1][0]) == 0))
 				is_bad = -1;
 		}
 		if (ft_strncmp(arr[i], ">", 1) == 0)
 		{
 			num_output++;
-			if ((arr[i + 1]) && (is_control_char(arr[i + 1][0]) == 1))
+			if ((arr[i + 1]) && (ft_isalpha(arr[i + 1][0]) == 0))
 				is_bad = -1;
 		}
 		i++;
