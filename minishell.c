@@ -40,6 +40,34 @@ void	eval(char *cmdline, char **envp, t_env *envt)
 	}
 }
 
+// read the Starting environment into a variable to access.
+// for line in envp
+// - find name (all up to =)
+// - find value
+// - set marker to next t_env
+t_env	*parse_env(char **envp)
+{
+	t_env	*ptr;
+	t_env	*first;
+	t_env	*next;
+
+	if (*envp)
+	{
+		first = init_new_env(*envp);
+		ptr = first;
+		envp++;
+		while (*envp)
+		{
+			next = init_new_env(*envp);
+			ptr->next = next;
+			ptr = ptr->next;
+			envp++;
+		}
+		return (first);
+	}
+	return (NULL);
+}
+
 // Simple checks for the validity of launch.
 // - We must be in an interactive terminal
 // - There are no extra arguments given.

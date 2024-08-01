@@ -84,35 +84,6 @@ void	add_to_env_list(t_env *lsthead, t_env *to_add)
 	ptr->next = to_add;
 }
 
-// read the Starting environment into a variable to access.
-// for line in envp
-// - find name (all up to =)
-// - find value
-// - set marker to next t_env
-// TODO Move to a setup file or similar.
-t_env	*parse_env(char **envp)
-{
-	t_env	*ptr;
-	t_env	*first;
-	t_env	*next;
-
-	if (*envp)
-	{
-		first = init_new_env(*envp);
-		ptr = first;
-		envp++;
-		while (*envp)
-		{
-			next = init_new_env(*envp);
-			ptr->next = next;
-			ptr = ptr->next;
-			envp++;
-		}
-		return (first);
-	}
-	return (NULL);
-}
-
 // Takes a  name and a value; returns a string formatted suitable
 // for storing as an environment variable.
 // Variables:

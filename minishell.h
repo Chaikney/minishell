@@ -71,6 +71,7 @@ typedef struct	s_env
 void	eval(char *cmdline, char **envp, t_env *envt);
 //void	eval(char *cmdline, char **envp);
 int		determine_output(t_command *cmd);
+t_env	*parse_env(char **envp);
 
 // substitute.c - variable substitution
 char	*ms_strsub(char *str, char *remove, char *replace);
@@ -140,7 +141,6 @@ void	exit_failed_pipe(t_command *cmd, int fd_in, int fd_out);
 
 // env.c - ENV builtin and environment variable helpers
 char	*make_env_string(char *name, char *value);
-t_env	*parse_env(char **envp);
 void	ms_env_t(t_env *environ);
 char	**serialise_env(t_env *env);
 t_env	*init_new_env(char *str);	// TODO Better to take separate name / value
