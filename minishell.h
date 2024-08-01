@@ -88,7 +88,6 @@ int			ms_pwd(void);
 void		ms_unset(t_command *cmd, t_env *enviro);
 void		ms_echo(t_command *cmd);
 void		int_unset(char *unset_var, t_env *enviro);
-void		copy_envp(char **src_envp, char **dst_envp);
 
 // ms_export.c - and related helpers
 char		*get_export_name(char *str);

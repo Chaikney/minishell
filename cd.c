@@ -12,6 +12,16 @@
 
 #include "minishell.h"
 
+// free whatever vars need to be freed.
+// Display appropriate error message
+// Static because it is specific to the CD function
+// Variables are freed outside of this function.
+static void	cd_error(char *errmsg, int err)
+{
+	perror(errmsg);
+	g_procstatus = err;
+}
+
 // Examine the argument passed to our CD builtin
 // and return the target to use.
 // NOTE This is mainly so we can use ~ as an alias for $HOME
@@ -22,11 +32,10 @@ static char	*get_cd_target(t_command *cmd)
 
 	if (cmd->argc != 2)
 	{
-		perror("cd: One single argument required\n");
 		if (cmd->argc > 2)
-			g_procstatus = E2BIG;
+			cd_error("cd: One single argument required\n", E2BIG);
 		else
-			g_procstatus = EINVAL;
+			cd_error("cd: One single argument required\n", EINVAL);
 		return (NULL);
 	}
 	else if (ft_strncmp(cmd->argv[1], "~", 2) == 0)
@@ -69,42 +78,9 @@ void	ms_cd(t_command *cmd, t_env *envt)
 		new_pwd = getcwd(new_pwd, 0);
 		update_pwd(oldpwd, new_pwd, envt);
 		free (new_pwd);
+		g_procstatus = 0;
 	}
 	free (oldpwd);
-}
-
-// free whatever vars need to be freed.
-// Display appropriate error message
-// Static because it is specific to the CD function
-// TODO Add newpwd to cd_error
-// TODO Remove envp from newpwd to cd_error ?
-static void	cd_error(char *errmsg, char *wd, char **new_envp, char *oldpwd)
-{
-	perror(errmsg);
-	if (wd)
-		free (wd);
-	if (new_envp)
-		free(new_envp);
-	if (oldpwd)
-		free(oldpwd);
-}
-
-// Copy the envp from src_envp to dst_envp
-// Ensures null-termination
-// but does *not* check that dst_envp is big enough!
-// TODO Probably will be obsolete later
-void	copy_envp(char **src_envp, char **dst_envp)
-{
-	int	i;
-
-	i = 0;
-	while (src_envp[i] != NULL)
-	{
-		dst_envp[i] = src_envp[i];
-		i++;
-	}
-	dst_envp[i] = NULL;
-	return ;
 }
 
 // After cd is issued, this updates the PWD and OLDPWD variables.
@@ -118,10 +94,8 @@ void	copy_envp(char **src_envp, char **dst_envp)
 // free new_envp
 // TODO Unify error handling in update_pwd
 // NOTE Variables used:
-// -  new_envp:	expanded temporary copy of envp (to be freed)
-// -  OLDPWD	string to be written to OLDPWD (includes name=) (freeing TBC)
-// -  new_pwd:	(string to be written to PWD (includes name=) (freeing TBC)
-// - env_len:	Number of lines in the environment
+// - OLDPWD:	string to be written to OLDPWD (freed on return to ms_cd)
+// - new_pwd:	(string to be written to PWD (freed on return to ms_cd)
 // NOTE I don't know whether strdup or pointers are better for adding to env
 // Either way seems impossible to free the memory in certain cases....
 // ...how do we *know*? The original envp pieces are statically allocated.
@@ -130,7 +104,7 @@ void	update_pwd(char *oldpwd, char *new_pwd, t_env *envt)
 {
 
 	if ((oldpwd == NULL) || (new_pwd == NULL))
-		cd_error("Missing value for PWD update.", NULL, NULL, oldpwd);
+		cd_error("Missing value for PWD update.", EINVAL);
 	else
 	{
 		int_unset("OLDPWD", envt);
