@@ -89,10 +89,13 @@ int	startup_checks(int argc)
 
 // FIXME Not clear what cmdline == NULL attempts, i can't trigger it.
 // ...readline man page says this what it returns on EOF on an empty line.
-// TODO Ensure that *all* commands run quit or return to here.
 // NOTE Exit called by user does not need to free prompt
 // ....as we destory it before eval
-// FIXED the g_procstatus var $? needs to get special treatment.
+// FIXME segfault with <>
+// FIXME cat << a - what shouuld it do??
+// FIXME cat << a << b << c << d - again, what should it do?
+// FIXME echo "thing" > out | less	what then? Problem was it did not recognise the redir.
+// FIXME Must be able to delete PATH and be forced to only work from absolute paths.
 int	main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;
