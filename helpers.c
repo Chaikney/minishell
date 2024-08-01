@@ -42,7 +42,9 @@ void	goto_stop_char(const char *cmdline, int *posn)
 // -- does path + cmd = an executable?
 // -- if YES we have our command: keep that and discard the rest.
 // NOTE The return value of getenv("PATH") does not need to be freed
-char	*search_in_path(char *cmd)
+// FIXED Don't use getenv for this.
+// FIXME search_in_path is too long for norm
+char	*search_in_path(char *cmd, t_env *envt)
 {
 	char	**pathparts;
 	char	*candidate;
@@ -52,21 +54,24 @@ char	*search_in_path(char *cmd)
 
 	i = 0;
 	goodpath = NULL;
-	pathparts = ft_split(getenv("PATH"), ':');
-	while ((pathparts[i] != NULL) && (!goodpath))
+	if (is_in_envt("PATH", envt) == 1)
 	{
-		slashed = ft_strjoin(pathparts[i], "/");
-		candidate = ft_strjoin(slashed, cmd);
-		if (access(candidate, X_OK) == 0)
-			goodpath = ft_strdup(candidate);
-		free (candidate);
-		free(slashed);
-		i++;
+		pathparts = ft_split(getenv("PATH"), ':');
+		while ((pathparts[i] != NULL) && (!goodpath))
+		{
+			slashed = ft_strjoin(pathparts[i], "/");
+			candidate = ft_strjoin(slashed, cmd);
+			if (access(candidate, X_OK) == 0)
+				goodpath = ft_strdup(candidate);
+			free (candidate);
+			free(slashed);
+			i++;
+		}
+		i = -1;
+		while (pathparts[++i] != NULL)
+			free(pathparts[i]);
+		free(pathparts);
 	}
-	i = -1;
-	while (pathparts[++i] != NULL)
-		free(pathparts[i]);
-	free(pathparts);
 	return (goodpath);
 }
 

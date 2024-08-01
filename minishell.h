@@ -113,7 +113,7 @@ void		remove_cmd_parts(t_command *cmd, char *target);
 int			determine_output(t_command *cmd);
 
 // helpers.c - finder and helper functions
-char		*search_in_path(char *cmd);
+char		*search_in_path(char *cmd, t_env *envt);
 void		goto_stop_char(const char *cmdline, int *posn);
 int			is_legal_name(char *str);
 int			is_control_char(char c);
