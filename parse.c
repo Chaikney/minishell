@@ -85,11 +85,9 @@ t_builtin	parse_builtin(t_command *cmd, int posn)
 // -- receive the paramter.
 // -- break when the parameter is NULL.
 // NOTE This applies variable substition where wanted.
-// FIXME Likely quote_aware_split has too many lines.
 // KILL Variable substitution interferes with unset builtin.
 // NOTE This is not an issue, we do the same as bash does.
 // NOTE we Initialise / NULLify the end values for memory safety.
-// FIXED export MS_TEST="can have spaces" is being split and should not be.
 char	**quote_aware_split(const char *cmdline, t_env *envt)
 {
 	char	**params;
@@ -98,7 +96,7 @@ char	**quote_aware_split(const char *cmdline, t_env *envt)
 
 	p_num = 0;
 	cmd_pos = 0;
-	params = malloc (sizeof (char *) * MAXARGS);	// FIXED? These are still not (always?) freed.
+	params = malloc (sizeof (char *) * MAXARGS);
 	if (!params)
 		return (NULL);
 	while ((p_num < MAXARGS))
@@ -109,25 +107,7 @@ char	**quote_aware_split(const char *cmdline, t_env *envt)
 		else if (is_control_char(cmdline[cmd_pos]) == 1)
 			params[p_num] = grab_control_seq(cmdline, &cmd_pos);
 		else
-		{
 			params[p_num] = get_any_parameter(cmdline, &cmd_pos, envt);
-		}
-
-		/* } */
-		/* else if (cmdline[cmd_pos] == '\"') */
-		/* { */
-		/* 	params[p_num] = get_weak_param(cmdline, &cmd_pos); */
-		/* 	if (needs_sub(params[p_num]) != -1) */
-		/* 		params[p_num] = substitute_variables(params[p_num]); */
-		/* } */
-		/* else if (cmdline[cmd_pos] == '\'') */
-		/* 	params[p_num] = get_strong_param(cmdline, &cmd_pos); */
-		/* else */
-		/* { */
-		/* 	params[p_num] = get_raw_param(cmdline, &cmd_pos); */
-		/* 	if (needs_sub(params[p_num]) != -1) */
-		/* 		params[p_num] = substitute_variables(params[p_num]); */
-		/* } */
 		if (params[p_num] == NULL)
 			break ;
 		p_num++;
@@ -171,7 +151,7 @@ int	check_tokens(char **arr)
 		is_bad = -1;
 	if ((num_input > 1) || (num_output > 1))
 		is_bad = -1;
-    return (is_bad);
+	return (is_bad);
 }
 
 // Clear the list of tokens generated from the cmdline.
@@ -179,12 +159,12 @@ int	check_tokens(char **arr)
 // Or stop when NULL reached?
 void	wipe_tokens(char **arr)
 {
-    int	i;
+	int	i;
 
-    i = 0;
-    while (i < MAXARGS)
-        free(arr[i++]);
-    free (arr);
+	i = 0;
+	while (i < MAXARGS)
+		free(arr[i++]);
+	free (arr);
 }
 
 int	count_tokens(char **arr)
@@ -203,6 +183,7 @@ int	count_tokens(char **arr)
 // Return NULL when we finish.
 // This would retain the I/O redir but remove the pipes.(replaced with the ->next)
 // NOTE We copy the values to make it easier to can wipe all tokens.
+// FIXME build_command has too many lines
 t_command	*build_command(char **tokens)
 {
 	static int	i;
