@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 13:48:26 by chaikney          #+#    #+#             */
-/*   Updated: 2024/07/31 20:05:53 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/08/01 03:14:22 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ typedef struct	s_env
 	char	*vname;
 	char	*value;
 	struct s_env	*next;
+	struct s_env	*prev;
 }	t_env;
 
 // various functions
