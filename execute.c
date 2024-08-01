@@ -26,11 +26,10 @@
 // - Any fork-ing needed has been handled before calling this.
 // NOTE The lines at the end are only reached if execve fails
 // TODO Need to serialise_envt so that execve gets uptodate ENV
-void	run_command(t_command *cmd, char **envp, t_env *envt)
+void	run_command(t_command *cmd, t_env *envt)
 {
 	char	*prog;
 
-	(void) envp;
 	if (cmd->builtin != NONE)
 	{
 		execute_builtin(cmd, envt);

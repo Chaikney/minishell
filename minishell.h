@@ -68,8 +68,7 @@ typedef struct	s_env
 }	t_env;
 
 // various functions
-void	eval(char *cmdline, char **envp, t_env *envt);
-//void	eval(char *cmdline, char **envp);
+void	eval(char *cmdline, t_env *envt);
 int		determine_output(t_command *cmd);
 t_env	*parse_env(char **envp);
 
@@ -108,11 +107,10 @@ int		setup_input(t_command *cmd, int i_lvl);
 int		determine_input(t_command *cmd);
 
 // paths.c - find and direct programs in PATH
-void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file, t_env *envt);
-void		direct_complex_command(t_command *cmd, char **envp, t_env *envt);
+void	run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt);
+void		direct_complex_command(t_command *cmd, t_env *envt);
 //void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file);
-//void	run_in_pipe(t_command *cmd, char **envp, int *i_file);
-void	run_in_pipe(t_command *cmd, char **envp, int *i_file, t_env *envt);
+void	run_in_pipe(t_command *cmd, int *i_file, t_env *envt);
 void	remove_cmd_parts(t_command *cmd, char *target);
 
 // helpers.c - finder and helper functions
@@ -167,7 +165,7 @@ void	print_tokens(char **arr);
 void	print_cmd_parts(t_command *cmd);
 
 // execute.c -functions to execute commands
-void	run_command(t_command *cmd, char **envp, t_env *envt);
+void	run_command(t_command *cmd, t_env *envt);
 void	execute_builtin(t_command *cmd, t_env *env);
 
 //sort.c

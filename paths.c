@@ -57,7 +57,7 @@ int	determine_output(t_command *cmd)
 // - if the final command is a builtin, execute it directly.
 // - otherwise pass it to be run in a fork
 // NOTE i_redir is passed as pointer so it can be changed to the next step in pipe.
-void	direct_complex_command(t_command *cmd, char **envp, t_env *envt)
+void	direct_complex_command(t_command *cmd, t_env *envt)
 {
 	int			o_redir;
 	int			i_redir;
@@ -66,7 +66,7 @@ void	direct_complex_command(t_command *cmd, char **envp, t_env *envt)
 	remove_cmd_parts(cmd, "<");
 	while (cmd->next != NULL)
 	{
-		run_in_pipe(cmd, envp, &i_redir, envt);
+		run_in_pipe(cmd, &i_redir, envt);
 		cmd = cmd->next;
 	}
 	o_redir = determine_output(cmd);
@@ -74,7 +74,7 @@ void	direct_complex_command(t_command *cmd, char **envp, t_env *envt)
 	if (cmd->builtin != NONE)
 		execute_builtin(cmd, envt);
 	else
-		run_final_cmd(cmd, envp, i_redir, o_redir, envt);
+		run_final_cmd(cmd, i_redir, o_redir, envt);
 }
 
 // Make a child process to execute the command, putting the output in a pipe
@@ -85,7 +85,7 @@ void	direct_complex_command(t_command *cmd, char **envp, t_env *envt)
 // NOTE The input file pointer connects us to the previous command in pipe.
 // DONE Move builtin check to run_command to save lines?
 //void	run_in_pipe(t_command *cmd, char **envp, int *i_file)
-void	run_in_pipe(t_command *cmd, char **envp, int *i_file, t_env *envt)
+void	run_in_pipe(t_command *cmd, int *i_file, t_env *envt)
 {
 	pid_t	child;
 	int		tube[2];
@@ -103,7 +103,7 @@ void	run_in_pipe(t_command *cmd, char **envp, int *i_file, t_env *envt)
 		// "redirect stdin to prevpipe"
 		dup2(*i_file, STDIN_FILENO);// closes STDIN, uses its ref to point to i_file (last processes' pipe read end)
 		close(*i_file);		// discard extra reference to the pipe read end.
-		run_command(cmd, envp, envt);	// asfter this all fds of the child are released.
+		run_command(cmd, envt);	// asfter this all fds of the child are released.
 	}
 	else
 	{
@@ -121,7 +121,7 @@ void	run_in_pipe(t_command *cmd, char **envp, int *i_file, t_env *envt)
 // NOTE This is used with either simple commands or at the end of complex one.
 // NOTE This *cannot* receive EXIT builtin
 // FIXME run_final_cmd still has too many lines
-void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file, t_env *envt)
+void	run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt)
 {
 	pid_t		child;
 	extern int	g_procstatus;
@@ -139,7 +139,7 @@ void	run_final_cmd(t_command *cmd, char **envp, int i_file, int o_file, t_env *e
 		dup2(i_file, STDIN_FILENO);	// Expect this to be the same as with pipe
 		if (i_file >= 0)
 			close(i_file);
-		run_command(cmd, envp, envt);	// after this all fds of the child are released.
+		run_command(cmd, envt);	// after this all fds of the child are released.
 	}
 	else
 	{

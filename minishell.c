@@ -23,7 +23,7 @@ int	g_procstatus;
 // - EXPORT has to change values in the process above.
 // TODO Move some of direct_complex_command back here?
 // TODO Can we remove envp from eval altogether?
-void	eval(char *cmdline, char **envp, t_env *envt)
+void	eval(char *cmdline, t_env *envt)
 {
 	t_command	*cmd;
 	char		*trimmed;
@@ -35,7 +35,7 @@ void	eval(char *cmdline, char **envp, t_env *envt)
 	cmd = parse_input(trimmed, envt);
 	if (cmd)
 	{
-		direct_complex_command(cmd, envp, envt);
+		direct_complex_command(cmd, envt);
 		clear_t_command(cmd);
 	}
 }
@@ -116,7 +116,7 @@ int	main(int argc, char **argv, char **envp)
 		if ((cmdline[0] != '\0'))
 		{
 			add_history((const char *) cmdline);
-			eval(cmdline, envp, enviro);
+			eval(cmdline, enviro);
 		}
 	}
 	return (0);
