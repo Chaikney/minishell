@@ -54,24 +54,21 @@ char	*search_in_path(char *cmd, t_env *envt)
 
 	i = 0;
 	goodpath = NULL;
-	if (is_in_envt("PATH", envt) == 1)
+	pathparts = ft_split(get_value_of_env("PATH", envt), ':');
+	while ((pathparts[i] != NULL) && (!goodpath))
 	{
-		pathparts = ft_split(getenv("PATH"), ':');
-		while ((pathparts[i] != NULL) && (!goodpath))
-		{
-			slashed = ft_strjoin(pathparts[i], "/");
-			candidate = ft_strjoin(slashed, cmd);
-			if (access(candidate, X_OK) == 0)
-				goodpath = ft_strdup(candidate);
-			free (candidate);
-			free(slashed);
-			i++;
-		}
-		i = -1;
-		while (pathparts[++i] != NULL)
-			free(pathparts[i]);
-		free(pathparts);
+		slashed = ft_strjoin(pathparts[i], "/");
+		candidate = ft_strjoin(slashed, cmd);
+		if (access(candidate, X_OK) == 0)
+			goodpath = ft_strdup(candidate);
+		free (candidate);
+		free(slashed);
+		i++;
 	}
+	i = -1;
+	while (pathparts[++i] != NULL)
+		free(pathparts[i]);
+	free(pathparts);
 	return (goodpath);
 }
 

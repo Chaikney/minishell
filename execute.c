@@ -30,6 +30,7 @@ void	run_command(t_command *cmd, t_env *envt)
 {
 	char	*prog;
 
+	prog = NULL;
 	if (cmd->builtin != NONE)
 	{
 		execute_builtin(cmd, envt);
@@ -37,7 +38,7 @@ void	run_command(t_command *cmd, t_env *envt)
 	}
 	if (access(cmd->argv[0], X_OK) == 0)
 		prog = cmd->argv[0];
-	else
+	else if (is_in_envt("PATH", envt) == 1)
 		prog = search_in_path(cmd->argv[0], envt);
 	if ((!prog) || (access(prog, X_OK) != 0))
 	{
