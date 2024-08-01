@@ -125,8 +125,6 @@ void	int_unset(char *unset_var, t_env *enviro)
 // TEST cases and expected (bash) behaviour:
 // [x] unset a variable that we set previously using export
 // [x] unset a variable that was inherited
-// TODO Do we need to free memory for var_name?
-// DONE UNSET should act to act on multiple vars, space separated,.
 void	ms_unset(t_command *cmd, t_env *enviro)
 {
 	int		i;

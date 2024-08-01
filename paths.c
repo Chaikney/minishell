@@ -56,7 +56,7 @@ int	determine_output(t_command *cmd)
 // - setup output redirection and remove / free those parts of cmd
 // - if the final command is a builtin, execute it directly.
 // - otherwise pass it to be run in a fork
-// NOTE i_redir is passed as pointer so it can be changed to the next step in pipe.
+// NOTE i_redir is passed as pointer to change for the next step in pipe.
 void	direct_complex_command(t_command *cmd, t_env *envt)
 {
 	int			o_redir;
@@ -82,9 +82,17 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 // - run command
 // - wait for it to come back
 // NOTE child == 0 means we are in the child process!
+// In child:
+// - STDOUT made to point to the Write end of the pipe
+// - the old reference (tube[0]) is closed
+// - "redirect stdin to prevpipe"
+// - run the command, everything will be cleared with that process exit
+// discard extra reference
+// In parent (i.e. the shell):
+// - close write end of pipe
+// - wait for the child, collect exit code for g_procstatus
+// - Keep hold of the read end of this pipe for the next run.
 // NOTE The input file pointer connects us to the previous command in pipe.
-// DONE Move builtin check to run_command to save lines?
-//void	run_in_pipe(t_command *cmd, char **envp, int *i_file)
 void	run_in_pipe(t_command *cmd, int *i_file, t_env *envt)
 {
 	pid_t	child;
@@ -99,19 +107,16 @@ void	run_in_pipe(t_command *cmd, int *i_file, t_env *envt)
 	{
 		close(tube[0]);
 		dup2(tube[1], STDOUT_FILENO);
-		close(tube[1]);		// NOTE This reference to the file is not needed we use STDOUTs now
-		// "redirect stdin to prevpipe"
-		dup2(*i_file, STDIN_FILENO);// closes STDIN, uses its ref to point to i_file (last processes' pipe read end)
-		close(*i_file);		// discard extra reference to the pipe read end.
-		run_command(cmd, envt);	// asfter this all fds of the child are released.
+		close(tube[1]);
+		dup2(*i_file, STDIN_FILENO);
+		close(*i_file);
+		run_command(cmd, envt);
 	}
 	else
 	{
-		close(tube[1]);	// Shell will not write to the pipe
-		// NOTE: commenting out this line leads to endless loop or non-returning process
+		close(tube[1]);
 		waitpid(child, &g_procstatus, 0);
-		*i_file = tube[0];	// Keep hold of the read end of this pipe for the next run.
-		printf("process %s finished with code: %i\n", cmd->argv[0], g_procstatus); // HACK for debugging
+		*i_file = tube[0];
 	}
 }
 
@@ -120,34 +125,40 @@ void	run_in_pipe(t_command *cmd, int *i_file, t_env *envt)
 // and waits for it to complete.
 // NOTE This is used with either simple commands or at the end of complex one.
 // NOTE This *cannot* receive EXIT builtin
-// FIXME run_final_cmd still has too many lines
+/// In child:
+// - STDOUT made to point to file, if needed.
+// - "redirect stdin to prevpipe"
+// - run the command, everything will be cleared with that process exit
+// discard extra reference
+// In parent (i.e. the shell):
+// - wait for the child, collect exit code for g_procstatus
+// - close output reference IF it is not STDOUT
+// - close input reference IF it is not STDIn
 void	run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt)
 {
 	pid_t		child;
-	extern int	g_procstatus;
 
 	child = fork();
 	if (child == -1)
 		g_procstatus = errno;
 	else if (child == 0)
 	{
-		if ((o_file >= 0) && (o_file != STDOUT_FILENO))	// Detect whether redirection is *needed*
+		if ((o_file >= 0) && (o_file != STDOUT_FILENO))
 		{
-			dup2(o_file, STDOUT_FILENO); // Although if these are equal, nothing happens.
-			close (o_file);	// if o_file was set as STDOUT before, closing would be dangerous as they are the *same* fd, not like dup (new fd pointing to same resource)
+			dup2(o_file, STDOUT_FILENO);
+			close (o_file);
 		}
-		dup2(i_file, STDIN_FILENO);	// Expect this to be the same as with pipe
+		dup2(i_file, STDIN_FILENO);
 		if (i_file >= 0)
 			close(i_file);
-		run_command(cmd, envt);	// after this all fds of the child are released.
+		run_command(cmd, envt);
 	}
 	else
 	{
 		waitpid(child, &g_procstatus, 0);
-		if ((o_file >= 0) && (o_file != STDOUT_FILENO))	// Make sure we don't close STDOUT if no redirection was given.
-			close(o_file);	// This makes sense if we are writing to a file *and* have access to it.
+		if ((o_file >= 0) && (o_file != STDOUT_FILENO))
+			close(o_file);
 		if ((i_file >= 0) && (i_file != STDIN_FILENO))
 			close(i_file);
-		printf("process finished with code: %i\n", g_procstatus); // HACK for debugging
 	}
 }
