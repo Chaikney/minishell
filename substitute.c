@@ -15,7 +15,7 @@
 // Find a variable and add its value into the parameter we are preparing.
 // NOTE Special treatment needed for the $? variable as it is discarded
 // after printing.
-int	add_value_into_param(char **par, int *r_pos, const char *cmd, t_env *envt)
+int	add_value_to_par(char **par, int *r_pos, const char *cmd, t_env *envt)
 {
 	char	*vname;
 	char	*vvalue;
