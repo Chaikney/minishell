@@ -13,29 +13,34 @@
 #include "minishell.h"
 
 // Find a variable and add its value into the parameter we are preparing.
+// NOTE Special treatment needed for the $? variable as it is discarded
+// after printing.
 int	add_value_into_param(char **par, int *r_pos, const char *cmd, t_env *envt)
 {
 	char	*vname;
 	char	*vvalue;
+	char	*ptr;
 	int		name_len;
 	int		val_len;
 
 	vname = get_var_name(&cmd[*r_pos]);
 	val_len = 0;
-	if (vname)
+	if (!vname)
+		return (0);
+	name_len = ft_strlen(vname) + 1;
+	vvalue = get_value_of_env(vname, envt);
+	while (name_len-- > 0)
+		(*r_pos)++;
+	if (vvalue)
 	{
-		name_len = ft_strlen(vname) + 1;
-		vvalue = get_value_of_env(vname, envt);
-		while (name_len-- > 0)
-			(*r_pos)++;
-		if (vvalue)
-		{
-			val_len = ft_strlen(vvalue);
-			while (*vvalue != '\0')
-				*(*par)++ = *vvalue++;
-		}
-		free (vname);
+		val_len = ft_strlen(vvalue);
+		ptr = vvalue;
+		while (*ptr != '\0')
+			*(*par)++ = *ptr++;
+		if (ft_strncmp(vname, "?", name_len) == 0)
+			free (vvalue);
 	}
+	free (vname);
 	return (val_len);
 }
 
