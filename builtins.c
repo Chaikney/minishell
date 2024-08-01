@@ -46,6 +46,10 @@ static t_builtin	detailed_parse_builtin(t_command *cmd, int posn)
 // If more complicated parsing is needed, we call detailed_parse_builtin
 // NOTE We no longer check if the command has extra arguments
 // - the builtin can just ignore them
+// FIXED Segfaults here given ><
+// It splits to 2 tokens but one command - should not happen?
+// but how to guard against?
+// FIXME Still a problem if >© is given.
 t_builtin	parse_builtin(t_command *cmd, int posn)
 {
 	t_builtin	retvalue;
