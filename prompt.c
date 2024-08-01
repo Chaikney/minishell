@@ -15,7 +15,7 @@
 // Return a part of the working directory to show in prompt
 // linesize limits how many characters we show
 // DONE make work with t_env
-// TODO Do I need to free full_wd?
+// NOTE I think I do NOT need to free full_wd as it points to a string in tenv
 char	*get_shrt_wd(t_env *envt)
 {
 	char	*cut_wd;

@@ -90,7 +90,6 @@ void	add_to_env_list(t_env *lsthead, t_env *to_add)
 // - find value
 // - set marker to next t_env
 // TODO Move to a setup file or similar.
-// TODO Consider duplicating all values so wwe can free them at the end
 t_env	*parse_env(char **envp)
 {
 	t_env	*ptr;

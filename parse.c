@@ -19,7 +19,7 @@
 // FIXME Lines are too long for norminette - a match function needed?
 t_builtin parse_builtin(t_command *cmd, int posn)
 {
-	if (cmd->argc == 0)
+	if ((cmd->argc == 0) || (cmd->argc < posn))
 		return (NONE);
 	if ((ft_strncmp(cmd->argv[posn], "cd", 2) == 0) && (ft_strlen(cmd->argv[posn]) == 2))
 		return (CD);
@@ -198,6 +198,7 @@ t_command	*build_command(char **tokens)
 	else
 		i++;	// step over the pipe.
     // TODO Break out the builtin parsing to elsewhere.
+    // NOTE feeding this ./minishell makes it go to posn 2 and crash
 	if ((new_cmd->argv[0]) && (ft_isalpha(new_cmd->argv[0][1]) == 1))
 		new_cmd->builtin = parse_builtin(new_cmd, 0);
 	else
