@@ -61,53 +61,6 @@ char	**quote_aware_split(const char *cmdline, t_env *envt)
 	return (params);
 }
 
-// Return a -1 if there are illegal combinations of tokens
-// e.g. multiple attempts at redirection for either I or O
-// DONE Implement sanity checks on token set.
-// [x]	do not start with a pipe
-// [x]	do not end with a pipe
-// [x]	do not have both > and >>
-// [x]	do not have both < and <<
-// [x]	do not have more than one input directive
-// [x]	do not have more than one output directive
-// [ ]	have text after any control char
-// FIXME Too long for norm now
-int	check_tokens(char **arr)
-{
-	int	num_input;
-	int	num_output;
-	int	i;
-	int	is_bad;
-
-	num_input = 0;
-	num_output = 0;
-	is_bad = 0;
-	i = 0;
-	if (ft_strncmp(arr[0], "|", 1) == 0)
-		is_bad = -1;
-	while (arr[i] != NULL)
-	{
-		if (ft_strncmp(arr[i], "<", 1) == 0)
-		{
-			num_input++;
-			if ((arr[i + 1]) && (ft_isalpha(arr[i + 1][0]) == 0))
-				is_bad = -1;
-		}
-		if (ft_strncmp(arr[i], ">", 1) == 0)
-		{
-			num_output++;
-			if ((arr[i + 1]) && (ft_isalpha(arr[i + 1][0]) == 0))
-				is_bad = -1;
-		}
-		i++;
-	}
-	if (ft_strncmp(arr[i - 1], "|", 1) == 0)
-		is_bad = -1;
-	if ((num_input > 1) || (num_output > 1))
-		is_bad = -1;
-	return (is_bad);
-}
-
 // Clear the list of tokens generated from the cmdline.
 // FIXED Sometimes this clear unitialised values - set to blank when set?
 // Or stop when NULL reached?

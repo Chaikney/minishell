@@ -97,8 +97,11 @@ void		ms_export_t(t_command *cmd, t_env **envt);
 t_command	*parse_input(char *cmdline, t_env *envt);
 char		**quote_aware_split(const char *cmdline, t_env *envt);
 int			count_tokens(char **arr);
-int			check_tokens(char **arr);
 void		wipe_tokens(char **arr);
+
+// checks.c - sanity checks on token order
+int			check_tokens(char **arr);
+int			proximity_test(char **arr);
 
 // input.c - functions for redirecting input
 int			stopword_input(t_command *cmd, int fd[2]);

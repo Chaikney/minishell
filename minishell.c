@@ -96,6 +96,7 @@ int	startup_checks(int argc)
 // FIXME cat << a << b << c << d - again, what should it do?
 // FIXME echo "thing" > out | less	what then? Problem was it did not recognise the redir.
 // FIXME Must be able to delete PATH and be forced to only work from absolute paths.
+// FIXME it is really easy to render it useless in a cat-walking on keybord situation
 int	main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;
