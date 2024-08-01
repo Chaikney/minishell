@@ -32,7 +32,7 @@ void	eval(char *cmdline, char **envp, t_env *envt)
 	if (trimmed == NULL)
 		perror("command line is NULL\n");
 	free (cmdline);
-	cmd = parse(trimmed, envt);
+	cmd = parse_input(trimmed, envt);
 	if (cmd)
 	{
 		direct_complex_command(cmd, envp, envt);

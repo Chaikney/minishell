@@ -60,6 +60,25 @@ t_command	*build_command(char **tokens)
 	return (new_cmd);
 }
 
+t_command	*build_command_list(char **tokens)
+{
+	int			num_pipes;
+	t_command	*next_cmd;
+	t_command	*cmd_ptr;
+	t_command	*cmd_head;
+
+	num_pipes = count_pipes(tokens);
+	cmd_head = build_command(tokens);
+	cmd_ptr = cmd_head;
+	while (num_pipes-- > 0)
+	{
+		next_cmd = build_command(tokens);
+		cmd_ptr->next = next_cmd;
+		cmd_ptr = cmd_ptr->next;
+	}
+	return (cmd_head);
+}
+
 // Take an array of strings (tokens from the split cmdline)
 // Return the number of pipe characters it contains.
 int	count_pipes(char **arr)

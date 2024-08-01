@@ -131,44 +131,23 @@ int	count_tokens(char **arr)
 // - cmdline:  set by readline in main
 // - tokens:	list of strings mallocd to a set size
 // - cmd_trim:	copy of cmdline without leading / trailing spaces; freed here
-// DONE Create the t_command list explicitly here (not later split)
-// FIXME make parse function shorter
-// DONE Perhaps the trim of cmdline should happen elsewhere?
-// DONE Split out "count pipes" functioning
-// DONE Must free tokens if the checks do not pass.
-// FIXED Too many variables in parse.
-t_command	*parse(char *cmdline, t_env *envt)
+t_command	*parse_input(char *cmdline, t_env *envt)
 {
 	char		**tokens;
-	t_command	*next_cmd;
-	t_command	*cmd_ptr;
 	t_command	*cmd_head;
-	int			num_pipes;
 
 	tokens = quote_aware_split(cmdline, envt);
 	free (cmdline);
 	if (!tokens)
 		return (NULL);
-	print_tokens(tokens);	// HACK for debugging, remove later.
 	if (check_tokens(tokens) == -1)
 	{
 		wipe_tokens(tokens);
 		return (NULL);
 	}
-	num_pipes = count_pipes(tokens);
-	cmd_head = build_command(tokens);
-	cmd_ptr = cmd_head;
-	while (num_pipes > 0)
-	{
-		next_cmd = build_command(tokens);
-		cmd_ptr->next = next_cmd;
-		num_pipes--;
-		cmd_ptr = cmd_ptr->next;
-		print_cmd_parts(next_cmd);	// HACK for debugging, remove later
-	}
+	cmd_head = build_command_list(tokens);
 	wipe_tokens(tokens);
 	if (cmd_head->argv[0] == NULL)
 		return (NULL);
-	print_cmd_parts(cmd_head);	// HACK for debugging
     return (cmd_head);
 }

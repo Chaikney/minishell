@@ -96,7 +96,7 @@ void		ms_export_display_t(t_env *envt);
 void		ms_export_t(t_command *cmd, t_env **envt);
 
 // parse.c - functions to read and interpret user input
-t_command	*parse(char *cmdline, t_env *envt);
+t_command	*parse_input(char *cmdline, t_env *envt);
 char	**quote_aware_split(const char *cmdline, t_env *envt);
 int		count_tokens(char **arr);
 int		check_tokens(char **arr);
@@ -124,6 +124,7 @@ int		is_control_char(char c);
 // pipes.c
 t_command	*init_new_command(void);
 t_command	*build_command(char **tokens);
+t_command	*build_command_list(char **tokens);
 int			count_pipes(char **arr);
 
 // signals.c - catch and manage signals like CTRL-C
