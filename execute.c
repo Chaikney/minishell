@@ -30,6 +30,7 @@ void	run_command(t_command *cmd, char **envp, t_env *envt)
 {
 	char	*prog;
 
+	(void) envp;
 	if (cmd->builtin != NONE)
 	{
 		execute_builtin(cmd, envt);
@@ -44,13 +45,13 @@ void	run_command(t_command *cmd, char **envp, t_env *envt)
 		g_procstatus = errno;
 		perror("Executable program not found in PATH");
 	}
-	else if (execve(prog, cmd->argv, envp) == -1)
+	else if (execve(prog, cmd->argv, serialise_env(envt)) == -1)
 	{
 		g_procstatus = errno;
 		perror("Failed to execute program");
 	}
 	free (prog);
-	exit_failed_pipe(cmd, -1, -1);
+	exit_failed_pipe(cmd, -1, -1, envt);
 }
 
 // Check value of cmd->builtin and direct to desired function.

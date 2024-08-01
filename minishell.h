@@ -138,7 +138,7 @@ void	ms_exit(t_command *cmd, t_env *envt);
 void	clear_environment(t_env *envt);
 //void	ms_exit(t_command *cmd);
 void	exit_successful_pipe(t_command *cmd);
-void	exit_failed_pipe(t_command *cmd, int fd_in, int fd_out);
+void	exit_failed_pipe(t_command *cmd, int fd_in, int fd_out, t_env *envt);
 
 // env.c - ENV builtin and environment variable helpers
 char	*make_env_string(char *name, char *value);

@@ -91,10 +91,10 @@ void	run_in_pipe(t_command *cmd, char **envp, int *i_file, t_env *envt)
 	int		tube[2];
 
 	if (pipe(tube) == -1)
-		exit_failed_pipe(NULL, tube[0], tube[1]);
+		exit_failed_pipe(NULL, tube[0], tube[1], envt);
 	child = fork();
 	if (child == -1)
-		exit_failed_pipe(NULL, tube[0], tube[1]);
+		exit_failed_pipe(NULL, tube[0], tube[1], envt);
 	if (child == 0)
 	{
 		close(tube[0]);

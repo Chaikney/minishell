@@ -66,11 +66,13 @@ void	exit_successful_pipe(t_command *cmd)
 }
 
 // Cleanly exit from a failed command in a pipe
-void	exit_failed_pipe(t_command *cmd, int fd_in, int fd_out)
+void	exit_failed_pipe(t_command *cmd, int fd_in, int fd_out, t_env *envt)
 {
 	g_procstatus = errno;
 	if (cmd)
 		clear_t_command(cmd);
+	if (envt)
+		clear_environment(envt);
 	perror(strerror(errno));
 	if ((fd_in) && (fd_in != -1))
 		close(fd_in);

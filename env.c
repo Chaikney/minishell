@@ -14,7 +14,10 @@
 
 // Turn the t_env variables back into a list of string like envp
 // This means that they would work with execve.
-// NOTE Untested, but shoulld be used to  pass to run_command etc
+// NOTE You can see this work by issuing:
+// export LANGUAGE=it
+// chromium
+// ...the browser speaks in Italian
 char	**serialise_env(t_env *env)
 {
 	char	**env_list;
