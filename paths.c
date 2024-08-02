@@ -20,6 +20,8 @@
 // - check access to file, open it
 // NOTE file mode is set to have NO EXEC permission so we don't...
 // ...attempt to execute any file with the same name as a program in the wd
+// FIXED <z> leads to double free segfault.
+// TODO Would be good to check validity of o_path here...
 int	determine_output(t_command *cmd)
 {
 	int		i;
@@ -38,6 +40,7 @@ int	determine_output(t_command *cmd)
 			if (ft_strncmp(cmd->argv[i], ">>", 2) == 0)
 				perms = O_WRONLY | O_CREAT | O_APPEND;
 			o_path = cmd->argv[i + 1];
+			printf("\n%s is output", o_path);	// HACK for debugging
 			o_fd = open(o_path, perms, 0666);
 			if (o_fd == -1)
 			{

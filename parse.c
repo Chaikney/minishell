@@ -103,6 +103,7 @@ t_command	*parse_input(char *cmdline, t_env *envt)
 	if (check_tokens(tokens) == -1)
 	{
 		wipe_tokens(tokens);
+		perror("malformed input. Try bash or tee. Or stop messing about");
 		return (NULL);
 	}
 	cmd_head = build_command_list(tokens);

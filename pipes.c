@@ -53,6 +53,7 @@ t_command	*build_command(char **tokens)
 		i = 0;
 	else
 		i++;
+	print_tokens(tokens);
 	// NOTE here we try to decide if we have a redirection and route around it
 	if ((new_cmd->argv[0]) &&
 		(ft_isalpha(new_cmd->argv[0][1]) == 1))
