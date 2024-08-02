@@ -76,6 +76,8 @@ int	no_extreme_controls(char **arr)
 // Return a -1 if there are illegal combinations of tokens
 // [x]	have text after any control char
 // FIXME Unsure about this test.
+// Return a -1 if there are illegal combinations of tokens
+// [x]	have text after any control char
 int	proximity_test(char **arr)
 {
 	int	i;
