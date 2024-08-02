@@ -58,6 +58,8 @@ void	clear_environment(t_env *envt)
 // SO, the builtins, basically.
 // (File descriptors were handled before calling this.)
 // NOTE Do not need to clear_environment because it persists.
+// NOTE Builtins that refuse to run (e.g. cd echo echo) also give this
+// "Success" message, which is misleading.
 void	exit_successful_pipe(t_command *cmd)
 {
 	clear_t_command(cmd);
