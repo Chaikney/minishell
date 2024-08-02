@@ -32,8 +32,8 @@ int	proximity_test(char **arr)
 				is_bad = -1;
 				break ;
 			}
-			i++;
 		}
+		i++;
 	}
 	return (is_bad);
 }
