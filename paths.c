@@ -40,7 +40,6 @@ int	determine_output(t_command *cmd)
 			if (ft_strncmp(cmd->argv[i], ">>", 2) == 0)
 				perms = O_WRONLY | O_CREAT | O_APPEND;
 			o_path = cmd->argv[i + 1];
-			printf("\n%s is output", o_path);	// HACK for debugging
 			o_fd = open(o_path, perms, 0666);
 			if (o_fd == -1)
 			{

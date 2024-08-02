@@ -173,6 +173,6 @@ void		print_list(t_env *node);
 void		remove_node(t_env **first, t_env *target);
 
 // debug.c TODO delete later
-void	print_tokens(char **arr);
-void	print_cmd_parts(t_command *cmd);
+void		print_tokens(char **arr);
+void		print_cmd_parts(t_command *cmd);
 #endif

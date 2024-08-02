@@ -91,12 +91,14 @@ int	startup_checks(int argc)
 // ...readline man page says this what it returns on EOF on an empty line.
 // NOTE Exit called by user does not need to free prompt
 // ....as we destory it before eval
-// FIXME segfault with <>
+// FIXED segfault with <>
 // FIXME cat << a - what shouuld it do??
 // FIXME cat << a << b << c << d - again, what should it do?
 // FIXME echo "thing" > out | less	what then? Problem was it did not recognise the redir.
-// FIXME Must be able to delete PATH and be forced to only work from absolute paths.
+// FIXED Must be able to delete PATH and be forced to only work from absolute paths.
 // FIXME it is really easy to render it useless in a cat-walking on keybord situation
+// FIXME Can trigger segfault in paarse builtin by rolling hand on keyboard.
+// ...goes beyond MAXARGS or token size?
 int	main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;

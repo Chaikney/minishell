@@ -97,7 +97,6 @@ int	no_extreme_controls(char **arr)
 
 	is_bad = 0;
 	len = count_tokens(arr);
-	printf("array len is %i", len);	// HACK remove, debugging
 	if (is_control_char(arr[len - 1][0]) == 1)
 		return (-1);
 	if ((arr[0][0] == '|') || (arr[0][0] == '>'))
