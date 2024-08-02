@@ -17,6 +17,9 @@
 // Any redirection token is followed by a file
 // bad returns -1
 // TODO Not fully implemented yet.
+// Find a control structure then check:
+// i + 1 is a file
+// ...and is accessible, or could be created
 int	has_target(char **arr)
 {
 	int	i;
@@ -27,8 +30,8 @@ int	has_target(char **arr)
 		if ((ft_strncmp(arr[i], "<", 1) == 0)
 			|| (ft_strncmp(arr[i], ">", 1) == 0))
 		{
-			// i + 1 is a file
-			// ...and is accessible, or could be created
+			if (is_control_char(arr[i + 1][0]) == 1)
+				return (-1);
 		}
 		i++;
 	}
