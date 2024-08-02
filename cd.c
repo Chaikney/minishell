@@ -33,9 +33,9 @@ static char	*get_cd_target(t_command *cmd)
 	if (cmd->argc != 2)
 	{
 		if (cmd->argc > 2)
-			cd_error("cd: One single argument required\n", E2BIG);
+			cd_error("cd: One single argument required", E2BIG);
 		else
-			cd_error("cd: One single argument required\n", EINVAL);
+			cd_error("cd: One single argument required", EINVAL);
 		return (NULL);
 	}
 	else if (ft_strncmp(cmd->argv[1], "~", 2) == 0)
