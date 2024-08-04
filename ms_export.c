@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 19:22:10 by chaikney          #+#    #+#             */
-/*   Updated: 2024/08/01 03:30:10 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/08/03 10:46:11 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,13 +107,16 @@ void	ms_export_t(t_command *cmd, t_env **envt)
 		while (i <= (cmd->argc - 1))
 		{
 			evar_name = get_export_name(cmd->argv[i]);
-			if ((!evar_name) || (is_legal_name(evar_name) == 0))
-				perror ("failed");
 			evar_newvalue = get_export_value(cmd->argv[i]);
-			if (is_in_envt(evar_name, *envt) == 0)
-				t_add_new_env_var(evar_name, evar_newvalue, *envt);
+			if ((!evar_name) || (is_legal_name(evar_name) == 0))
+				printf("failed\n");
 			else
-				t_replace_env_var(evar_name, evar_newvalue, envt);
+			{
+				if (is_in_envt(evar_name, *envt) == 0)
+					t_add_new_env_var(evar_name, evar_newvalue, *envt);
+				else
+					t_replace_env_var(evar_name, evar_newvalue, envt);
+			}
 			i++;
 			free (evar_name);
 			free (evar_newvalue);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 12:39:41 by chaikney          #+#    #+#             */
-/*   Updated: 2024/07/29 12:39:44 by chaikney         ###   ########.fr       */
+/*   Updated: 2024/08/03 13:47:11 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 // Variables are freed outside of this function.
 static void	cd_error(char *errmsg, int err)
 {
-	perror(errmsg);
+	printf("%s\n",errmsg);
 	g_procstatus = err;
 }
 
@@ -37,7 +37,11 @@ static char	*get_cd_target(t_command *cmd)
 		if (cmd->argc > 2)
 			cd_error("cd: One single argument required", E2BIG);
 		else
-			cd_error("cd: One single argument required", EINVAL);
+		{
+			target = getenv("HOME");
+			return (target);
+		}
+		
 		return (NULL);
 	}
 	else if (ft_strncmp(cmd->argv[1], "~", 2) == 0)

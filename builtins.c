@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 19:47:34 by chaikney          #+#    #+#             */
-/*   Updated: 2024/07/31 20:06:59 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/08/03 17:06:37 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,11 +147,15 @@ void	ms_unset(t_command *cmd, t_env *enviro)
 			var_name = get_export_name(cmd->argv[i]);
 			if ((!var_name) || (is_legal_name(var_name) == 0))
 			{
-				perror ("unset failed");
+				printf("unset failed\n");
 				g_procstatus = ENOMEM;
 			}
-			if (is_in_envt(var_name, enviro) == 1)
+			else 
+			{
+				if (is_in_envt(var_name, enviro) == 1)
 				int_unset(var_name, enviro);
+			}
+			
 			i++;
 			free (var_name);
 		}
