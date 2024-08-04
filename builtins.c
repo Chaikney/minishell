@@ -129,6 +129,7 @@ void	int_unset(char *unset_var, t_env *enviro)
 // TEST cases and expected (bash) behaviour:
 // [x] unset a variable that we set previously using export
 // [x] unset a variable that was inherited
+// FIXME ms_unset has more than 25 lines
 void	ms_unset(t_command *cmd, t_env *enviro)
 {
 	int		i;
@@ -150,12 +151,11 @@ void	ms_unset(t_command *cmd, t_env *enviro)
 				printf("unset failed\n");
 				g_procstatus = ENOMEM;
 			}
-			else 
+			else
 			{
 				if (is_in_envt(var_name, enviro) == 1)
-				int_unset(var_name, enviro);
+					int_unset(var_name, enviro);
 			}
-			
 			i++;
 			free (var_name);
 		}

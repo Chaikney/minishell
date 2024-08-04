@@ -93,6 +93,7 @@ char	*get_export_value(char *str)
 // With options, it sets (adds or updates) variables in the
 // process environment.
 // Without options, it displays those options in a particular format.
+// FIXME ms_export_t has too many lines.
 void	ms_export_t(t_command *cmd, t_env **envt)
 {
 	char	*evar_name;

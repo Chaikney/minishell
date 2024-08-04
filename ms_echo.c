@@ -17,6 +17,7 @@
 void	ms_echo(t_command *cmd)
 {
 	int	i;
+
 	i = 0;
 	if (cmd->builtin == ECHO)
 		i = 1;
@@ -24,11 +25,12 @@ void	ms_echo(t_command *cmd)
 		i = 2;
 	while (i < cmd->argc)
 	{
-		while((cmd->argv[i][0] == '-' && cmd->argv[i][1] == 'n') && cmd->argv[i + 1] != NULL)
+		while ((cmd->argv[i][0] == '-' && cmd->argv[i][1] == 'n')
+			&& cmd->argv[i + 1] != NULL)
 			i++;
-		if(cmd->argv[i][0] == '-'  && cmd->argv[i][1] == 'n')
+		if (cmd->argv[i][0] == '-' && cmd->argv[i][1] == 'n')
 			i++;
-		if(cmd->argv[i] != NULL)
+		if (cmd->argv[i] != NULL)
 		{
 			printf("%s", cmd->argv[i]);
 			if (i < cmd->argc - 1)

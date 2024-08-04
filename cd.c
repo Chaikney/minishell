@@ -17,7 +17,7 @@
 // Variables are freed outside of this function.
 static void	cd_error(char *errmsg, int err)
 {
-	printf("%s\n",errmsg);
+	printf("%s\n", errmsg);
 	g_procstatus = err;
 }
 
@@ -41,7 +41,6 @@ static char	*get_cd_target(t_command *cmd)
 			target = getenv("HOME");
 			return (target);
 		}
-		
 		return (NULL);
 	}
 	else if (ft_strncmp(cmd->argv[1], "~", 2) == 0)
