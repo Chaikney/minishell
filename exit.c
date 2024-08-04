@@ -23,6 +23,7 @@ void	ms_exit(t_command *cmd, t_env *envt)
 	printf("Agurrrr....\n");
 	clear_t_command(cmd);
 	clear_environment(envt);
+	rl_clear_history();
 	exit(EXIT_SUCCESS);
 }
 
