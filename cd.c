@@ -12,7 +12,6 @@
 
 #include "minishell.h"
 
-// free whatever vars need to be freed.
 // Display appropriate error message
 // Static because it is specific to the CD function
 // Variables are freed outside of this function.
@@ -58,17 +57,19 @@ static char	*get_cd_target(t_command *cmd)
 // [x] cd ../..							move up two levels
 // [x] cd ../other_folder					Move to sibling folder
 // [x] cd ~									go to $HOME
+// NOTE Check target before accessing oldpwd. If not, oldpwd is not freed.
+// cd .. then cd then exit
 void	ms_cd(t_command *cmd, t_env *envt)
 {
 	char	*oldpwd;
 	char	*new_pwd;
 	char	*target;
 
-	oldpwd = NULL;
-	oldpwd = getcwd(oldpwd, 0);
 	target = get_cd_target(cmd);
 	if (!target)
 		return ;
+	oldpwd = NULL;
+	oldpwd = getcwd(oldpwd, 0);
 	if (chdir(target) != 0)
 		cd_error("Target not found", ENOENT);
 	else
@@ -80,6 +81,7 @@ void	ms_cd(t_command *cmd, t_env *envt)
 		g_procstatus = 0;
 	}
 	free (oldpwd);
+	return ;
 }
 
 // After cd is issued, this updates the PWD and OLDPWD variables.
