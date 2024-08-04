@@ -58,12 +58,16 @@ void	clear_environment(t_env *envt)
 // ran in a pipe but hasn't otherwise (i.e. via execve) been exited.
 // SO, the builtins, basically.
 // (File descriptors were handled before calling this.)
+// TODO Check the assetion below by clearing envt
 // NOTE Do not need to clear_environment because it persists.
-// NOTE Builtins that refuse to run (e.g. cd echo echo) also give this
+// We check the g_procstatus value and exit(fail) because if not,
+// builtins that refuse to run (e.g. cd echo echo) give a
 // "Success" message, which is misleading.
 void	exit_successful_pipe(t_command *cmd)
 {
 	clear_t_command(cmd);
+	if (g_procstatus != 0)
+		exit (EXIT_FAILURE);
 	g_procstatus = 0;
 	exit (EXIT_SUCCESS);
 }

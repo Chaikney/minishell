@@ -26,6 +26,9 @@ static void	cd_error(char *errmsg, int err)
 // and return the target to use.
 // NOTE This is mainly so we can use ~ as an alias for $HOME
 // ....but other things might be possible?
+// NOTE The return does not need to  be freed because it is either:
+// - assigned in getenv
+// - freed as part of clear_t_command.
 static char	*get_cd_target(t_command *cmd)
 {
 	char	*target;
@@ -67,7 +70,7 @@ void	ms_cd(t_command *cmd, t_env *envt)
 	if (!target)
 		return ;
 	if (chdir(target) != 0)
-		printf("wrong address\n");
+		cd_error("Target not found", ENOENT);
 	else
 	{
 		new_pwd = NULL;
