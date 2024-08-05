@@ -71,6 +71,22 @@ t_env	*parse_env(char **envp)
 	return (NULL);
 }
 
+void	startup_message(void)
+{
+	printf("\n********************************************\n");
+	printf("\n\tWelcome to Minishell!\nby chaikney and emedina- for 42U\n");
+	printf("\n********************************************\n");
+	printf("This interactive-only shell supports:\n\t- multiple pipes\n\t");
+	printf("- input and output redirection and\n\t- variable substitution.\n");
+	printf("Note that this is *not* a clone of bash and all its quirks.\n");
+	printf("Other shells like fish have been considered in its design.\n");
+	printf("This shell does *not* support:");
+	printf("\n\t- Multiple or mid-pipe redirection");
+	printf("\n\t- Running a copy of itself.\n\t- Running in a pipe,");
+	printf("\n\t- Wildcards / globbing, or\n\t- Script execution.\n");
+	printf("\n********************************************\n");
+}
+
 // Simple checks for the validity of launch.
 // - We must be in an interactive terminal
 // - There are no extra arguments given.
@@ -89,6 +105,7 @@ int	startup_checks(int argc)
 		exit (EXIT_FAILURE);
 	}
 	setup_signals();
+	startup_message();
 	return (0);
 }
 
