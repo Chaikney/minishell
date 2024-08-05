@@ -26,6 +26,11 @@ void	eval(char *cmdline, t_env *envt)
 	t_command	*cmd;
 	char		*trimmed;
 
+	if (ft_strlen(cmdline) > MAXPARAM)
+	{
+		printf("Input too long for **MINI**shell to process...\n");
+		return ;
+	}
 	trimmed = ft_strtrim(cmdline, " ");
 	if (trimmed == NULL)
 		perror("command line is NULL\n");
