@@ -114,7 +114,7 @@ int	no_extreme_controls(char **arr)
 // [x]	do not have more than one input directive
 // [x]	do not have more than one output directive
 // [ ]	have text after any control char
-// FIXME < test less is legit!!!
+// FIXED < test less is legit!!!
 int	check_tokens(char **arr)
 {
 	int	is_bad;

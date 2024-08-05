@@ -97,12 +97,17 @@ int	startup_checks(int argc)
 // NOTE Exit called by user does not need to free prompt
 // ....as we destory it before eval
 // FIXED segfault with <>
-// FIXME cat << a - what shouuld it do??
-// FIXME cat << a << b << c << d - again, what should it do?
+// NOTE cat << a - in bash this relies on multiline input.
+// Here we are not required to handle that ("no unclosed quotes") therefore
+// use CTRL-D to end the input.
+// NOTE cat << a << b << c << d - whatever it does in bash,
+// 		we do *not* handle multiple redirection.
 // FIXME echo "thing" > out | less	what then? Problem was it did not recognise the redir.
+// bash & fish - out contains "thing", less is blank
+// TODO Test echo thing > out -- would expect redirection.
 // FIXED Must be able to delete PATH and be forced to only work from absolute paths.
-// FIXME it is really easy to render it useless in a cat-walking on keybord situation
-// FIXME Can trigger segfault in paarse builtin by rolling hand on keyboard.
+// FIXED it is really easy to render it useless in a cat-walking on keybord situation
+// FIXED Can trigger segfault in paarse builtin by rolling hand on keyboard.
 // ...goes beyond MAXARGS or token size?
 int	main(int argc, char **argv, char **envp)
 {
