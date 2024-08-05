@@ -20,10 +20,10 @@ char	*get_blank_param(void)
 {
 	char	*par;
 
-	par = malloc(sizeof(char) * 256);
+	par = malloc(sizeof(char) * MAXPARAM);
 	if (!par)
 		return (NULL);
-	ft_bzero(par, 256);
+	ft_bzero(par, MAXPARAM);
 	return (par);
 }
 
@@ -37,10 +37,7 @@ char	*grab_control_seq(const char *cmd, int *posn)
 	char	*par;
 
 	i = 0;
-	par = malloc(sizeof(char) * 256);
-	if (!par)
-		return (NULL);
-	ft_bzero(par, 256);
+	par = get_blank_param();
 	if (cmd[*posn] == cmd[*posn + 1])
 	{
 		par[i] = cmd[*posn];
@@ -115,6 +112,7 @@ void	change_parse_mode(char c, int *mode, int *pos)
 // 0 - raw
 // 1 - "weak"
 // 2 - 'strong'		copy everything in the quotes, unaltered
+// FIXME Must protect the main loop from going past the end of param (MAXPARAM)
 char	*get_any_parameter(const char *cmdline, int *posn, t_env *envt)
 {
 	char	*param;

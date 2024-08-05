@@ -17,6 +17,10 @@
 #  define MAXARGS 128
 # endif
 
+# ifndef MAXPARAM
+#  define MAXPARAM 512
+# endif
+
 # include <stdio.h>	// perror
 # include <readline/readline.h>	// readline input
 # include <readline/history.h>	// readline history
