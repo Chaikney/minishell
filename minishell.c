@@ -126,7 +126,6 @@ int	startup_checks(int argc)
 // FIXED it is really easy to render it useless in a cat-walking on keybord situation
 // FIXED Can trigger segfault in paarse builtin by rolling hand on keyboard.
 // ...goes beyond MAXARGS or token size?
-// FIXME echo $' makes unrecoverable state
 int	main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;
