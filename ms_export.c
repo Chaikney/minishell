@@ -12,35 +12,6 @@
 
 #include "minishell.h"
 
-// Return the NAME part of str. OR NULL if the name is invalid.
-// NOTE Each argument to EXPORT should be
-// in the form NAME=VALUE, without spaces
-// therefore, the part to = is the NAME
-// See how long the part before = is
-// Allocate that space (+ 1 for null terminator)
-// Copy backwards to zero
-char	*get_export_name(char *str)
-{
-	int		len;
-	char	*name;
-
-	len = 0;
-	while ((str[len] != '\0') && (str[len] != '='))
-		len++;
-	if (len == 0)
-		return (NULL);
-	name = malloc(sizeof(char) * (len + 1));
-	if (!name)
-		return (NULL);
-	name[len] = '\0';
-	while (len > 0)
-	{
-		len--;
-		name[len] = str[len];
-	}
-	return (name);
-}
-
 // EXPORT with no options displays an ordered list of the
 // environment variables in a specific format.
 void	ms_export_display_t(t_env *envt)
@@ -65,45 +36,43 @@ void	ms_export_display_t(t_env *envt)
 		printf("\n");
 }
 
-// return the VALUE part of a NAME=VALUE pair to process in EXPORT
-// Variables:
-// - value:		the string returned. Must be freed later.
-// - midpoint:	index of the = character.
-// - len:		Number of chars we have to copy from value.
-char	*get_export_value(char *str)
-{
-	int		midpoint;
-	int		len;
-	char	*value;
-
-	if (ft_strchr(str, '=') == NULL)
-		return (NULL);
-	midpoint = 0;
-	len = 0;
-	while ((str[midpoint] != '\0') && (str[midpoint] != '='))
-		midpoint++;
-	midpoint++;
-	while (str[midpoint + len] != '\0')
-		len++;
-	value = ft_substr(str, midpoint, len);
-	return (value);
-}
-
 static void	export_error(char *errmsg, int err)
 {
 	printf("%s\n", errmsg);
 	g_procstatus = err;
 }
 
-// Builtin EXPORT command.
-// With options, it sets (adds or updates) variables in the
-// process environment.
-// Without options, it displays those options in a particular format.
-// FIXME ms_export_t has too many lines.
-void	ms_export_t(t_command *cmd, t_env **envt)
+// sets (adds or updates) variables in the
+// process environment .
+// Splits the parameter into value and name parts
+// If the name does not exist, adds it.
+// If the name already exists, unsets then adds it.
+static void	export_single_var(char *par, t_env **envt)
 {
 	char	*evar_name;
 	char	*evar_newvalue;
+
+	evar_name = get_export_name(par);
+	evar_newvalue = get_export_value(par);
+	if ((!evar_name) || (is_legal_name(evar_name) == 0))
+		export_error("failed", 1);
+	else
+	{
+		if (is_in_envt(evar_name, *envt) == 0)
+			t_add_new_env_var(evar_name, evar_newvalue, *envt);
+		else
+			t_replace_env_var(evar_name, evar_newvalue, envt);
+	}
+	free (evar_name);
+	free (evar_newvalue);
+}
+
+// Guiding function for Builtin EXPORT command.
+// With options, it sets (adds or updates) variables in the
+// process environment via export_single_var.
+// Without options, it displays those options in a particular format.
+void	ms_export_t(t_command *cmd, t_env **envt)
+{
 	int		i;
 
 	i = 1;
@@ -113,20 +82,8 @@ void	ms_export_t(t_command *cmd, t_env **envt)
 	{
 		while (i <= (cmd->argc - 1))
 		{
-			evar_name = get_export_name(cmd->argv[i]);
-			evar_newvalue = get_export_value(cmd->argv[i]);
-			if ((!evar_name) || (is_legal_name(evar_name) == 0))
-				export_error("failed", 1);
-			else
-			{
-				if (is_in_envt(evar_name, *envt) == 0)
-					t_add_new_env_var(evar_name, evar_newvalue, *envt);
-				else
-					t_replace_env_var(evar_name, evar_newvalue, envt);
-			}
+			export_single_var(cmd->argv[i], envt);
 			i++;
-			free (evar_name);
-			free (evar_newvalue);
 		}
 	}
 }

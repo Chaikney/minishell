@@ -94,8 +94,6 @@ void		ms_echo(t_command *cmd);
 void		int_unset(char *unset_var, t_env *enviro);
 
 // ms_export.c - and related helpers
-char		*get_export_name(char *str);
-char		*get_export_value(char *str);
 void		ms_export_display_t(t_env *envt);
 void		ms_export_t(t_command *cmd, t_env **envt);
 
@@ -122,10 +120,11 @@ void		remove_cmd_parts(t_command *cmd, char *target);
 int			determine_output(t_command *cmd);
 
 // helpers.c - finder and helper functions
-char		*search_in_path(char *cmd, t_env *envt);
 void		goto_stop_char(const char *cmdline, int *posn);
 int			is_legal_name(char *str);
 int			is_control_char(char c);
+char		*get_export_name(char *str);
+char		*get_export_value(char *str);
 
 // pipes.c
 t_command	*init_new_command(void);
@@ -169,6 +168,7 @@ char		*get_prompt(t_env *envt);
 
 // execute.c -functions to execute commands
 void		run_command(t_command *cmd, t_env *envt);
+char		*search_in_path(char *cmd, t_env *envt);
 void		execute_builtin(t_command *cmd, t_env *env);
 
 //sort.c

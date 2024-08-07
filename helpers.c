@@ -35,43 +35,6 @@ void	goto_stop_char(const char *cmdline, int *posn)
 		(*posn)++;
 }
 
-// Return an executable path for cmd.
-// NOTE cmd must be the name only, not any of its arguments.
-// - split the pieces of PATH and add a trailing slash.
-// - test the parts of path:
-// -- does path + cmd = an executable?
-// -- if YES we have our command: keep that and discard the rest.
-// NOTE The return value of getenv("PATH") does not need to be freed
-// FIXED Don't use getenv for this.
-// FIXME search_in_path is too long for norm
-char	*search_in_path(char *cmd, t_env *envt)
-{
-	char	**pathparts;
-	char	*candidate;
-	char	*slashed;
-	char	*goodpath;
-	int		i;
-
-	i = 0;
-	goodpath = NULL;
-	pathparts = ft_split(get_value_of_env("PATH", envt), ':');
-	while ((pathparts[i] != NULL) && (!goodpath))
-	{
-		slashed = ft_strjoin(pathparts[i], "/");
-		candidate = ft_strjoin(slashed, cmd);
-		if (access(candidate, X_OK) == 0)
-			goodpath = ft_strdup(candidate);
-		free (candidate);
-		free(slashed);
-		i++;
-	}
-	i = -1;
-	while (pathparts[++i] != NULL)
-		free(pathparts[i]);
-	free(pathparts);
-	return (goodpath);
-}
-
 // Checks to see if the string is a valid shell variable name
 // 1 - YES is a valid name
 // 0 - NO the name is not valid
@@ -95,4 +58,57 @@ int	is_legal_name(char *str)
 			return (0);
 	}
 	return (1);
+}
+
+// return the VALUE part of a NAME=VALUE pair to process in EXPORT
+// Variables:
+// - value:		the string returned. Must be freed later.
+// - midpoint:	index of the = character.
+// - len:		Number of chars we have to copy from value.
+char	*get_export_value(char *str)
+{
+	int		midpoint;
+	int		len;
+	char	*value;
+
+	if (ft_strchr(str, '=') == NULL)
+		return (NULL);
+	midpoint = 0;
+	len = 0;
+	while ((str[midpoint] != '\0') && (str[midpoint] != '='))
+		midpoint++;
+	midpoint++;
+	while (str[midpoint + len] != '\0')
+		len++;
+	value = ft_substr(str, midpoint, len);
+	return (value);
+}
+
+// Return the NAME part of str. OR NULL if the name is invalid.
+// NOTE Each argument to EXPORT should be
+// in the form NAME=VALUE, without spaces
+// therefore, the part to = is the NAME
+// See how long the part before = is
+// Allocate that space (+ 1 for null terminator)
+// Copy backwards to zero
+char	*get_export_name(char *str)
+{
+	int		len;
+	char	*name;
+
+	len = 0;
+	while ((str[len] != '\0') && (str[len] != '='))
+		len++;
+	if (len == 0)
+		return (NULL);
+	name = malloc(sizeof(char) * (len + 1));
+	if (!name)
+		return (NULL);
+	name[len] = '\0';
+	while (len > 0)
+	{
+		len--;
+		name[len] = str[len];
+	}
+	return (name);
 }
