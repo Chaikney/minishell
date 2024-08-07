@@ -73,14 +73,16 @@ void	exit_successful_pipe(t_command *cmd)
 }
 
 // Cleanly exit from a failed command in a pipe
+// Problem here: errno is updated very frequently.
+// That leads to lots of "Success" messages we don't want
+// NOTE g_procstatus must be properly set before we arrive here.
 void	exit_failed_pipe(t_command *cmd, int fd_in, int fd_out, t_env *envt)
 {
-	g_procstatus = errno;
 	if (cmd)
 		clear_t_command(cmd);
 	if (envt)
 		clear_environment(envt);
-	perror(strerror(errno));
+	perror(strerror(g_procstatus));
 	if ((fd_in) && (fd_in != -1))
 		close(fd_in);
 	if ((fd_out) && (fd_out != -1))
