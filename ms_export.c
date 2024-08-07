@@ -89,6 +89,12 @@ char	*get_export_value(char *str)
 	return (value);
 }
 
+static void	export_error(char *errmsg, int err)
+{
+	printf("%s\n", errmsg);
+	g_procstatus = err;
+}
+
 // Builtin EXPORT command.
 // With options, it sets (adds or updates) variables in the
 // process environment.
@@ -110,7 +116,7 @@ void	ms_export_t(t_command *cmd, t_env **envt)
 			evar_name = get_export_name(cmd->argv[i]);
 			evar_newvalue = get_export_value(cmd->argv[i]);
 			if ((!evar_name) || (is_legal_name(evar_name) == 0))
-				printf("failed\n");
+				export_error("failed", 1);
 			else
 			{
 				if (is_in_envt(evar_name, *envt) == 0)
