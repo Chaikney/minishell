@@ -14,6 +14,35 @@
 
 // Functions that handle the execution and running of commands.
 
+// Not S_ISREG - Not a regular file, don't execute
+// Not S_IXUSER - Not executable by owner, don't execute
+void	check_prog(char *prog)
+{
+	struct stat	pstat;
+
+	g_procstatus = 0;
+	if (!prog)
+	{
+		g_procstatus = errno;
+		perror("Executable program not found in PATH");
+	}
+	else if (stat(prog, &pstat) == -1)
+	{
+		g_procstatus = errno;
+		perror("Failed to stat program");
+	}
+	else if (!S_ISREG(pstat.st_mode))
+	{
+		g_procstatus = EPERM;
+		perror("Not a regular file");
+	}
+	else if (!(pstat.st_mode & S_IXUSR))
+	{
+		g_procstatus = EPERM;
+		perror("Not executable");
+	}
+}
+
 // Take a command (must be at argv[0])
 // If it is a builtin, run that and exit the child process.
 // NOTE Ensure that EXIT has been handled outside of a fork!
@@ -26,6 +55,8 @@
 // - Any fork-ing needed has been handled before calling this.
 // NOTE The lines at the end are only reached if execve fails
 // DONE Need to serialise_envt so that execve gets uptodate ENV
+// FIXED Block attempts to exectute directories (. or ...)
+// FIXME failed commmands leave us in broken state.
 void	run_command(t_command *cmd, t_env *envt)
 {
 	char	*prog;
@@ -37,18 +68,17 @@ void	run_command(t_command *cmd, t_env *envt)
 		exit_successful_pipe(cmd);
 	}
 	if (access(cmd->argv[0], X_OK) == 0)
-		prog = cmd->argv[0];
+		prog = ft_strdup(cmd->argv[0]);
 	else if (is_in_envt("PATH", envt) == 1)
 		prog = search_in_path(cmd->argv[0], envt);
-	if ((!prog) || (access(prog, X_OK) != 0))
+	check_prog (prog);
+	if (g_procstatus == 0)
 	{
-		g_procstatus = errno;
-		perror("Executable program not found in PATH");
-	}
-	else if (execve(prog, cmd->argv, serialise_env(envt)) == -1)
-	{
-		g_procstatus = errno;
-		perror("Failed to execute program");
+		if (execve(prog, cmd->argv, serialise_env(envt)) == -1)
+		{
+			g_procstatus = errno;
+			perror("Failed to execute program");
+		}
 	}
 	free (prog);
 	exit_failed_pipe(cmd, -1, -1, envt);

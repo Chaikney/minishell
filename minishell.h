@@ -32,6 +32,7 @@
 # include <string.h>	// strerror
 # include "libft/libft.h"
 # include <signal.h>	// catch CRTL-c, CTRL-d, other signals
+# include <sys/stat.h>	// stat, lstat and associated macros.
 
 // global variable to hold exit codes
 extern int	g_procstatus;
