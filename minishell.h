@@ -108,8 +108,8 @@ int			check_tokens(char **arr);
 int			proximity_test(char **arr);
 
 // input.c - functions for redirecting input
-int			stopword_input(t_command *cmd, int fd[2]);
-int			setup_input(t_command *cmd, int i_lvl);
+int			stopword_input(t_command *cmd, int fd[2], int posn);
+int			setup_input(t_command *cmd, int i_lvl, int posn);
 int			determine_input(t_command *cmd);
 
 // paths.c - find and direct programs in PATH

@@ -42,8 +42,7 @@ static int	word_match(char *stop, char *line)
 // -- waits for reader to finish
 // - returns the read end of the parent's pipe
 // NOTE read end of pipe is not needed by GNL
-// NOTE stopword = cmd->argv[1] is a hardcoded assumption, is it safe?
-int	stopword_input(t_command *cmd, int fd[2])
+int	stopword_input(t_command *cmd, int fd[2], int posn)
 {
 	int		reader;
 	char	*line;
@@ -55,7 +54,7 @@ int	stopword_input(t_command *cmd, int fd[2])
 		while (1)
 		{
 			line = get_next_line(STDIN_FILENO);
-			if (word_match(cmd->argv[1], line) == 1)
+			if (word_match(cmd->argv[posn + 1], line) == 1)
 			{
 				free (line);
 				exit_successful_pipe(cmd);
@@ -80,7 +79,7 @@ int	stopword_input(t_command *cmd, int fd[2])
 // bash quits with error and doesn’t run the command.
 // If it succeeds, bash uses the file descriptor
 // of the opened file as the stdin file descriptor for the command.
-int	setup_input(t_command *cmd, int i_lvl)
+int	setup_input(t_command *cmd, int i_lvl, int posn)
 {
 	char	*i_path;
 	int		i_file;
@@ -89,11 +88,11 @@ int	setup_input(t_command *cmd, int i_lvl)
 	if (i_lvl == 2)
 	{
 		pipe(fd);
-		i_file = stopword_input(cmd, fd);
+		i_file = stopword_input(cmd, fd, posn);
 	}
 	else if (i_lvl == 1)
 	{
-		i_path = cmd->argv[1];
+		i_path = cmd->argv[posn + 1];
 		i_file = open(i_path, O_RDONLY);
 		if (i_file == -1)
 			g_procstatus = errno;
@@ -125,7 +124,7 @@ int	determine_input(t_command *cmd)
 			i_redir = 1;
 			if (ft_strncmp(cmd->argv[i], "<<", 2) == 0)
 				i_redir = 2;
-			i_fd = setup_input(cmd, i_redir);
+			i_fd = setup_input(cmd, i_redir, i);
 		}
 		i++;
 	}
