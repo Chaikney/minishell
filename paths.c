@@ -69,14 +69,20 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 	while (cmd->next != NULL)
 	{
 		run_in_pipe(cmd, &i_redir, envt);
-		cmd = cmd->next;
+		if (g_procstatus == 0)
+			cmd = cmd->next;
+		else
+			return ;
 	}
-	o_redir = determine_output(cmd);
-	remove_cmd_parts(cmd, ">");
-	if (cmd->builtin != NONE)
-		execute_builtin(cmd, envt);
-	else
-		run_final_cmd(cmd, i_redir, o_redir, envt);
+	if (g_procstatus == 0)
+	{
+		o_redir = determine_output(cmd);
+		remove_cmd_parts(cmd, ">");
+		if (cmd->builtin != NONE)
+			execute_builtin(cmd, envt);
+		else
+			run_final_cmd(cmd, i_redir, o_redir, envt);
+	}
 }
 
 // Make a child process to execute the command, putting the output in a pipe
