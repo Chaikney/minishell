@@ -22,6 +22,7 @@ OBJ		= $(SRC:.c=.o)
 #	libft variables
 FTDIR	= ./libft
 FTLIB	= -L $(FTDIR) -lft
+LIBFT	= $(FTDIR)/libft.a
 
 LIBS	= $(FTLIB) -lreadline
 
@@ -32,17 +33,16 @@ HEADERS	= -I $(FTDIR)
 
 all: $(NAME)
 
-$(NAME): libft $(OBJ)
-#	$(CC) $(OBJ) -o $(NAME)
+$(NAME): $(OBJ) $(LIBFT)
 	$(CC) $(OBJ) $(HEADERS) $(LIBS) -o $(NAME)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-libft:
+$(LIBFT):
 	make -C $(FTDIR)
 
-.PHONY: clean, all, fclean, re, libft
+.PHONY: clean, all, fclean, re
 
 clean:
 	/bin/rm -f *.o
