@@ -53,10 +53,10 @@ t_command	*build_command(char **tokens)
 		i = 0;
 	else
 		i++;
-	if ((new_cmd->argv[0]) && (ft_isalpha(new_cmd->argv[0][1]) == 1))
-		new_cmd->builtin = parse_builtin(new_cmd, 0);
-	else
+	if ((new_cmd->argv[0]) && (is_control_char(new_cmd->argv[0][0]) == 1))
 		new_cmd->builtin = parse_builtin(new_cmd, 2);
+	else
+		new_cmd->builtin = parse_builtin(new_cmd, 0);
 	return (new_cmd);
 }
 

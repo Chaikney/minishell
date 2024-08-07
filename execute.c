@@ -56,7 +56,6 @@ int	check_prog(char *prog)
 // NOTE The lines at the end are only reached if execve fails
 // DONE Need to serialise_envt so that execve gets uptodate ENV
 // FIXED Block attempts to exectute directories (. or ...)
-// FIXME failed commmands leave us in broken state.
 void	run_command(t_command *cmd, t_env *envt)
 {
 	char	*prog;
