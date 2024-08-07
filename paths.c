@@ -59,22 +59,26 @@ int	determine_output(t_command *cmd)
 // - if the final command is a builtin, execute it directly.
 // - otherwise pass it to be run in a fork
 // NOTE i_redir is passed as pointer to change for the next step in pipe.
+// NOTE We need use last_status to not run a final_cmd if penultimate fails.
+// ...cant use g-proc because it leaves us in an unrecoverable state.
 void	direct_complex_command(t_command *cmd, t_env *envt)
 {
 	int			o_redir;
 	int			i_redir;
+	int			last_status;
 
+	last_status = 0;
 	i_redir = determine_input(cmd);
 	remove_cmd_parts(cmd, "<");
 	while (cmd->next != NULL)
 	{
-		run_in_pipe(cmd, &i_redir, envt);
-		if (g_procstatus == 0)
+		last_status = run_in_pipe(cmd, &i_redir, envt);
+		if (last_status == 0)
 			cmd = cmd->next;
 		else
 			return ;
 	}
-	if (g_procstatus == 0)
+	if (last_status == 0)
 	{
 		o_redir = determine_output(cmd);
 		remove_cmd_parts(cmd, ">");
@@ -101,7 +105,7 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 // - wait for the child, collect exit code for g_procstatus
 // - Keep hold of the read end of this pipe for the next run.
 // NOTE The input file pointer connects us to the previous command in pipe.
-void	run_in_pipe(t_command *cmd, int *i_file, t_env *envt)
+int	run_in_pipe(t_command *cmd, int *i_file, t_env *envt)
 {
 	pid_t	child;
 	int		tube[2];
@@ -126,6 +130,7 @@ void	run_in_pipe(t_command *cmd, int *i_file, t_env *envt)
 		waitpid(child, &g_procstatus, 0);
 		*i_file = tube[0];
 	}
+	return (g_procstatus);
 }
 
 // Simplest command runner.

@@ -16,31 +16,31 @@
 
 // Not S_ISREG - Not a regular file, don't execute
 // Not S_IXUSER - Not executable by owner, don't execute
-void	check_prog(char *prog)
+int	check_prog(char *prog)
 {
 	struct stat	pstat;
+	int			retval;
 
-	g_procstatus = 0;
-	if (!prog)
+	retval = 0;
+	if ((!prog) || (stat(prog, &pstat) == -1))
 	{
 		g_procstatus = errno;
-		perror("Executable program not found in PATH");
-	}
-	else if (stat(prog, &pstat) == -1)
-	{
-		g_procstatus = errno;
-		perror("Failed to stat program");
+		perror("not found or cannot stat program");
+		retval = -1;
 	}
 	else if (!S_ISREG(pstat.st_mode))
 	{
 		g_procstatus = EPERM;
 		perror("Not a regular file");
+		retval = -1;
 	}
 	else if (!(pstat.st_mode & S_IXUSR))
 	{
 		g_procstatus = EPERM;
 		perror("Not executable");
+		retval = -1;
 	}
+	return (retval);
 }
 
 // Take a command (must be at argv[0])
@@ -71,8 +71,7 @@ void	run_command(t_command *cmd, t_env *envt)
 		prog = ft_strdup(cmd->argv[0]);
 	else if (is_in_envt("PATH", envt) == 1)
 		prog = search_in_path(cmd->argv[0], envt);
-	check_prog (prog);
-	if (g_procstatus == 0)
+	if (check_prog (prog) == 0)
 	{
 		if (execve(prog, cmd->argv, serialise_env(envt)) == -1)
 		{
