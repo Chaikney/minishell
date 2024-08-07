@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 12:39:25 by chaikney          #+#    #+#             */
-/*   Updated: 2024/08/03 15:04:17 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/08/07 23:27:21 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,7 @@ void	ms_echo(t_command *cmd)
 		i = 2;
 	while (i < cmd->argc)
 	{
-		while ((cmd->argv[i][0] == '-' && cmd->argv[i][1] == 'n')
-			&& cmd->argv[i + 1] != NULL)
-			i++;
-		if (cmd->argv[i][0] == '-' && cmd->argv[i][1] == 'n')
-			i++;
+		i = echon(cmd, i);
 		if (cmd->argv[i] != NULL)
 		{
 			printf("%s", cmd->argv[i]);
@@ -41,4 +37,17 @@ void	ms_echo(t_command *cmd)
 	if (cmd->builtin == ECHO)
 		printf("\n");
 	return ;
+}
+
+int	echon(t_command *cmd, int i)
+{
+	if (cmd->argv[1][0] == '-' && cmd->argv[1][1] == 'n')
+	{
+		while ((cmd->argv[i][0] == '-' && cmd->argv[i][1] == 'n')
+			&& cmd->argv[i + 1] != NULL)
+			i++;
+		if (cmd->argv[i][0] == '-' && cmd->argv[i][1] == 'n')
+			i++;
+	}
+	return(i);
 }
