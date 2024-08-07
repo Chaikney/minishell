@@ -119,13 +119,10 @@ int	startup_checks(int argc)
 // use CTRL-D to end the input.
 // NOTE cat << a << b << c << d - whatever it does in bash,
 // 		we do *not* handle multiple redirection.
-// FIXME echo "thing" > out | less	what then? Problem was it did not recognise the redir.
+// FIXME echo "thing" > out | less	what then?
+// Problem was it did not recognise the redir.
 // bash & fish - out contains "thing", less is blank
 // TODO Test echo thing > out -- would expect redirection.
-// FIXED Must be able to delete PATH and be forced to only work from absolute paths.
-// FIXED it is really easy to render it useless in a cat-walking on keybord situation
-// FIXED Can trigger segfault in paarse builtin by rolling hand on keyboard.
-// ...goes beyond MAXARGS or token size?
 int	main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;

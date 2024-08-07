@@ -112,7 +112,6 @@ void	change_parse_mode(char c, int *mode, int *pos)
 // 0 - raw
 // 1 - "weak"
 // 2 - 'strong'		copy everything in the quotes, unaltered
-// FIXME Must protect the main loop from going past the end of param (MAXPARAM)
 char	*get_any_parameter(const char *cmdline, int *posn, t_env *envt)
 {
 	char	*param;
@@ -134,12 +133,7 @@ char	*get_any_parameter(const char *cmdline, int *posn, t_env *envt)
 		while ((p_mode == 0) && (!ft_strchr("|><$ \'\"", cmdline[*posn])))
 			*ptr++ = cmdline[(*posn)++];
 		if ((p_mode != 2) && (cmdline[*posn] == '$'))
-		{
-			if ((cmdline[*posn + 1] == ' ') || (cmdline[*posn + 1] == '\0'))
-				*ptr++ = cmdline[(*posn)++];
-			else
-				add_value_to_par(&ptr, posn, cmdline, envt);
-		}
+			examine_var(&ptr, posn, cmdline, envt);
 		if ((cmdline[*posn] == '\'') || (cmdline[*posn] == '\"'))
 			change_parse_mode(cmdline[*posn], &p_mode, posn);
 	}

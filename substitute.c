@@ -12,6 +12,25 @@
 
 #include "minishell.h"
 
+int	examine_var(char **par, int *r_pos, const char *cmd, t_env *envt)
+{
+	char	*ptr;
+	int		val_len;
+
+	ptr = *par;
+	val_len = 0;
+	if ((cmd[*r_pos + 1] == ' ') || (cmd[*r_pos + 1] == '\0'))
+		*ptr++ = cmd[(*r_pos)++];
+	else if (cmd[*r_pos + 1] == '$')
+	{
+		while (cmd[*r_pos] == '$')
+			*ptr++ = cmd[(*r_pos)++];
+	}
+	else
+		val_len = add_value_to_par(par, r_pos, cmd, envt);
+	return (val_len);
+}
+
 // Find a variable and add its value into the parameter we are preparing.
 // Returns the length of the value added in.
 // NOTE Special treatment needed for freeing the $? variable
@@ -25,10 +44,10 @@ int	add_value_to_par(char **par, int *r_pos, const char *cmd, t_env *envt)
 	int		name_len;
 	int		val_len;
 
+	val_len = 0;
 	vname = get_var_name(&cmd[*r_pos]);
 	if ((!vname) || (is_legal_name(vname) == 0))
 		return (ft_strlen(vname));
-	val_len = 0;
 	name_len = ft_strlen(vname) + 1;
 	vvalue = get_value_of_env(vname, envt);
 	while (name_len-- > 0)

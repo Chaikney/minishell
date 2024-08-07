@@ -92,7 +92,7 @@ char	*get_value_of_env(char *name, t_env *envt)
 			return (ptr->value);
 		ptr = ptr->next;
 	}
-	if ((ft_strncmp(name, ptr->vname, len) == 0)&& (len != 0))
+	if ((ft_strncmp(name, ptr->vname, len) == 0) && (len != 0))
 		return (ptr->value);
 	return (NULL);
 }
