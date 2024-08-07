@@ -74,22 +74,25 @@ void	t_add_new_env_var(char *name, char *value, t_env *env)
 // return the value of the env. variaable with name.
 // NULL if not present.
 // Now with the special variable $?
+// FIXED This returns "truecolor" when given $"(the first value)
 char	*get_value_of_env(char *name, t_env *envt)
 {
 	t_env	*ptr;
 	int		len;
 
 	len = ft_strlen(name);
-	if (ft_strncmp(name, "?", len) == 0)
+	if ((len != 0) && (ft_strncmp(name, "?", len) == 0))
 		return (ft_itoa(g_procstatus));
 	ptr = envt;
-	while (ptr->next != NULL)
+	if (is_in_envt(name, envt) == 0)
+		return (NULL);
+	while ((ptr->next != NULL) && (len != 0))
 	{
 		if (ft_strncmp(name, ptr->vname, len) == 0)
 			return (ptr->value);
 		ptr = ptr->next;
 	}
-	if (ft_strncmp(name, ptr->vname, len) == 0)
+	if ((ft_strncmp(name, ptr->vname, len) == 0)&& (len != 0))
 		return (ptr->value);
 	return (NULL);
 }

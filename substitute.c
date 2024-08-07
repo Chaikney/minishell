@@ -13,8 +13,9 @@
 #include "minishell.h"
 
 // Find a variable and add its value into the parameter we are preparing.
-// NOTE Special treatment needed for the $? variable as it is discarded
-// after printing.
+// NOTE Special treatment needed for freeing the $? variable
+// as it is discarded after printing.
+// NOTE A $ alone  or followed by a space should be printed as-is
 int	add_value_to_par(char **par, int *r_pos, const char *cmd, t_env *envt)
 {
 	char	*vname;
@@ -24,9 +25,9 @@ int	add_value_to_par(char **par, int *r_pos, const char *cmd, t_env *envt)
 	int		val_len;
 
 	vname = get_var_name(&cmd[*r_pos]);
+	if ((!vname) || (is_legal_name(vname) == 0))
+		return (ft_strlen(vname));
 	val_len = 0;
-	if (!vname)
-		return (0);
 	name_len = ft_strlen(vname) + 1;
 	vvalue = get_value_of_env(vname, envt);
 	while (name_len-- > 0)
@@ -51,6 +52,8 @@ int	add_value_to_par(char **par, int *r_pos, const char *cmd, t_env *envt)
 // - alloc a string
 // - copy characters
 // NOTE This does not step over the name in the outer string
+// ..then thats a problem, no?
+// FIXME This should refuse " and ' as potential var names
 char	*get_var_name(const char *str)
 {
 	int		name_len;

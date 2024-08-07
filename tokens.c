@@ -134,7 +134,12 @@ char	*get_any_parameter(const char *cmdline, int *posn, t_env *envt)
 		while ((p_mode == 0) && (!ft_strchr("|><$ \'\"", cmdline[*posn])))
 			*ptr++ = cmdline[(*posn)++];
 		if ((p_mode != 2) && (cmdline[*posn] == '$'))
-			add_value_to_par(&ptr, posn, cmdline, envt);
+		{
+			if ((cmdline[*posn + 1] == ' ') || (cmdline[*posn + 1] == '\0'))
+				*ptr++ = cmdline[(*posn)++];
+			else
+				add_value_to_par(&ptr, posn, cmdline, envt);
+		}
 		if ((cmdline[*posn] == '\'') || (cmdline[*posn] == '\"'))
 			change_parse_mode(cmdline[*posn], &p_mode, posn);
 	}
