@@ -70,7 +70,7 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 	last_status = 0;
 	i_redir = determine_input(cmd);
 	remove_cmd_parts(cmd, "<");
-	while (cmd->next != NULL)
+	while ((cmd->next != NULL) && (i_redir != -1))
 	{
 		last_status = run_in_pipe(cmd, &i_redir, envt);
 		if (last_status == 0)
@@ -78,7 +78,7 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 		else
 			return ;
 	}
-	if (last_status == 0)
+	if ((last_status == 0) && (i_redir != -1))
 	{
 		o_redir = determine_output(cmd);
 		remove_cmd_parts(cmd, ">");

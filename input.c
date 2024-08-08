@@ -79,6 +79,7 @@ int	stopword_input(t_command *cmd, int fd[2], int posn)
 // bash quits with error and doesn’t run the command.
 // If it succeeds, bash uses the file descriptor
 // of the opened file as the stdin file descriptor for the command.
+// NOTE If a file opened for input does not exist, do not execute the command.
 int	setup_input(t_command *cmd, int i_lvl, int posn)
 {
 	char	*i_path;
