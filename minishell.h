@@ -91,6 +91,7 @@ int			ms_pwd(void);
 t_builtin	parse_builtin(t_command *cmd, int posn);
 void		ms_echo(t_command *cmd);
 int			echon(t_command *cmd, int i);
+int			needs_to_fork(t_command *cmd);
 
 // ms_unset.c
 void		ms_unset(t_command *cmd, t_env *enviro);

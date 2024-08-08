@@ -82,7 +82,7 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 	{
 		o_redir = determine_output(cmd);
 		remove_cmd_parts(cmd, ">");
-		if (cmd->builtin != NONE)
+		if (needs_to_fork(cmd) == 0)
 			execute_builtin(cmd, envt);
 		else
 			run_final_cmd(cmd, i_redir, o_redir, envt);

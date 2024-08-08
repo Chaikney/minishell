@@ -90,3 +90,18 @@ int	ms_pwd(void)
 	g_procstatus = 0;
 	return (0);
 }
+
+// return 1 if the command needs to fork before running
+// Mostly important for builtins that should allow their output to redirect.
+int	needs_to_fork(t_command *cmd)
+{
+	int	to_fork;
+
+	to_fork = 0;
+	if ((cmd->builtin == NONE) || (cmd->builtin == ENV) || (cmd->builtin == PWD)
+		|| (cmd->builtin == ECHO) || (cmd->builtin == ECHON))
+		to_fork = 1;
+	else if ((cmd->builtin == EXP) && (cmd->argc > 1))
+		to_fork = 1;
+	return (to_fork);
+}

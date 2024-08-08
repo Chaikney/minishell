@@ -128,6 +128,17 @@ void	run_command(t_command *cmd, t_env *envt)
 //  [x] env, no options or args
 //  [x] export
 //  [x] exit no options.
+//  NOTE Some of the builtins must redirect their output
+//  - env
+//  - export
+//  - pwd
+//  - echo
+//  And some that must *not* redirect output
+//  - unset
+//  - cd
+//  - export with value
+//  - exit
+//  This is handled in needs_to_fork and is transparent to the program
 void	execute_builtin(t_command *cmd, t_env *enviro)
 {
 	if (cmd->builtin == CD)
