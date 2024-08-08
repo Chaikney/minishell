@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   helpers.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 17:55:44 by chaikney          #+#    #+#             */
-/*   Updated: 2024/07/16 17:55:49 by chaikney         ###   ########.fr       */
+/*   Updated: 2024/08/08 12:49:43 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ int	is_control_char(char c)
 // (The quote styles are matched for in the main loop.)
 void	goto_stop_char(const char *cmdline, int *posn)
 {
-	while ((cmdline[*posn] != '\0') && (cmdline[*posn] == ' '))
+	while ((cmdline[*posn] != '\0') && (((cmdline[*posn] == ' '))
+	|| (cmdline[*posn] == '\t')))
 		(*posn)++;
 }
 

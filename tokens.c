@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokens.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 17:56:44 by chaikney          #+#    #+#             */
-/*   Updated: 2024/07/16 17:56:47 by chaikney         ###   ########.fr       */
+/*   Updated: 2024/08/08 12:47:11 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,13 +124,14 @@ char	*get_any_parameter(const char *cmdline, int *posn, t_env *envt)
 	while (cmdline[*posn] != '\0')
 	{
 		if ((p_mode == 0) && ((is_control_char(cmdline[*posn]) == 1)
-				|| ((p_mode == 0) && (cmdline[*posn]) == ' ')))
+				|| ((p_mode == 0) && (cmdline[*posn]) == ' ')
+				|| (cmdline[*posn]) == '\t'))
 			break ;
 		while ((p_mode == 2) && (ft_strchr("\''\0", cmdline[*posn]) == NULL))
 			*ptr++ = cmdline[(*posn)++];
 		while ((p_mode == 1) && (ft_strchr("\"$", cmdline[*posn]) == NULL))
 			*ptr++ = cmdline[(*posn)++];
-		while ((p_mode == 0) && (!ft_strchr("|><$ \'\"", cmdline[*posn])))
+		while ((p_mode == 0) && (!ft_strchr("|><$\t \'\"", cmdline[*posn])))
 			*ptr++ = cmdline[(*posn)++];
 		if ((p_mode != 2) && (cmdline[*posn] == '$'))
 			examine_var(&ptr, posn, cmdline, envt);
