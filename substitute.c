@@ -85,7 +85,7 @@ char	*get_var_name(const char *str)
 		return (NULL);
 	ptr++;
 	name_len = 0;
-	while ((ft_strchr("/ \'\"", *ptr) == NULL) && (*ptr != '\0'))
+	while ((ft_strchr("/\\ \'\"", *ptr) == NULL) && (*ptr != '\0'))
 	{
 		name_len++;
 		ptr++;
