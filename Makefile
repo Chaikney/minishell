@@ -15,7 +15,7 @@ NAME	= minishell
 SRC		= minishell.c paths.c parse.c builtins.c substitute.c tokens.c \
 		helpers.c pipes.c input.c ms_echo.c signals.c exit.c env.c cd.c \
 		prompt.c debug.c execute.c ms_export.c sort.c env_vars.c \
-		checks.c
+		checks.c ms_unset.c
 
 OBJ		= $(SRC:.c=.o)
 

@@ -50,5 +50,5 @@ int	echon(t_command *cmd, int i)
 		if (cmd->argv[i][0] == '-' && cmd->argv[i][1] == 'n')
 			i++;
 	}
-	return(i);
+	return (i);
 }

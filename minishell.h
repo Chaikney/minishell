@@ -89,9 +89,11 @@ char		*get_any_parameter(const char *cmdline, int *posn, t_env *envt);
 // builtins.c
 int			ms_pwd(void);
 t_builtin	parse_builtin(t_command *cmd, int posn);
-void		ms_unset(t_command *cmd, t_env *enviro);
 void		ms_echo(t_command *cmd);
-int		echon(t_command *cmd, int i);
+int			echon(t_command *cmd, int i);
+
+// ms_unset.c
+void		ms_unset(t_command *cmd, t_env *enviro);
 void		int_unset(char *unset_var, t_env *enviro);
 
 // ms_export.c - and related helpers
