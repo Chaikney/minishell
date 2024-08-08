@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 17:55:44 by chaikney          #+#    #+#             */
-/*   Updated: 2024/08/08 12:49:43 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/08/08 13:15:16 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	is_control_char(char c)
 void	goto_stop_char(const char *cmdline, int *posn)
 {
 	while ((cmdline[*posn] != '\0') && (((cmdline[*posn] == ' '))
-	|| (cmdline[*posn] == '\t')))
+			|| (cmdline[*posn] == '\t')))
 		(*posn)++;
 }
 

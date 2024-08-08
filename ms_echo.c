@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 12:39:25 by chaikney          #+#    #+#             */
-/*   Updated: 2024/08/08 12:58:23 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/08/08 13:17:48 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ void	ms_echo(t_command *cmd)
 
 int	echon(t_command *cmd, int i)
 {
-	if (cmd->argv[1][0] == '-' && cmd->argv[1][1] == 'n')
+	if (cmd->argv[1][0] == '-' && cmd->argv[1][1] == 'n'
+		&& ft_strlen (cmd->argv[1]) == 2)
 	{
 		while ((cmd->argv[i][0] == '-' && cmd->argv[i][1] == 'n')
 			&& cmd->argv[i + 1] != NULL)
@@ -50,5 +51,5 @@ int	echon(t_command *cmd, int i)
 		if (cmd->argv[i][0] == '-' && cmd->argv[i][1] == 'n')
 			i++;
 	}
-	return(i);
+	return (i);
 }

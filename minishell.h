@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 13:48:26 by chaikney          #+#    #+#             */
-/*   Updated: 2024/08/07 23:20:07 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/08/08 13:14:13 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ int			ms_pwd(void);
 t_builtin	parse_builtin(t_command *cmd, int posn);
 void		ms_unset(t_command *cmd, t_env *enviro);
 void		ms_echo(t_command *cmd);
-int		echon(t_command *cmd, int i);
+int			echon(t_command *cmd, int i);
 void		int_unset(char *unset_var, t_env *enviro);
 
 // ms_export.c - and related helpers
