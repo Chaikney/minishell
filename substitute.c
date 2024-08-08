@@ -68,7 +68,7 @@ int	add_value_to_par(char **par, int *r_pos, const char *cmd, t_env *envt)
 // Return the name of a $variable for later substitution
 // Returns a null-terminated string *without* the $
 // - check we are at $
-// - count length (until a space)
+// - count length (until a space, slash or quote)
 // - alloc a string
 // - copy characters
 // NOTE This does not step over the name in the outer string
@@ -85,7 +85,7 @@ char	*get_var_name(const char *str)
 		return (NULL);
 	ptr++;
 	name_len = 0;
-	while ((ft_strchr(" \'\"", *ptr) == NULL) && (*ptr != '\0'))
+	while ((ft_strchr("/ \'\"", *ptr) == NULL) && (*ptr != '\0'))
 	{
 		name_len++;
 		ptr++;
