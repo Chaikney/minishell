@@ -101,7 +101,7 @@ int	needs_to_fork(t_command *cmd)
 	if ((cmd->builtin == NONE) || (cmd->builtin == ENV) || (cmd->builtin == PWD)
 		|| (cmd->builtin == ECHO) || (cmd->builtin == ECHON))
 		to_fork = 1;
-	else if ((cmd->builtin == EXP) && (cmd->argc > 1))
+	else if ((cmd->builtin == EXP) && (cmd->argc == 1))
 		to_fork = 1;
 	return (to_fork);
 }
