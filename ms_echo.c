@@ -36,6 +36,7 @@ void	ms_echo(t_command *cmd)
 	}
 	if (cmd->builtin == ECHO)
 		printf("\n");
+	g_procstatus = 0;
 	return ;
 }
 

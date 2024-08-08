@@ -87,6 +87,7 @@ int	ms_pwd(void)
 		return (-1);
 	printf("%s\n", wd);
 	free (wd);
+	g_procstatus = 0;
 	return (0);
 }
 
@@ -135,6 +136,7 @@ void	ms_unset(t_command *cmd, t_env *enviro)
 	char	*var_name;
 
 	i = 1;
+	g_procstatus = 0;
 	if (cmd->argc < 2)
 	{
 		perror("unset: missing argument\n");

@@ -76,6 +76,7 @@ void	ms_export_t(t_command *cmd, t_env **envt)
 	int		i;
 
 	i = 1;
+	g_procstatus = 0;
 	if (cmd->argc < 2)
 		ms_export_display_t(*envt);
 	else

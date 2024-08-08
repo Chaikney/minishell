@@ -59,6 +59,7 @@ void	ms_env_t(t_env *environ)
 	}
 	if (ptr->value)
 		printf("%s=%s\n", ptr->vname, ptr->value);
+	g_procstatus = 0;
 }
 
 // Sets up a new t_env node to be added
