@@ -12,6 +12,10 @@
 
 #include "minishell.h"
 
+// Directs variable subsitution.
+// a $ on its own or followed by another = print direct.
+// a variable that does not exist = pass over the variable, print nothing.
+// FIXED If is_legal_name in add_value fails, we don't move on and endless loop
 int	examine_var(char **par, int *r_pos, const char *cmd, t_env *envt)
 {
 	char	*ptr;
@@ -27,7 +31,11 @@ int	examine_var(char **par, int *r_pos, const char *cmd, t_env *envt)
 			*ptr++ = cmd[(*r_pos)++];
 	}
 	else
+	{
 		val_len = add_value_to_par(par, r_pos, cmd, envt);
+		while (val_len-- >= 0)
+			(*r_pos)++;
+	}
 	return (val_len);
 }
 
@@ -42,19 +50,20 @@ int	add_value_to_par(char **par, int *r_pos, const char *cmd, t_env *envt)
 	char	*vvalue;
 	char	*ptr;
 	int		name_len;
-	int		val_len;
 
-	val_len = 0;
 	vname = get_var_name(&cmd[*r_pos]);
+	name_len = ft_strlen(vname);
 	if ((!vname) || (is_legal_name(vname) == 0))
-		return (ft_strlen(vname));
+	{
+		free (vname);
+		return (name_len);
+	}
 	name_len = ft_strlen(vname) + 1;
 	vvalue = get_value_of_env(vname, envt);
 	while (name_len-- > 0)
 		(*r_pos)++;
 	if (vvalue)
 	{
-		val_len = ft_strlen(vvalue);
 		ptr = vvalue;
 		while (*ptr != '\0')
 			*(*par)++ = *ptr++;
@@ -62,7 +71,7 @@ int	add_value_to_par(char **par, int *r_pos, const char *cmd, t_env *envt)
 			free (vvalue);
 	}
 	free (vname);
-	return (val_len);
+	return (name_len);
 }
 
 // Return the name of a $variable for later substitution
