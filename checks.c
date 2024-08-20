@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checks.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/01 19:47:45 by chaikney          #+#    #+#             */
-/*   Updated: 2024/08/01 19:47:47 by chaikney         ###   ########.fr       */
+/*   Updated: 2024/08/20 12:41:22 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ int	no_extreme_controls(char **arr)
 	len = count_tokens(arr);
 	if (is_control_char(arr[len - 1][0]) == 1)
 		return (-1);
-	if ((arr[0][0] == '|') || (arr[0][0] == '>'))
+	if ((arr[0][0] == '|') || (arr[0][0] == '>') || ((arr[0][0] == '<') && (arr[0][1] != '<')))
 		is_bad = -1;
 	return (is_bad);
 }

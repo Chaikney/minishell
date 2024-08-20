@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 17:56:44 by chaikney          #+#    #+#             */
-/*   Updated: 2024/08/08 12:47:11 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/08/20 11:55:45 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,11 @@ void	remove_cmd_parts(t_command *cmd, char *target)
 		i++;
 	}
 	free (cmd->argv[i]);
-	if (to_go == 2)
-		free (cmd->argv[i + 1]);
+	if(target[0] != '<' && target[1] != '<')
+	{
+		if (to_go == 2)
+			free (cmd->argv[i + 1]);
+	}
 	while (cmd->argv[i + to_go] != NULL)
 	{
 		cmd->argv[i] = cmd->argv[i + to_go];

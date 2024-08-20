@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/24 12:16:53 by chaikney          #+#    #+#             */
-/*   Updated: 2024/06/24 12:17:02 by chaikney         ###   ########.fr       */
+/*   Updated: 2024/08/20 10:26:47 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,6 @@ t_command	*parse_input(char *cmdline, t_env *envt)
 {
 	char		**tokens;
 	t_command	*cmd_head;
-
 	tokens = quote_aware_split(cmdline, envt);
 	free (cmdline);
 	if (!tokens)

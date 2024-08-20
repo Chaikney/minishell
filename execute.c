@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 12:37:50 by chaikney          #+#    #+#             */
-/*   Updated: 2024/08/07 22:03:10 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/08/20 12:32:14 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,12 +65,18 @@ char	*search_in_path(char *cmd, t_env *envt)
 	pathparts = ft_split(get_value_of_env("PATH", envt), ':');
 	while ((pathparts[i] != NULL) && (!goodpath))
 	{
-		slashed = ft_strjoin(pathparts[i], "/");
-		candidate = ft_strjoin(slashed, cmd);
-		if (access(candidate, X_OK) == 0)
-			goodpath = ft_strdup(candidate);
-		free (candidate);
-		free(slashed);
+		
+		if(cmd[0] != '<' && cmd[1] != '<')
+		{
+			slashed = ft_strjoin(pathparts[i], "/");
+			candidate = ft_strjoin(slashed, cmd);
+			if (access(candidate, X_OK) == 0)
+				goodpath = ft_strdup(candidate);
+			free (candidate);
+			free(slashed);
+		}
+
+	
 		i++;
 	}
 	i = -1;
@@ -103,10 +109,13 @@ void	run_command(t_command *cmd, t_env *envt)
 		execute_builtin(cmd, envt);
 		exit_successful_pipe(cmd);
 	}
-	if (access(cmd->argv[0], X_OK) == 0)
-		prog = ft_strdup(cmd->argv[0]);
-	else if (is_in_envt("PATH", envt) == 1)
-		prog = search_in_path(cmd->argv[0], envt);
+	if(cmd->argv[0][0] != '<'  && cmd->argv[0][1] != '<')
+	{
+		if (access(cmd->argv[0], X_OK) == 0)
+			prog = ft_strdup(cmd->argv[0]);
+		else if (is_in_envt("PATH", envt) == 1)
+			prog = search_in_path(cmd->argv[0], envt);
+	}
 	if (check_prog (prog) == 0)
 	{
 		if (execve(prog, cmd->argv, serialise_env(envt)) == -1)

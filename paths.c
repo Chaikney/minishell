@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   paths.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 16:03:41 by chaikney          #+#    #+#             */
-/*   Updated: 2024/05/31 16:03:42 by chaikney         ###   ########.fr       */
+/*   Updated: 2024/08/20 12:43:53 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,23 +69,25 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 
 	last_status = 0;
 	i_redir = determine_input(cmd);
-	remove_cmd_parts(cmd, "<");
-	while ((cmd->next != NULL) && (i_redir != -1))
-	{
-		last_status = run_in_pipe(cmd, &i_redir, envt);
-		if (last_status == 0)
-			cmd = cmd->next;
-		else
-			return ;
-	}
-	if ((last_status == 0) && (i_redir != -1))
-	{
-		o_redir = determine_output(cmd);
-		remove_cmd_parts(cmd, ">");
-		if (needs_to_fork(cmd) == 0)
-			execute_builtin(cmd, envt);
-		else
+	if(cmd->argv[0][0] != '<'  && cmd->argv[0][1] != '<')
+	{		
+		remove_cmd_parts(cmd, "<");
+		while ((cmd->next != NULL) && (i_redir != -1))
+		{
+			last_status = run_in_pipe(cmd, &i_redir, envt);
+			if (last_status == 0)
+				cmd = cmd->next;
+			else
+				return ;
+		}
+		if ((last_status == 0) && (i_redir != -1))
+		{
+			o_redir = determine_output(cmd);
+			remove_cmd_parts(cmd, ">");
+			if (needs_to_fork(cmd) == 0)
+				execute_builtin(cmd, envt);
 			run_final_cmd(cmd, i_redir, o_redir, envt);
+		}
 	}
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 13:47:55 by chaikney          #+#    #+#             */
-/*   Updated: 2024/06/06 13:48:06 by chaikney         ###   ########.fr       */
+/*   Updated: 2024/08/20 14:42:51 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,25 @@ void	eval(char *cmdline, t_env *envt)
 {
 	t_command	*cmd;
 	char		*trimmed;
+	int 		len;
 
-	if (ft_strlen(cmdline) > MAXPARAM)
+	len = 0;
+	len = ft_strlen(cmdline);
+	if (len > MAXPARAM)
 	{
 		printf("Input too long for **MINI**shell to process...\n");
 		return ;
 	}
+	if(cmdline[len - 1] == ' ')
+	{
+		free(cmdline);
+		return;
+	}
+
+
 	trimmed = ft_strtrim(cmdline, " ");
 	if (trimmed == NULL)
 		perror("command line is NULL\n");
-	free (cmdline);
 	cmd = parse_input(trimmed, envt);
 	if (cmd)
 	{

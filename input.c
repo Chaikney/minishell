@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 19:46:34 by chaikney          #+#    #+#             */
-/*   Updated: 2024/07/18 19:46:37 by chaikney         ###   ########.fr       */
+/*   Updated: 2024/08/20 10:58:39 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,6 @@ int	setup_input(t_command *cmd, int i_lvl, int posn)
 	char	*i_path;
 	int		i_file;
 	int		fd[2];
-
 	if (i_lvl == 2)
 	{
 		pipe(fd);

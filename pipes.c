@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 17:56:28 by chaikney          #+#    #+#             */
-/*   Updated: 2024/07/16 17:56:32 by chaikney         ###   ########.fr       */
+/*   Updated: 2024/08/20 11:43:16 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ t_command	*build_command(char **tokens)
 		i = 0;
 	else
 		i++;
-	if ((new_cmd->argv[0]) && (is_control_char(new_cmd->argv[0][0]) == 1))
+	if ((new_cmd->argv[0]) && (is_control_char(new_cmd->argv[0][0]) == 1 && is_control_char(new_cmd->argv[0][1]) != 1))
 		new_cmd->builtin = parse_builtin(new_cmd, 2);
 	else
 		new_cmd->builtin = parse_builtin(new_cmd, 0);
