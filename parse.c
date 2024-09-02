@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/24 12:16:53 by chaikney          #+#    #+#             */
-/*   Updated: 2024/08/20 10:26:47 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/09/02 14:29:42 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,15 @@ t_command	*parse_input(char *cmdline, t_env *envt)
 {
 	char		**tokens;
 	t_command	*cmd_head;
+	int run_or_not;
+
+	run_or_not = 0;
+	run_or_not = closed_quotes(cmdline);
+	if(run_or_not == 0)
+	{
+		free(cmdline);
+		return (NULL);
+	}
 	tokens = quote_aware_split(cmdline, envt);
 	free (cmdline);
 	if (!tokens)
@@ -110,4 +119,26 @@ t_command	*parse_input(char *cmdline, t_env *envt)
 	if (cmd_head->argv[0] == NULL)
 		return (NULL);
 	return (cmd_head);
+}
+
+int closed_quotes(char *ptr)
+{
+	int j;
+	int counter1;
+	int counter2;
+	
+	counter1 = 0;
+	counter2 = 0;
+	j = 0;
+	while(ptr[j] != '\0')
+	{
+		if(ptr[j] == '\"')
+			counter1++;
+		if(ptr[j] == '\'')
+			counter2++;
+		j++;	
+	}
+	if(counter1 == 1 || counter2 == 1)
+		return(0);
+	return(1);
 }

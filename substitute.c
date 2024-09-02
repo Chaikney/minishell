@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/28 19:04:12 by chaikney          #+#    #+#             */
-/*   Updated: 2024/08/01 03:04:03 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/09/02 14:23:10 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,6 @@ char	*get_var_name(const char *str)
 	int		name_len;
 	char	*ptr;
 	char	*var_name;
-
 	ptr = (char *) str;
 	if (*ptr != '$')
 		return (NULL);
@@ -146,3 +145,4 @@ char	*ms_strsub(char *str, char *old_sub, char *new_sub)
 		*new_str++ = *str++;
 	return (cptr);
 }
+

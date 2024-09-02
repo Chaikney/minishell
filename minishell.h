@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 13:48:26 by chaikney          #+#    #+#             */
-/*   Updated: 2024/08/08 13:14:13 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/09/02 14:29:42 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ char		*get_var_name(const char *str);
 int			add_value_to_par(char **par, int *pos, const char *cmd, t_env *env);
 int			examine_var(char **par, int *r_pos, const char *cmd, t_env *envt);
 
+
 // tokens.c - break up line according to "quote" 'styles'
 char		*grab_control_seq(const char *cmd, int *posn);
 char		*get_any_parameter(const char *cmdline, int *posn, t_env *envt);
@@ -106,6 +107,7 @@ t_command	*parse_input(char *cmdline, t_env *envt);
 char		**quote_aware_split(const char *cmdline, t_env *envt);
 int			count_tokens(char **arr);
 void		wipe_tokens(char **arr);
+int			closed_quotes(char *ptr);
 
 // checks.c - sanity checks on token order
 int			check_tokens(char **arr);

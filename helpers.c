@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 17:55:44 by chaikney          #+#    #+#             */
-/*   Updated: 2024/08/08 13:15:16 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/09/02 14:04:32 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ int	is_legal_name(char *str)
 		return (0);
 	if ((ft_isdigit(str[0]) == 1) || (str[0] == '\'') || (str[0] == '\"'))
 		return (0);
+
 	if ((str[0] == '?') && (ft_strlen(str) == 1))
 		return (1);
 	while (str[i] != '\0')
