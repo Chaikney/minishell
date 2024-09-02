@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 13:47:55 by chaikney          #+#    #+#             */
-/*   Updated: 2024/08/20 14:42:51 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/09/02 13:10:00 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,19 +28,18 @@ void	eval(char *cmdline, t_env *envt)
 	int 		len;
 
 	len = 0;
-	len = ft_strlen(cmdline);
 	if (len > MAXPARAM)
 	{
 		printf("Input too long for **MINI**shell to process...\n");
 		return ;
 	}
-	if(cmdline[len - 1] == ' ')
+	while(cmdline[len] == ' ')
+		len ++;
+	if(cmdline[len] == '\0')
 	{
-		free(cmdline);
-		return;
+		free (cmdline);
+		return ;
 	}
-
-
 	trimmed = ft_strtrim(cmdline, " ");
 	if (trimmed == NULL)
 		perror("command line is NULL\n");
