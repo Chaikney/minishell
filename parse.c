@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/24 12:16:53 by chaikney          #+#    #+#             */
-/*   Updated: 2024/09/02 14:29:42 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/09/02 14:55:15 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ int closed_quotes(char *ptr)
 			counter2++;
 		j++;	
 	}
-	if(counter1 == 1 || counter2 == 1)
+	if(counter1 % 2 != 0  || counter2 % 2 != 0)
 		return(0);
 	return(1);
 }
