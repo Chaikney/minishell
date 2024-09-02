@@ -133,9 +133,17 @@ int closed_quotes(char *ptr)
 	while(ptr[j] != '\0')
 	{
 		if(ptr[j] == '\"')
+		{
 			counter1++;
+			if(ptr[j - 1] == '\\')
+				counter1--;
+		}
 		if(ptr[j] == '\'')
+		{
 			counter2++;
+			if(ptr[j - 1] == '\\')
+				counter2--;
+		}
 		j++;	
 	}
 	if(counter1 % 2 != 0  || counter2 % 2 != 0)
