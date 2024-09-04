@@ -51,7 +51,6 @@ int	is_legal_name(char *str)
 		return (0);
 	if ((ft_isdigit(str[0]) == 1) || (str[0] == '\'') || (str[0] == '\"'))
 		return (0);
-
 	if ((str[0] == '?') && (ft_strlen(str) == 1))
 		return (1);
 	while (str[i] != '\0')

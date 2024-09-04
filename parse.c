@@ -91,17 +91,18 @@ int	count_tokens(char **arr)
 // - cmdline:  set by readline in main
 // - tokens:	list of strings mallocd to a set size
 // - cmd_trim:	copy of cmdline without leading / trailing spaces; freed here
+// FIXME Too many lines
 t_command	*parse_input(char *cmdline, t_env *envt)
 {
 	char		**tokens;
 	t_command	*cmd_head;
-	int run_or_not;
+	int			run_or_not;
 
 	run_or_not = 0;
 	run_or_not = closed_quotes(cmdline);
-	if(run_or_not == 0)
+	if (run_or_not == 0)
 	{
-		free(cmdline);
+		free (cmdline);
 		return (NULL);
 	}
 	tokens = quote_aware_split(cmdline, envt);
@@ -121,32 +122,34 @@ t_command	*parse_input(char *cmdline, t_env *envt)
 	return (cmd_head);
 }
 
-int closed_quotes(char *ptr)
+// FIXME No description of function
+// FIXME Function has too many lines
+int	closed_quotes(char *ptr)
 {
-	int j;
-	int counter1;
-	int counter2;
-	
+	int	j;
+	int	counter1;
+	int	counter2;
+
 	counter1 = 0;
 	counter2 = 0;
 	j = 0;
-	while(ptr[j] != '\0')
+	while (ptr[j] != '\0')
 	{
-		if(ptr[j] == '\"')
+		if (ptr[j] == '\"')
 		{
 			counter1++;
-			if(ptr[j - 1] == '\\')
+			if (ptr[j - 1] == '\\')
 				counter1--;
 		}
-		if(ptr[j] == '\'')
+		if (ptr[j] == '\'')
 		{
 			counter2++;
-			if(ptr[j - 1] == '\\')
+			if (ptr[j - 1] == '\\')
 				counter2--;
 		}
-		j++;	
+		j++;
 	}
-	if(counter1 % 2 != 0  || counter2 % 2 != 0)
-		return(0);
-	return(1);
+	if (counter1 % 2 != 0 || counter2 % 2 != 0)
+		return (0);
+	return (1);
 }

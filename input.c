@@ -85,6 +85,7 @@ int	setup_input(t_command *cmd, int i_lvl, int posn)
 	char	*i_path;
 	int		i_file;
 	int		fd[2];
+
 	if (i_lvl == 2)
 	{
 		pipe(fd);

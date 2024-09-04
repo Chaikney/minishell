@@ -64,6 +64,7 @@ char	*grab_control_seq(const char *cmd, int *posn)
 // - Ensure last NULL is copied
 // - Adjust value of argc
 // NOTE The target parts *must* have already been processed.
+// FIXME Too many lines in function
 void	remove_cmd_parts(t_command *cmd, char *target)
 {
 	int	i;
@@ -81,7 +82,7 @@ void	remove_cmd_parts(t_command *cmd, char *target)
 		i++;
 	}
 	free (cmd->argv[i]);
-	if(target[0] != '<' && target[1] != '<')
+	if (target[0] != '<' && target[1] != '<')
 	{
 		if (to_go == 2)
 			free (cmd->argv[i + 1]);

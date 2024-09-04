@@ -86,6 +86,7 @@ char	*get_var_name(const char *str)
 	int		name_len;
 	char	*ptr;
 	char	*var_name;
+
 	ptr = (char *) str;
 	if (*ptr != '$')
 		return (NULL);
@@ -145,4 +146,3 @@ char	*ms_strsub(char *str, char *old_sub, char *new_sub)
 		*new_str++ = *str++;
 	return (cptr);
 }
-

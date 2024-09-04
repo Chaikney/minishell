@@ -21,11 +21,12 @@ int	g_procstatus;
 // as some builtins don't work in pipes!
 // - EXIT has to be an exit from the shell.
 // - EXPORT has to change values in the process above.
+// FIXME Too many lines
 void	eval(char *cmdline, t_env *envt)
 {
 	t_command	*cmd;
 	char		*trimmed;
-	int 		len;
+	int			len;
 
 	len = 0;
 	if (len > MAXPARAM)
@@ -33,9 +34,9 @@ void	eval(char *cmdline, t_env *envt)
 		printf("Input too long for **MINI**shell to process...\n");
 		return ;
 	}
-	while(cmdline[len] == ' ')
+	while (cmdline[len] == ' ')
 		len ++;
-	if(cmdline[len] == '\0')
+	if (cmdline[len] == '\0')
 	{
 		free (cmdline);
 		return ;

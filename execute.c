@@ -65,8 +65,7 @@ char	*search_in_path(char *cmd, t_env *envt)
 	pathparts = ft_split(get_value_of_env("PATH", envt), ':');
 	while ((pathparts[i] != NULL) && (!goodpath))
 	{
-		
-		if(cmd[0] != '<' && cmd[1] != '<')
+		if (cmd[0] != '<' && cmd[1] != '<')
 		{
 			slashed = ft_strjoin(pathparts[i], "/");
 			candidate = ft_strjoin(slashed, cmd);
@@ -75,8 +74,6 @@ char	*search_in_path(char *cmd, t_env *envt)
 			free (candidate);
 			free(slashed);
 		}
-
-	
 		i++;
 	}
 	i = -1;
@@ -109,7 +106,7 @@ void	run_command(t_command *cmd, t_env *envt)
 		execute_builtin(cmd, envt);
 		exit_successful_pipe(cmd);
 	}
-	if(cmd->argv[0][0] != '<'  && cmd->argv[0][1] != '<')
+	if (cmd->argv[0][0] != '<' && cmd->argv[0][1] != '<')
 	{
 		if (access(cmd->argv[0], X_OK) == 0)
 			prog = ft_strdup(cmd->argv[0]);

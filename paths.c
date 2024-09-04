@@ -61,6 +61,7 @@ int	determine_output(t_command *cmd)
 // NOTE i_redir is passed as pointer to change for the next step in pipe.
 // NOTE We need use last_status to not run a final_cmd if penultimate fails.
 // ...cant use g-proc because it leaves us in an unrecoverable state.
+// FIXME Too many lines in function
 void	direct_complex_command(t_command *cmd, t_env *envt)
 {
 	int			o_redir;
@@ -69,8 +70,8 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 
 	last_status = 0;
 	i_redir = determine_input(cmd);
-	if(cmd->argv[0][0] != '<'  && cmd->argv[0][1] != '<')
-	{		
+	if (cmd->argv[0][0] != '<' && cmd->argv[0][1] != '<')
+	{
 		remove_cmd_parts(cmd, "<");
 		while ((cmd->next != NULL) && (i_redir != -1))
 		{

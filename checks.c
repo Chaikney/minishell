@@ -99,7 +99,8 @@ int	no_extreme_controls(char **arr)
 	len = count_tokens(arr);
 	if (is_control_char(arr[len - 1][0]) == 1)
 		return (-1);
-	if ((arr[0][0] == '|') || (arr[0][0] == '>') || ((arr[0][0] == '<') && (arr[0][1] != '<')))
+	if ((arr[0][0] == '|') || (arr[0][0] == '>')
+		|| ((arr[0][0] == '<') && (arr[0][1] != '<')))
 		is_bad = -1;
 	return (is_bad);
 }
