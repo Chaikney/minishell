@@ -20,8 +20,10 @@
 // - check access to file, open it
 // NOTE file mode is set to have NO EXEC permission so we don't...
 // ...attempt to execute any file with the same name as a program in the wd
-// FIXED <z> leads to double free segfault.
 // TODO Would be good to check validity of o_path here...
+// TODO What changes are needed to determine_output to make in-pipe redir work?
+// Can it be called on *any* command? I think yes, the problem before was
+// the the operation made 0 sense. (Still the case,  but now we are doing it...)
 int	determine_output(t_command *cmd)
 {
 	int		i;
@@ -59,9 +61,14 @@ int	determine_output(t_command *cmd)
 // - if the final command is a builtin, execute it directly.
 // - otherwise pass it to be run in a fork
 // NOTE i_redir is passed as pointer to change for the next step in pipe.
+// NOTE i_redir of -1 means....? Nothing?
+// TODO Test whether the i_redir -1 does *anything* or should be removed
 // NOTE We need use last_status to not run a final_cmd if penultimate fails.
 // ...cant use g-proc because it leaves us in an unrecoverable state.
 // FIXME Too many lines in function
+// TODO They want output redir to work *within* pipes now.
+// ...probably *not* as a pointer because the output gets lost and the
+// next command has to function with blankness from STDIN
 void	direct_complex_command(t_command *cmd, t_env *envt)
 {
 	int			o_redir;
@@ -73,9 +80,11 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 	if (cmd->argv[0][0] != '<' && cmd->argv[0][1] != '<')
 	{
 		remove_cmd_parts(cmd, "<");
+		o_redir = determine_output(cmd);
+		remove_cmd_parts(cmd, ">");
 		while ((cmd->next != NULL) && (i_redir != -1))
 		{
-			last_status = run_in_pipe(cmd, &i_redir, envt);
+			last_status = run_in_pipe(cmd, &i_redir, o_redir, envt);
 			if (last_status == 0)
 				cmd = cmd->next;
 			else
@@ -108,7 +117,10 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 // - wait for the child, collect exit code for g_procstatus
 // - Keep hold of the read end of this pipe for the next run.
 // NOTE The input file pointer connects us to the previous command in pipe.
-int	run_in_pipe(t_command *cmd, int *i_file, t_env *envt)
+// TODO Make output_redir relevant in run_in_pipe
+// - pass o_redir
+// - change the child process dup2 calls
+int	run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt)
 {
 	pid_t	child;
 	int		tube[2];
@@ -121,7 +133,7 @@ int	run_in_pipe(t_command *cmd, int *i_file, t_env *envt)
 	if (child == 0)
 	{
 		close(tube[0]);
-		dup2(tube[1], STDOUT_FILENO);
+		dup2(tube[1], o_file);
 		close(tube[1]);
 		dup2(*i_file, STDIN_FILENO);
 		close(*i_file);

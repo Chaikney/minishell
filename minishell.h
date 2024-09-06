@@ -121,7 +121,7 @@ int			determine_input(t_command *cmd);
 // paths.c - find and direct programs in PATH
 void		run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt);
 void		direct_complex_command(t_command *cmd, t_env *envt);
-int			run_in_pipe(t_command *cmd, int *i_file, t_env *envt);
+int			run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt);
 void		remove_cmd_parts(t_command *cmd, char *target);
 int			determine_output(t_command *cmd);
 
