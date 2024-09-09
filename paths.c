@@ -83,10 +83,10 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 	if (cmd->argv[0][0] != '<' && cmd->argv[0][1] != '<')
 	{
 		remove_cmd_parts(cmd, "<");
-		o_redir = determine_output(cmd);
-		remove_cmd_parts(cmd, ">");
 		while ((cmd->next != NULL) && (i_redir != -1))
 		{
+			o_redir = determine_output(cmd);
+			remove_cmd_parts(cmd, ">");
 			last_status = run_in_pipe(cmd, &i_redir, o_redir, envt);
 			if (last_status == 0)
 				cmd = cmd->next;
@@ -177,9 +177,10 @@ void	run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt)
 		g_procstatus = errno;
 	else if (child == 0)
 	{
-//		if ((o_file >= 0) && (o_file != STDOUT_FILENO))
+		if ((o_file >= 0) && (o_file != STDOUT_FILENO))
 		{
 			dup2(o_file, STDOUT_FILENO);
+			close (o_file);
 		}
 		dup2(i_file, STDIN_FILENO);
 		if (i_file >= 0)
