@@ -177,10 +177,9 @@ void	run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt)
 		g_procstatus = errno;
 	else if (child == 0)
 	{
-		if ((o_file >= 0) && (o_file != STDOUT_FILENO))
+//		if ((o_file >= 0) && (o_file != STDOUT_FILENO))
 		{
 			dup2(o_file, STDOUT_FILENO);
-			close (o_file);
 		}
 		dup2(i_file, STDIN_FILENO);
 		if (i_file >= 0)
