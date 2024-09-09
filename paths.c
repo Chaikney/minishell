@@ -12,7 +12,8 @@
 
 #include "minishell.h"
 
-// Wrap everything needed to work out where the output comes from,
+// Read a command (which may be part of a pipe sequence)
+// work out where the output goes to, by checking for > symbol(s)
 // open the file with appropriate perms and return the fd to it.
 // - Find the marker.
 // - Set file perms for level (create or append)
@@ -21,9 +22,11 @@
 // NOTE file mode is set to have NO EXEC permission so we don't...
 // ...attempt to execute any file with the same name as a program in the wd
 // TODO Would be good to check validity of o_path here...
+// ....how do we know what a valid o_path would be?
 // TODO What changes are needed to determine_output to make in-pipe redir work?
-// Can it be called on *any* command? I think yes, the problem before was
-// the the operation made 0 sense. (Still the case,  but now we are doing it...)
+// TODO Should we reject an i that has 3 or more chars?
+// Can this be called on *any* command? I think yes, the problem before was
+// the operation made 0 sense. (Still the case, but now we are doing it...)
 int	determine_output(t_command *cmd)
 {
 	int		i;
@@ -118,8 +121,9 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 // - Keep hold of the read end of this pipe for the next run.
 // NOTE The input file pointer connects us to the previous command in pipe.
 // TODO Make output_redir relevant in run_in_pipe
-// - pass o_redir
+// - pass o_redir as o_file - this will be an open file or STDOUT or -1
 // - change the child process dup2 calls
+// TODO Does the output file need to be opened? Or closed?
 int	run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt)
 {
 	pid_t	child;
@@ -162,6 +166,8 @@ int	run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt)
 // - wait for the child, collect exit code for g_procstatus
 // - close output reference IF it is not STDOUT
 // - close input reference IF it is not STDIn
+// FIXME Have broken redirection in the simple case.
+// We now only get the filename in a created file, and append does nothing.
 void	run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt)
 {
 	pid_t		child;

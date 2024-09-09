@@ -80,6 +80,8 @@ t_env	*parse_env(char **envp)
 	return (NULL);
 }
 
+// Print a message explaining what the shell can and cannot do.
+// TODO Update start message to match what has been added in
 void	startup_message(void)
 {
 	printf("\n********************************************\n");
