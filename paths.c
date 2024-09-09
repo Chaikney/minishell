@@ -72,6 +72,9 @@ int	determine_output(t_command *cmd)
 // TODO They want output redir to work *within* pipes now.
 // ...probably *not* as a pointer because the output gets lost and the
 // next command has to function with blankness from STDIN
+// NOTE the *one* useful form of output redirection would be like:
+// [do command and rewrite to file] | echo "finished"
+// ....and I still think that it is best served by something else.
 void	direct_complex_command(t_command *cmd, t_env *envt)
 {
 	int			o_redir;
@@ -120,10 +123,15 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 // - wait for the child, collect exit code for g_procstatus
 // - Keep hold of the read end of this pipe for the next run.
 // NOTE The input file pointer connects us to the previous command in pipe.
-// TODO Make output_redir relevant in run_in_pipe
+// DONE? Make output_redir relevant in run_in_pipe
 // - pass o_redir as o_file - this will be an open file or STDOUT or -1
 // - change the child process dup2 calls
-// TODO Does the output file need to be opened? Or closed?
+// NOTE Does the output file need to be opened? Or closed?
+// it was opened in determine_output.
+// If the output file is closed before waitpid call, likely to break .
+// IF there is output redirection then
+// - *i_file has to be reset to STDIN
+// (Otherwise we use the read end of the pipe (tube[0]) as before)
 int	run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt)
 {
 	pid_t	child;
@@ -147,7 +155,10 @@ int	run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt)
 	{
 		close(tube[1]);
 		waitpid(child, &g_procstatus, 0);
-		*i_file = tube[0];
+		if (o_file == STDOUT_FILENO)
+			*i_file = tube[0];
+		else
+			*i_file = STDIN_FILENO;
 	}
 	return (g_procstatus);
 }
@@ -166,8 +177,6 @@ int	run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt)
 // - wait for the child, collect exit code for g_procstatus
 // - close output reference IF it is not STDOUT
 // - close input reference IF it is not STDIn
-// FIXME Have broken redirection in the simple case.
-// We now only get the filename in a created file, and append does nothing.
 void	run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt)
 {
 	pid_t		child;
