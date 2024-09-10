@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 16:03:41 by chaikney          #+#    #+#             */
-/*   Updated: 2024/09/10 21:30:54 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/09/10 21:33:14 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,7 +204,7 @@ void	run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt)
 		dup2(i_file, STDIN_FILENO);
 		run_command(cmd, envt);
 		if (i_file >= 0)
-            close(i_file)
+            close(i_file);
 	}
 	else
 	{
