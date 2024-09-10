@@ -141,6 +141,7 @@ void	launch_child_cmd(int tube[2], t_command *cmd, int *i_file, t_env *envt)
 // (Otherwise we use the read end of the pipe (tube[0]) as before)
 // NOTE mkdir i_exist | ls does not run ls
 // This is because the error code terminates the run.
+// FIXME Intermediate output redir STILL DOES NOT WORK
 int	run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt)
 {
 	pid_t	child;
