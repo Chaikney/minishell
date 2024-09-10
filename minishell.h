@@ -123,7 +123,7 @@ void		run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt);
 void		direct_complex_command(t_command *cmd, t_env *envt);
 int			run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt);
 int			determine_output(t_command *cmd);
-void		launch_child_cmd(int tube[2], t_command *cmd, int *i_file, t_env *envt)
+void		launch_child_cmd(int tube[2], t_command *cmd, int *i_file, t_env *envt);
 
 // helpers.c - finder and helper functions
 void		goto_stop_char(const char *cmdline, int *posn);
