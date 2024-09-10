@@ -79,6 +79,7 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 
 	last_status = 0;
 	i_redir = determine_input(cmd);
+	// NOTE This below is a check against heredoc - but does it prevent *all* commands being run?
 	if (cmd->argv[0][0] != '<' && cmd->argv[0][1] != '<')
 	{
 		remove_cmd_parts(cmd, "<");
@@ -109,8 +110,9 @@ void	launch_child_cmd(int tube[2], t_command *cmd, int *i_file, t_env *envt)
 {
 	close(tube[0]);
 	close(tube[1]);
+//	(void) tube;
 	dup2(*i_file, STDIN_FILENO);
-	close(*i_file);
+//	close(*i_file);		// NOTE This prevents interactive apps like top from running
 	run_command(cmd, envt);
 }
 
@@ -198,8 +200,9 @@ void	run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt)
 			close (o_file);
 		}
 		dup2(i_file, STDIN_FILENO);
-		if (i_file >= 0)
-			close(i_file);
+		// NOTE It is this below that causes top and interactive apps to fail
+		/* if (i_file >= 0) */
+		/* 	close(i_file); */
 		run_command(cmd, envt);
 	}
 	else
