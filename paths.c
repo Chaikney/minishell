@@ -23,7 +23,6 @@
 // ...attempt to execute any file with the same name as a program in the wd
 // TODO Would be good to check validity of o_path here...
 // ....how do we know what a valid o_path would be?
-// TODO What changes are needed to determine_output to make in-pipe redir work?
 // TODO Should we reject an i that has 3 or more chars?
 // Can this be called on *any* command? I think yes, the problem before was
 // the operation made 0 sense. (Still the case, but now we are doing it...)
@@ -68,10 +67,7 @@ int	determine_output(t_command *cmd)
 // TODO Test whether the i_redir -1 does *anything* or should be removed
 // NOTE We need use last_status to not run a final_cmd if penultimate fails.
 // ...cant use g-proc because it leaves us in an unrecoverable state.
-// FIXME Too many lines in function
-// TODO They want output redir to work *within* pipes now.
-// ...probably *not* as a pointer because the output gets lost and the
-// next command has to function with blankness from STDIN
+// FIXME Too many lines in function direct_complex_command
 // NOTE the *one* useful form of output redirection would be like:
 // [do command and rewrite to file] | echo "finished"
 // ....and I still think that it is best served by something else.
@@ -107,6 +103,17 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 	}
 }
 
+// Wrap and run the necessary for a command running in a pipe
+// The pipe has been sucessfully set up before calling this.
+void	launch_child_cmd(int tube[2], t_command *cmd, int *i_file, t_env *envt)
+{
+	close(tube[0]);
+	close(tube[1]);
+	dup2(*i_file, STDIN_FILENO);
+	close(*i_file);
+	run_command(cmd, envt);
+}
+
 // Make a child process to execute the command, putting the output in a pipe
 // - fork
 // - run command
@@ -132,6 +139,8 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 // IF there is output redirection then
 // - *i_file has to be reset to STDIN
 // (Otherwise we use the read end of the pipe (tube[0]) as before)
+// NOTE mkdir i_exist | ls does not run ls
+// This is because the error code terminates the run.
 int	run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt)
 {
 	pid_t	child;
@@ -142,14 +151,10 @@ int	run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt)
 	child = fork();
 	if (child == -1)
 		exit_failed_pipe(NULL, tube[0], tube[1], envt);
-	if (child == 0)
+	else if (child == 0)
 	{
-		close(tube[0]);
 		dup2(tube[1], o_file);
-		close(tube[1]);
-		dup2(*i_file, STDIN_FILENO);
-		close(*i_file);
-		run_command(cmd, envt);
+		launch_child_cmd(tube, cmd, i_file, envt);
 	}
 	else
 	{

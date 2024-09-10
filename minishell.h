@@ -82,10 +82,10 @@ char		*get_var_name(const char *str);
 int			add_value_to_par(char **par, int *pos, const char *cmd, t_env *env);
 int			examine_var(char **par, int *r_pos, const char *cmd, t_env *envt);
 
-
 // tokens.c - break up line according to "quote" 'styles'
 char		*grab_control_seq(const char *cmd, int *posn);
 char		*get_any_parameter(const char *cmdline, int *posn, t_env *envt);
+void		remove_cmd_parts(t_command *cmd, char *target);
 
 // builtins.c
 int			ms_pwd(void);
@@ -122,8 +122,8 @@ int			determine_input(t_command *cmd);
 void		run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt);
 void		direct_complex_command(t_command *cmd, t_env *envt);
 int			run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt);
-void		remove_cmd_parts(t_command *cmd, char *target);
 int			determine_output(t_command *cmd);
+void		launch_child_cmd(int tube[2], t_command *cmd, int *i_file, t_env *envt)
 
 // helpers.c - finder and helper functions
 void		goto_stop_char(const char *cmdline, int *posn);
