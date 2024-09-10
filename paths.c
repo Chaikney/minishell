@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 16:03:41 by chaikney          #+#    #+#             */
-/*   Updated: 2024/08/20 12:43:53 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/09/10 21:30:54 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,12 +76,16 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 	int			o_redir;
 	int			i_redir;
 	int			last_status;
-
+	int			saved_stdin;
 	last_status = 0;
 	i_redir = determine_input(cmd);
-	// NOTE This below is a check against heredoc - but does it prevent *all* commands being run?
 	if (cmd->argv[0][0] != '<' && cmd->argv[0][1] != '<')
 	{
+		saved_stdin = dup(STDIN_FILENO);
+        if (saved_stdin == -1) {
+            perror("dup failed");
+            return;
+        }
 		remove_cmd_parts(cmd, "<");
 		while ((cmd->next != NULL) && (i_redir != -1))
 		{
@@ -110,9 +114,8 @@ void	launch_child_cmd(int tube[2], t_command *cmd, int *i_file, t_env *envt)
 {
 	close(tube[0]);
 	close(tube[1]);
-//	(void) tube;
 	dup2(*i_file, STDIN_FILENO);
-//	close(*i_file);		// NOTE This prevents interactive apps like top from running
+	close(*i_file);
 	run_command(cmd, envt);
 }
 
@@ -143,7 +146,6 @@ void	launch_child_cmd(int tube[2], t_command *cmd, int *i_file, t_env *envt)
 // (Otherwise we use the read end of the pipe (tube[0]) as before)
 // NOTE mkdir i_exist | ls does not run ls
 // This is because the error code terminates the run.
-// FIXME Intermediate output redir STILL DOES NOT WORK
 int	run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt)
 {
 	pid_t	child;
@@ -200,10 +202,9 @@ void	run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt)
 			close (o_file);
 		}
 		dup2(i_file, STDIN_FILENO);
-		// NOTE It is this below that causes top and interactive apps to fail
-		/* if (i_file >= 0) */
-		/* 	close(i_file); */
 		run_command(cmd, envt);
+		if (i_file >= 0)
+            close(i_file)
 	}
 	else
 	{
