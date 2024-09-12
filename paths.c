@@ -164,12 +164,7 @@ int	run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt)
 		}
 		else
 			dup2(tube[1], STDOUT_FILENO);	// otherwise, the output goes to the pipe as usual
-		close(tube[0]);
-//	close(tube[1]);
-		dup2(*i_file, STDIN_FILENO);
-		close(*i_file);
-		run_command(cmd, envt);
-//		launch_child_cmd(tube, cmd, i_file, envt);
+		launch_child_cmd(tube, cmd, i_file, envt);
 	}
 	else
 	{
