@@ -113,6 +113,9 @@ int			closed_quotes(char *ptr);
 int			check_tokens(char **arr);
 int			proximity_test(char **arr);
 
+// output.c - functions for redirecting output (doesn't exist yet)
+void	wire_up_output(int o_file, int *tube);
+
 // input.c - functions for redirecting input
 int			stopword_input(t_command *cmd, int fd[2], int posn);
 int			setup_input(t_command *cmd, int i_lvl, int posn);

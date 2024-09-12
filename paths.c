@@ -152,14 +152,8 @@ int	run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt)
 		exit_failed_pipe(NULL, tube[0], tube[1], envt);
 	else if (child == 0)
 	{
-		// NOTE Check here is same as final_cmd - a valid output file gets STDOUT
-		if ((o_file >= 0) && (o_file != STDOUT_FILENO))
-		{
-			dup2(o_file, STDOUT_FILENO);
-			close (o_file);
-		}
-		else
-			dup2(tube[1], STDOUT_FILENO);	// otherwise, the output goes to the pipe as usual
+
+		wire_up_output(o_file, tube);
 		launch_child_cmd(tube, cmd, i_file, envt);
 	}
 	else
@@ -172,6 +166,24 @@ int	run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt)
 			*i_file = STDIN_FILENO;
 	}
 	return (g_procstatus);
+}
+
+// Make the calls and checks needed to set up output,
+// whether in a pipe or at the end of it.
+// Designed to be called from a child process after a pipe has been set up.
+// NOTE when there is no tube to be passed to we leave STDOUT as is
+void	wire_up_output(int o_file, int *tube)
+{
+	// NOTE Check here is same as final_cmd - a valid output file gets STDOUT
+	if ((o_file >= 0) && (o_file != STDOUT_FILENO))
+	{
+		dup2(o_file, STDOUT_FILENO);
+		close (o_file);
+	}
+	else if (tube)
+		dup2(tube[1], STDOUT_FILENO);	// otherwise, the output goes to the pipe as usual
+	else
+		return ;
 }
 
 // Simplest command runner.
@@ -197,11 +209,7 @@ void	run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt)
 		g_procstatus = errno;
 	else if (child == 0)
 	{
-		if ((o_file >= 0) && (o_file != STDOUT_FILENO))
-		{
-			dup2(o_file, STDOUT_FILENO);
-			close (o_file);
-		}
+		wire_up_output(o_file, NULL);
 		dup2(i_file, STDIN_FILENO);
 		run_command(cmd, envt);
 		if (i_file >= 0)
