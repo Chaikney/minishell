@@ -64,7 +64,7 @@ char	*grab_control_seq(const char *cmd, int *posn)
 // - Ensure last NULL is copied
 // - Adjust value of argc
 // NOTE The target parts *must* have already been processed.
-// FIXME Too many lines in function
+// FIXME Too many lines in function - split pipe removal out? Still needed?
 void	remove_cmd_parts(t_command *cmd, char *target)
 {
 	int	i;

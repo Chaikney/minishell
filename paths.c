@@ -63,8 +63,8 @@ int	determine_output(t_command *cmd)
 // - if the final command is a builtin, execute it directly.
 // - otherwise pass it to be run in a fork
 // NOTE i_redir is passed as pointer to change for the next step in pipe.
-// NOTE i_redir of -1 means....? Nothing?
-// TODO Test whether the i_redir -1 does *anything* or should be removed
+// DONE Test whether the i_redir -1 does *anything* or should be removed
+// NOTE i_redir == -1 is triggered if we couldn't open the input file path.
 // NOTE We need use last_status to not run a final_cmd if penultimate fails.
 // ...cant use g-proc because it leaves us in an unrecoverable state.
 // FIXME Too many lines in function direct_complex_command
@@ -73,6 +73,7 @@ int	determine_output(t_command *cmd)
 // ....and I still think that it is best served by something else.
 // FIXME Output redirection does not work,
 // e.g. ls > test | echo whatever displays ls onscreen.
+// TODO Can we change the last_status check to something with SIGPIPE?
 void	direct_complex_command(t_command *cmd, t_env *envt)
 {
 	int	o_redir;
@@ -110,7 +111,7 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 void	launch_child_cmd(int tube[2], t_command *cmd, int *i_file, t_env *envt)
 {
 	close(tube[0]);
-	close(tube[1]);
+//	close(tube[1]);
 	dup2(*i_file, STDIN_FILENO);
 	close(*i_file);
 	run_command(cmd, envt);
@@ -155,8 +156,20 @@ int	run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt)
 		exit_failed_pipe(NULL, tube[0], tube[1], envt);
 	else if (child == 0)
 	{
-		dup2(tube[1], o_file);
-		launch_child_cmd(tube, cmd, i_file, envt);
+		// NOTE Check here is same as final_cmd - a valid output file gets STDOUT
+		if ((o_file >= 0) && (o_file != STDOUT_FILENO))
+		{
+			dup2(o_file, STDOUT_FILENO);
+			close (o_file);
+		}
+		else
+			dup2(tube[1], STDOUT_FILENO);	// otherwise, the output goes to the pipe as usual
+		close(tube[0]);
+//	close(tube[1]);
+		dup2(*i_file, STDIN_FILENO);
+		close(*i_file);
+		run_command(cmd, envt);
+//		launch_child_cmd(tube, cmd, i_file, envt);
 	}
 	else
 	{
