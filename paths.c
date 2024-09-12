@@ -71,21 +71,18 @@ int	determine_output(t_command *cmd)
 // NOTE the *one* useful form of output redirection would be like:
 // [do command and rewrite to file] | echo "finished"
 // ....and I still think that it is best served by something else.
+// FIXME Output redirection does not work,
+// e.g. ls > test | echo whatever displays ls onscreen.
 void	direct_complex_command(t_command *cmd, t_env *envt)
 {
-	int			o_redir;
-	int			i_redir;
-	int			last_status;
-	int			saved_stdin;
+	int	o_redir;
+	int	i_redir;
+	int	last_status;
+
 	last_status = 0;
 	i_redir = determine_input(cmd);
 	if (cmd->argv[0][0] != '<' && cmd->argv[0][1] != '<')
 	{
-		saved_stdin = dup(STDIN_FILENO);
-        if (saved_stdin == -1) {
-            perror("dup failed");
-            return;
-        }
 		remove_cmd_parts(cmd, "<");
 		while ((cmd->next != NULL) && (i_redir != -1))
 		{
