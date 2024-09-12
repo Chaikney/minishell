@@ -52,6 +52,7 @@ int	determine_output(t_command *cmd)
 			}
 		}
 	}
+	remove_cmd_parts(cmd, ">");
 	return (o_fd);
 }
 
@@ -68,10 +69,7 @@ int	determine_output(t_command *cmd)
 // NOTE We need use last_status to not run a final_cmd if penultimate fails.
 // ...cant use g-proc because it leaves us in an unrecoverable state.
 // FIXME Too many lines in function direct_complex_command
-// NOTE the *one* useful form of output redirection would be like:
-// [do command and rewrite to file] | echo "finished"
-// ....and I still think that it is best served by something else.
-// FIXME Output redirection does not work,
+// FIXED Output redirection does not work,
 // e.g. ls > test | echo whatever displays ls onscreen.
 // TODO Can we change the last_status check to something with SIGPIPE?
 void	direct_complex_command(t_command *cmd, t_env *envt)
@@ -88,7 +86,6 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 		while ((cmd->next != NULL) && (i_redir != -1))
 		{
 			o_redir = determine_output(cmd);
-			remove_cmd_parts(cmd, ">");
 			last_status = run_in_pipe(cmd, &i_redir, o_redir, envt);
 			if (last_status == 0)
 				cmd = cmd->next;
@@ -98,7 +95,6 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 		if ((last_status == 0) && (i_redir != -1))
 		{
 			o_redir = determine_output(cmd);
-			remove_cmd_parts(cmd, ">");
 			if (needs_to_fork(cmd) == 0)
 				execute_builtin(cmd, envt);
 			run_final_cmd(cmd, i_redir, o_redir, envt);
