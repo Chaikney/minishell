@@ -113,8 +113,9 @@ int			closed_quotes(char *ptr);
 int			check_tokens(char **arr);
 int			proximity_test(char **arr);
 
-// output.c - functions for redirecting output (doesn't exist yet)
-void	wire_up_output(int o_file, int *tube);
+// output.c - functions for redirecting output
+void		wire_up_output(int o_file, int *tube);
+int			determine_output(t_command *cmd);
 
 // input.c - functions for redirecting input
 int			stopword_input(t_command *cmd, int fd[2], int posn);
@@ -125,7 +126,6 @@ int			determine_input(t_command *cmd);
 void		run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt);
 void		direct_complex_command(t_command *cmd, t_env *envt);
 int			run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt);
-int			determine_output(t_command *cmd);
 void		launch_child_cmd(int tube[2], t_command *cmd, int *i_file, t_env *envt);
 
 // helpers.c - finder and helper functions
