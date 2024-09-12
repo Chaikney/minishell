@@ -25,6 +25,7 @@
 // NOTE We need use last_status to not run a final_cmd if penultimate fails.
 // ...cant use g-proc because it leaves us in an unrecoverable state.
 // FIXME Too many lines in function direct_complex_command
+// FIXME The initial check disables heredoc altogether!
 // FIXED Output redirection does not work,
 // e.g. ls > test | echo whatever displays ls onscreen.
 // TODO Can we change the last_status check to something with SIGPIPE?
@@ -108,7 +109,6 @@ int	run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt)
 		exit_failed_pipe(NULL, tube[0], tube[1], envt);
 	else if (child == 0)
 	{
-
 		wire_up_output(o_file, tube);
 		launch_child_cmd(tube, cmd, i_file, envt);
 	}
@@ -151,7 +151,7 @@ void	run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt)
 		dup2(i_file, STDIN_FILENO);
 		run_command(cmd, envt);
 		if (i_file >= 0)
-            close(i_file);
+			close(i_file);
 	}
 	else
 	{
