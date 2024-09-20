@@ -43,6 +43,26 @@ int	check_prog(char *prog)
 	return (retval);
 }
 
+// Takes a program name and a location (from PATH)
+// Returns a fully-qualified pathname to be run
+// Or NULL if the two do not combine to make an executable
+char	*test_path_candidate(char *prog, char *loc)
+{
+	char	*candidate;
+	char	*slashed;
+	char	*goodpath;
+
+	slashed = ft_strjoin(loc, "/");
+	candidate = ft_strjoin(slashed, prog);
+	if (access(candidate, X_OK) == 0)
+		goodpath = ft_strdup(candidate);
+	else
+		goodpath = NULL;
+	free (candidate);
+	free(slashed);
+	return (goodpath);
+}
+
 // Return an executable path for cmd.
 // NOTE cmd must be the name only, not any of its arguments.
 // - split the pieces of PATH and add a trailing slash.
@@ -50,36 +70,29 @@ int	check_prog(char *prog)
 // -- does path + cmd = an executable?
 // -- if YES we have our command: keep that and discard the rest.
 // NOTE The return value of getenv("PATH") does not need to be freed
-// FIXED Don't use getenv for this.
-// FIXME search_in_path is too long for norm
+// TODO is the here_doc check needed? we check before calling the function.
+// And what happens if this is a heredoc thing? Would we find the command?!
 char	*search_in_path(char *cmd, t_env *envt)
 {
 	char	**pathparts;
-	char	*candidate;
-	char	*slashed;
 	char	*goodpath;
 	int		i;
 
 	i = 0;
 	goodpath = NULL;
-	pathparts = ft_split(get_value_of_env("PATH", envt), ':');
-	while ((pathparts[i] != NULL) && (!goodpath))
+	if (cmd[0] != '<' && cmd[1] != '<')
 	{
-		if (cmd[0] != '<' && cmd[1] != '<')
+		pathparts = ft_split(get_value_of_env("PATH", envt), ':');
+		while ((pathparts[i] != NULL) && (!goodpath))
 		{
-			slashed = ft_strjoin(pathparts[i], "/");
-			candidate = ft_strjoin(slashed, cmd);
-			if (access(candidate, X_OK) == 0)
-				goodpath = ft_strdup(candidate);
-			free (candidate);
-			free(slashed);
+			goodpath = test_path_candidate(cmd, pathparts[i]);
+			i++;
 		}
-		i++;
+		i = -1;
+		while (pathparts[++i] != NULL)
+			free(pathparts[i]);
+		free(pathparts);
 	}
-	i = -1;
-	while (pathparts[++i] != NULL)
-		free(pathparts[i]);
-	free(pathparts);
 	return (goodpath);
 }
 
@@ -94,8 +107,6 @@ char	*search_in_path(char *cmd, t_env *envt)
 // - i.e. they are valid and null-terminated.
 // - Any fork-ing needed has been handled before calling this.
 // NOTE The lines at the end are only reached if execve fails
-// DONE Need to serialise_envt so that execve gets uptodate ENV
-// FIXED Block attempts to exectute directories (. or ...)
 void	run_command(t_command *cmd, t_env *envt)
 {
 	char	*prog;

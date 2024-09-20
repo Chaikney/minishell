@@ -177,6 +177,7 @@ char		*get_prompt(t_env *envt);
 
 // execute.c -functions to execute commands
 void		run_command(t_command *cmd, t_env *envt);
+char		*test_path_candidate(char *prog, char *loc);
 char		*search_in_path(char *cmd, t_env *envt);
 void		execute_builtin(t_command *cmd, t_env *env);
 
