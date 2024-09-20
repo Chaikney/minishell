@@ -24,25 +24,16 @@
 // NOTE i_redir == -1 is triggered if we couldn't open the input file path.
 // NOTE We need use last_status to not run a final_cmd if penultimate fails.
 // ...cant use g-proc because it leaves us in an unrecoverable state.
-// FIXME The initial check disables heredoc altogether!
-// FIXED Output redirection does not work,
-// e.g. ls > test | echo whatever displays ls onscreen.
 // TODO Can we change the last_status check to something with SIGPIPE?
-// FIXME Too many lines in function direct_complex_command
+// FIXED Too many lines in function direct_complex_command
 void	direct_complex_command(t_command *cmd, t_env *envt)
 {
 	int	o_redir;
 	int	i_redir;
 	int	last_status;
-	int	saved_stdin;
 
 	last_status = 0;
 	i_redir = determine_input(cmd);
-	saved_stdin = dup(STDIN_FILENO);
-	if (saved_stdin == -1) {
-		perror("dup failed");
-		return;
-	}
 	remove_cmd_parts(cmd, "<");
 	while ((cmd->next != NULL) && (i_redir != -1))
 	{
@@ -66,6 +57,7 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 
 // Wrap and run the necessary for a command running in a pipe
 // The pipe has been sucessfully set up before calling this.
+// TODO Test to see whether close(tube[1]) should be fully removed.
 void	launch_child_cmd(int tube[2], t_command *cmd, int *i_file, t_env *envt)
 {
 	close(tube[0]);
