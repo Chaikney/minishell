@@ -39,6 +39,9 @@ int	has_target(char **arr)
 	return (0);
 }
 
+// This test forbids more than one use of redirections in the user input.
+// FIXME Test incompatible with permitting multiple redirection, so remove it?
+// Or should it be re-arranged somehow?
 int	count_controls(char **arr)
 {
 	int	num_input;
@@ -63,6 +66,9 @@ int	count_controls(char **arr)
 
 // returns 0 if all the control tokens in the file are well-formed.
 // That means the right length, with no other pieces
+// > and < can be no longer than 2 chars,
+// also if 2 long, they must be the same
+// | must be 1 char long
 int	clean_controls(char **arr)
 {
 	int	i;
@@ -115,6 +121,7 @@ int	no_extreme_controls(char **arr)
 // [x]	do not have more than one output directive
 // [ ]	have text after any control char
 // FIXME < test less is legit!!! so is < test rev
+// ...which test does this fail?
 int	check_tokens(char **arr)
 {
 	int	is_bad;
@@ -124,7 +131,7 @@ int	check_tokens(char **arr)
 		is_bad = no_extreme_controls(arr);
 	if (is_bad == 0)
 		is_bad = has_target(arr);
-	if (is_bad == 0)
-		is_bad = count_controls(arr);
+	/* if (is_bad == 0) */
+	/* 	is_bad = count_controls(arr); */
 	return (is_bad);
 }
