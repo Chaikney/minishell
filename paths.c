@@ -20,20 +20,22 @@
 // - if the final command is a builtin, execute it directly.
 // - otherwise pass it to be run in a fork
 // NOTE i_redir is passed as pointer to change for the next step in pipe.
-// NOTE i_redir of -1 means....? Nothing?
-// TODO Test whether the i_redir -1 does *anything* or should be removed
+// DONE Test whether the i_redir -1 does *anything* or should be removed
+// NOTE i_redir == -1 is triggered if we couldn't open the input file path.
 // NOTE We need use last_status to not run a final_cmd if penultimate fails.
 // ...cant use g-proc because it leaves us in an unrecoverable state.
+// FIXME The initial check disables heredoc altogether!
+// FIXED Output redirection does not work,
+// e.g. ls > test | echo whatever displays ls onscreen.
+// TODO Can we change the last_status check to something with SIGPIPE?
 // FIXME Too many lines in function direct_complex_command
-// NOTE the *one* useful form of output redirection would be like:
-// [do command and rewrite to file] | echo "finished"
-// ....and I still think that it is best served by something else.
 void	direct_complex_command(t_command *cmd, t_env *envt)
 {
-	int			o_redir;
-	int			i_redir;
-	int			last_status;
-	int			saved_stdin;
+	int	o_redir;
+	int	i_redir;
+	int	last_status;
+	int	saved_stdin;
+
 	last_status = 0;
 	i_redir = determine_input(cmd);
 	saved_stdin = dup(STDIN_FILENO);
@@ -67,7 +69,7 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 void	launch_child_cmd(int tube[2], t_command *cmd, int *i_file, t_env *envt)
 {
 	close(tube[0]);
-	close(tube[1]);
+//	close(tube[1]);
 	dup2(*i_file, STDIN_FILENO);
 	close(*i_file);
 	run_command(cmd, envt);
@@ -112,7 +114,7 @@ int	run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt)
 		exit_failed_pipe(NULL, tube[0], tube[1], envt);
 	else if (child == 0)
 	{
-		dup2(tube[1], o_file);
+		wire_up_output(o_file, tube);
 		launch_child_cmd(tube, cmd, i_file, envt);
 	}
 	else
@@ -150,11 +152,7 @@ void	run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt)
 		g_procstatus = errno;
 	else if (child == 0)
 	{
-		if ((o_file >= 0) && (o_file != STDOUT_FILENO))
-		{
-			dup2(o_file, STDOUT_FILENO);
-			close (o_file);
-		}
+		wire_up_output(o_file, NULL);
 		dup2(i_file, STDIN_FILENO);
 		run_command(cmd, envt);
 		if (i_file >= 0)

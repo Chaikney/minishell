@@ -89,7 +89,6 @@ int	clean_controls(char **arr)
 // returns -1 if the token array ends or begins with a control character
 // - is the first char in the end token a control? BAD
 // - is the first token a > or |? BAD
-// FIXED < test less is legit!!!
 int	no_extreme_controls(char **arr)
 {
 	int	is_bad;
@@ -115,7 +114,7 @@ int	no_extreme_controls(char **arr)
 // [x]	do not have more than one input directive
 // [x]	do not have more than one output directive
 // [ ]	have text after any control char
-// FIXED < test less is legit!!!
+// FIXME < test less is legit!!! so is < test rev
 int	check_tokens(char **arr)
 {
 	int	is_bad;
