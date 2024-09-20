@@ -39,12 +39,15 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 	{
 		o_redir = determine_output(cmd);
 		last_status = run_in_pipe(cmd, &i_redir, o_redir, envt);
-		if (last_status == 0)
+		if (last_status != EPIPE)
 			cmd = cmd->next;
 		else
+		{
+			printf("broken pipe\n;");
 			return ;
+		}
 	}
-	if ((last_status == 0) && (i_redir != -1))
+	if ((last_status != EPIPE) && (i_redir != -1))
 	{
 		o_redir = determine_output(cmd);
 		if (needs_to_fork(cmd) == 0)
