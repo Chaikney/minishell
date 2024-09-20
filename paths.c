@@ -59,10 +59,11 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 // Wrap and run the necessary for a command running in a pipe
 // The pipe has been sucessfully set up before calling this.
 // TODO Test to see whether close(tube[1]) should be fully removed.
+// ...what was the use case it failed on?
 void	launch_child_cmd(int tube[2], t_command *cmd, int *i_file, t_env *envt)
 {
 	close(tube[0]);
-//	close(tube[1]);
+	close(tube[1]);
 	dup2(*i_file, STDIN_FILENO);
 	close(*i_file);
 	run_command(cmd, envt);
