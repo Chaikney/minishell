@@ -15,7 +15,7 @@
 // Functions used to break up the readline input into tokens for parsing.
 
 // Initialize a string to copy the parts of the line to.
-// NOTE 256 is arbitrary and might better as compile-time constant.
+// NOTE MAXPARAM is a semi-arbitrary compile-time constant.
 char	*get_blank_param(void)
 {
 	char	*par;
@@ -57,15 +57,45 @@ char	*grab_control_seq(const char *cmd, int *posn)
 // < << > and >> are associated with the parameter after,
 // ...so we also remove that(controlled with the to_go variable.)
 // Method:
-// - Decide if one or two entries must be removed.
 // - Find position of the target
-// - free memory at position (and next if needed)
+// - free memory at that position (and next if needed)
 // - copy the values ahead to the position
 // - Ensure last NULL is copied
 // - Adjust value of argc
 // NOTE The target parts *must* have already been processed.
 // FIXME Too many lines in function - split pipe removal out? Still needed?
+// Pipe removal is not used, it is handled in build_command
 void	remove_cmd_parts(t_command *cmd, char *target)
+{
+	int	i;
+	int	to_go;
+
+	i = 0;
+	to_go = 2;
+	while ((cmd->argv[i]) && (ft_strncmp(cmd->argv[i], target, 1) != 0))
+	{
+		if (i == cmd->argc - 1)
+			return ;
+		i++;
+	}
+	free (cmd->argv[i]);
+	// HACK introduced in 0x16f4087, prevents crash(?) but also makes command format inconsistent!
+	if (target[0] != '<' && target[1] != '<')	// TODO Why do we prevent removal in heredoc case??
+	{
+		free (cmd->argv[i + 1]);
+	}
+	while (cmd->argv[i + to_go] != NULL)
+	{
+		cmd->argv[i] = cmd->argv[i + to_go];
+		i++;
+	}
+	cmd->argv[i] = cmd->argv[i + to_go];
+	cmd->argc = cmd->argc - to_go;
+}
+
+// This is the remove_cmd_parts version that can handle |
+// TODO Remove later once i know that it is not needed.
+void	old_remove_cmd_parts(t_command *cmd, char *target)
 {
 	int	i;
 	int	to_go;
