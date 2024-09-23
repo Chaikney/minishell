@@ -129,5 +129,6 @@ int	determine_input(t_command *cmd)
 		}
 		i++;
 	}
+	remove_cmd_parts(cmd, "<");
 	return (i_fd);
 }

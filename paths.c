@@ -26,6 +26,8 @@
 // ...cant use g-proc because it leaves us in an unrecoverable state.
 // TODO Can we change the last_status check to something with SIGPIPE?
 // FIXED Too many lines in function direct_complex_command
+// TODO Is input from any point in the pipe sensible?
+// If so need more determine input calls......
 void	direct_complex_command(t_command *cmd, t_env *envt)
 {
 	int	o_redir;
@@ -33,11 +35,13 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 	int	last_status;
 
 	last_status = 0;
+	print_cmd_parts(cmd);
 	i_redir = determine_input(cmd);
-	remove_cmd_parts(cmd, "<");
+//	remove_cmd_parts(cmd, "<");
 	while ((cmd->next != NULL) && (i_redir != -1))
 	{
 		o_redir = determine_output(cmd);
+		print_cmd_parts(cmd);
 		last_status = run_in_pipe(cmd, &i_redir, o_redir, envt);
 		if (last_status != EPIPE)
 			cmd = cmd->next;
@@ -50,6 +54,7 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 	if ((last_status != EPIPE) && (i_redir != -1))
 	{
 		o_redir = determine_output(cmd);
+		print_cmd_parts(cmd);
 		if (needs_to_fork(cmd) == 0)
 			execute_builtin(cmd, envt);
 		run_final_cmd(cmd, i_redir, o_redir, envt);
@@ -63,7 +68,7 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 void	launch_child_cmd(int tube[2], t_command *cmd, int *i_file, t_env *envt)
 {
 	close(tube[0]);
-	close(tube[1]);
+//	close(tube[1]);
 	dup2(*i_file, STDIN_FILENO);
 	close(*i_file);
 	run_command(cmd, envt);
