@@ -35,13 +35,10 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 	int	last_status;
 
 	last_status = 0;
-	print_cmd_parts(cmd);
 	i_redir = determine_input(cmd);
-//	remove_cmd_parts(cmd, "<");
 	while ((cmd->next != NULL) && (i_redir != -1))
 	{
 		o_redir = determine_output(cmd);
-		print_cmd_parts(cmd);
 		last_status = run_in_pipe(cmd, &i_redir, o_redir, envt);
 		if (last_status != EPIPE)
 			cmd = cmd->next;
@@ -54,7 +51,6 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 	if ((last_status != EPIPE) && (i_redir != -1))
 	{
 		o_redir = determine_output(cmd);
-		print_cmd_parts(cmd);
 		if (needs_to_fork(cmd) == 0)
 			execute_builtin(cmd, envt);
 		run_final_cmd(cmd, i_redir, o_redir, envt);

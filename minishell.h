@@ -187,8 +187,4 @@ void		sort_env(t_env *head);
 void		append(t_env **head_ref, char *new_vname, char *new_value);
 void		print_list(t_env *node);
 void		remove_node(t_env **first, t_env *target);
-
-// debug
-void	print_cmd_parts(t_command *cmd);
-void	print_tokens(char **arr);
 #endif
