@@ -39,31 +39,6 @@ int	has_target(char **arr)
 	return (0);
 }
 
-// This test forbids more than one use of redirections in the user input.
-// FIXME Test incompatible with permitting multiple redirection, so remove it?
-// Or should it be re-arranged somehow?
-int	count_controls(char **arr)
-{
-	int	num_input;
-	int	num_output;
-	int	i;
-
-	i = 0;
-	num_input = 0;
-	num_output = 0;
-	while (arr[i] != NULL)
-	{
-		if (ft_strncmp(arr[i], "<", 1) == 0)
-			num_input++;
-		if (ft_strncmp(arr[i], ">", 1) == 0)
-			num_output++;
-		i++;
-	}
-	if ((num_input > 1) || (num_output > 1))
-		return (-1);
-	return (0);
-}
-
 // returns 0 if all the control tokens in the file are well-formed.
 // That means the right length, with no other pieces
 // > and < can be no longer than 2 chars,
@@ -114,14 +89,12 @@ int	no_extreme_controls(char **arr)
 
 // Return a -1 if there are illegal combinations of tokens
 // e.g. multiple attempts at redirection for either I or O
-// DONE Implement sanity checks on token set.
+// Implement sanity checks on token set:
 // [x]	do not start with a pipe
 // [x]	do not end with a pipe
 // [x]	do not have both > and >>
 // [x]	do not have both < and <<
-// [x]	do not have more than one input directive
-// [x]	do not have more than one output directive
-// [ ]	have text after any control char
+// [ ]	must have text after any control char
 int	check_tokens(char **arr)
 {
 	int	is_bad;
@@ -131,7 +104,5 @@ int	check_tokens(char **arr)
 		is_bad = no_extreme_controls(arr);
 	if (is_bad == 0)
 		is_bad = has_target(arr);
-	/* if (is_bad == 0) */
-	/* 	is_bad = count_controls(arr); */
 	return (is_bad);
 }
