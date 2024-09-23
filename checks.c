@@ -92,9 +92,12 @@ int	clean_controls(char **arr)
 	return (0);
 }
 
-// returns -1 if the token array ends or begins with a control character
+// returns -1 if the token array ends or begins
+// with an (illegitimate) control character
 // - is the first char in the end token a control? BAD
 // - is the first token a > or |? BAD
+// NOTE input redirection (both types) at the start is GOOD
+// FIXED < test less is legit!!! so is < test rev
 int	no_extreme_controls(char **arr)
 {
 	int	is_bad;
@@ -104,8 +107,7 @@ int	no_extreme_controls(char **arr)
 	len = count_tokens(arr);
 	if (is_control_char(arr[len - 1][0]) == 1)
 		return (-1);
-	if ((arr[0][0] == '|') || (arr[0][0] == '>')
-		|| ((arr[0][0] == '<') && (arr[0][1] != '<')))
+	if ((arr[0][0] == '|') || (arr[0][0] == '>'))
 		is_bad = -1;
 	return (is_bad);
 }
@@ -120,9 +122,6 @@ int	no_extreme_controls(char **arr)
 // [x]	do not have more than one input directive
 // [x]	do not have more than one output directive
 // [ ]	have text after any control char
-// FIXME < test less is legit!!! so is < test rev
-// ...which test does this fail?
-// FIXME  < test rev gives a malformed input error!
 int	check_tokens(char **arr)
 {
 	int	is_bad;
