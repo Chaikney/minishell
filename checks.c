@@ -87,6 +87,30 @@ int	no_extreme_controls(char **arr)
 	return (is_bad);
 }
 
+// return -1 if there are any control characters *not*
+// followed by legitimate arguments (i.e. a plausible filename)
+// NOTE This and has_target are *very* similar. Too similar?
+int	then_text(char **arr)
+{
+	int	is_bad;
+	int	i;
+
+	is_bad = 0;
+	i = count_tokens(arr);
+	while (i > 0)
+	{
+		if (is_control_char(arr[i - 1][0] == 1))
+		{
+			if (arr[i] == NULL)
+				return (-1);
+			if (ft_isdigit(arr[i][0]) == 1)
+				return (-1);
+		}
+		i--;
+	}
+	return (is_bad);
+}
+
 // Return a -1 if there are illegal combinations of tokens
 // e.g. multiple attempts at redirection for either I or O
 // Implement sanity checks on token set:
@@ -104,5 +128,7 @@ int	check_tokens(char **arr)
 		is_bad = no_extreme_controls(arr);
 	if (is_bad == 0)
 		is_bad = has_target(arr);
+	if (is_bad == 0)
+		is_bad = then_text(arr);
 	return (is_bad);
 }
