@@ -122,6 +122,7 @@ int	no_extreme_controls(char **arr)
 // [ ]	have text after any control char
 // FIXME < test less is legit!!! so is < test rev
 // ...which test does this fail?
+// FIXME  < test rev gives a malformed input error!
 int	check_tokens(char **arr)
 {
 	int	is_bad;
