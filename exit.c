@@ -95,6 +95,8 @@ void	exit_failed_pipe(t_command *cmd, int fd_in, int fd_out, t_env *envt)
 // - clear all the char* held in argv
 // - move to the nex tin the chain
 // - free the t_command left behind.
+// FIXME Protect against argc of less than 0
+// FIXME PRotect the empty command case
 void	clear_t_command(t_command *cmd)
 {
 	int			i;

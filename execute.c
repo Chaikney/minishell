@@ -107,29 +107,30 @@ char	*search_in_path(char *cmd, t_env *envt)
 // - i.e. they are valid and null-terminated.
 // - Any fork-ing needed has been handled before calling this.
 // NOTE The lines at the end are only reached if execve fails
+// FIXME Segfaults if it gets a NULL cmd->argv[0]
 void	run_command(t_command *cmd, t_env *envt)
 {
 	char	*prog;
 
 	prog = NULL;
-	if (cmd->builtin != NONE)
+	if ((cmd->argv[0]))
 	{
-		execute_builtin(cmd, envt);
-		exit_successful_pipe(cmd);
-	}
-	if (cmd->argv[0][0] != '<' && cmd->argv[0][1] != '<')
-	{
+		if (cmd->builtin != NONE)
+		{
+			execute_builtin(cmd, envt);
+			exit_successful_pipe(cmd);
+		}
 		if (access(cmd->argv[0], X_OK) == 0)
 			prog = ft_strdup(cmd->argv[0]);
 		else if (is_in_envt("PATH", envt) == 1)
 			prog = search_in_path(cmd->argv[0], envt);
-	}
-	if (check_prog (prog) == 0)
-	{
-		if (execve(prog, cmd->argv, serialise_env(envt)) == -1)
+		if (check_prog (prog) == 0)
 		{
-			g_procstatus = errno;
-			perror("Failed to execute program");
+			if (execve(prog, cmd->argv, serialise_env(envt)) == -1)
+			{
+				g_procstatus = errno;
+				perror("Failed to execute program");
+			}
 		}
 	}
 	free (prog);
