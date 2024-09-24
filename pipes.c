@@ -32,6 +32,8 @@ t_command	*init_new_command(void)
 // This retains the I/O redirection info but removes the pipes.
 // (The pipes are replaced with the ->next)
 // NOTE We copy the values to make it easier to wipe all tokens.
+// FIXME Occasional/possible memleak with pipes at the ft_strdup
+// ...but I have not managed to reproduce recently...
 t_command	*build_command(char **tokens)
 {
 	static int	i;
@@ -45,7 +47,7 @@ t_command	*build_command(char **tokens)
 	while ((i < num_tokens) && (tokens[i])
 		&& (ft_strncmp(tokens[i], "|", 1) != 0))
 	{
-		new_cmd->argv[j++] = ft_strdup(tokens[i++]);	// FIXME memleak with pipes
+		new_cmd->argv[j++] = ft_strdup(tokens[i++]);
 		new_cmd->argc++;
 	}
 	new_cmd->argv[new_cmd->argc] = NULL;

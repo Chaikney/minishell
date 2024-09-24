@@ -25,7 +25,6 @@
 // NOTE We need use last_status to not run a final_cmd if penultimate fails.
 // ...cant use g-proc because it leaves us in an unrecoverable state.
 // TODO Can we change the last_status check to something with SIGPIPE?
-// FIXED Too many lines in function direct_complex_command
 // TODO Is input from any point in the pipe sensible?
 // If so need more determine input calls......
 void	direct_complex_command(t_command *cmd, t_env *envt)
