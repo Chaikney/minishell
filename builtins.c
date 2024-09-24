@@ -47,19 +47,16 @@ static t_builtin	detailed_parse_builtin(t_command *cmd, int posn)
 // NOTE We no longer check if the command has extra arguments
 // - the builtin can just ignore them
 // NOTE < test | rev segfaults in parse_builtin - checks.c prevents that.
-// FIXME parse_builtin has too many lines.
 t_builtin	parse_builtin(t_command *cmd)
 {
 	t_builtin	retvalue;
 	int			len;
-	int	i;
+	int			i;
 
 	i = 0;
 	while ((cmd->argv[i]) && (is_control_char(cmd->argv[i][0]) == 1))
-		i = i + 2;	// because a cc *must* have a file/stopword!
-	if (i >= cmd->argc)
-		return (NONE);	// do not look closer!
-	if ((cmd->argc == 0) || (cmd->argc < i))
+		i = i + 2;
+	if ((i >= cmd->argc) || (cmd->argc == 0))
 		retvalue = (NONE);
 	else
 	{
