@@ -21,20 +21,15 @@ int	g_procstatus;
 // as some builtins don't work in pipes!
 // - EXIT has to be an exit from the shell.
 // - EXPORT has to change values in the process above.
-// FIXME Too many lines in eval function
-// TODO Restore length check
+// FIXED Too many lines in eval function
+// DONE Restore length check
 void	eval(char *cmdline, t_env *envt)
 {
 	t_command	*cmd;
 	char		*trimmed;
 	int			len;
 
-	len = 0;	// FIXME This makes a nonsense of the following check!
-	if (len > MAXPARAM)
-	{
-		printf("Input too long for **MINI**shell to process...\n");
-		return ;
-	}
+	len = 0;
 	while (cmdline[len] == ' ')
 		len ++;
 	if (cmdline[len] == '\0')
@@ -43,8 +38,12 @@ void	eval(char *cmdline, t_env *envt)
 		return ;
 	}
 	trimmed = ft_strtrim(cmdline, " ");
-	if (trimmed == NULL)
-		perror("command line is NULL\n");
+	if ((trimmed == NULL) || (ft_strlen(trimmed) > MAXPARAM))
+	{
+		printf("Input too long (or short) for **MINI**shell to process...\n");
+		free (trimmed);
+		return ;
+	}
 	cmd = parse_input(trimmed, envt);
 	if (cmd)
 	{
