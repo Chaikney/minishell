@@ -63,8 +63,9 @@ char	*grab_control_seq(const char *cmd, int *posn)
 // - Ensure last NULL is copied
 // - Adjust value of argc
 // NOTE The target parts *must* have already been processed.
-// FIXME Too many lines in function - split pipe removal out? Still needed?
+// FIXME Too many lines in function
 // Pipe removal is not used, it is handled in build_command
+// FIXME This can create a cmd with argc of -2 !
 void	remove_cmd_parts(t_command *cmd, char *target)
 {
 	int	i;
@@ -72,6 +73,8 @@ void	remove_cmd_parts(t_command *cmd, char *target)
 
 	i = 0;
 	to_go = 2;
+	if (cmd->argc <= 0)
+		return ;
 	while ((cmd->argv[i]) && (ft_strncmp(cmd->argv[i], target, 1) != 0))
 	{
 		if (i == cmd->argc - 1)
