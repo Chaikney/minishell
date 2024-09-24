@@ -102,22 +102,15 @@ void	clear_t_command(t_command *cmd)
 	int			i;
 	t_command	*ptr;
 
-	if (cmd)
+	while (cmd)
 	{
-		while (cmd->next != NULL)
-		{
-			i = 0;
-			while (cmd->argv[i])
-				free(cmd->argv[i++]);
-			free(cmd->argv[cmd->argc]);
-			ptr = cmd;
-			cmd = cmd->next;
-			free (ptr);
-		}
 		i = 0;
 		while (cmd->argv[i])
 			free(cmd->argv[i++]);
 		free(cmd->argv[cmd->argc]);
-		free (cmd);
+		ptr = cmd;
+		cmd = cmd->next;
+		free (ptr);
 	}
+	free (cmd);
 }
