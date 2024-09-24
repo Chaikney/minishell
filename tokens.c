@@ -96,39 +96,6 @@ void	remove_cmd_parts(t_command *cmd, char *target)
 	cmd->argc = cmd->argc - to_go;
 }
 
-// This is the remove_cmd_parts version that can handle |
-// TODO Remove later once i know that it is not needed.
-void	old_remove_cmd_parts(t_command *cmd, char *target)
-{
-	int	i;
-	int	to_go;
-
-	i = 0;
-	if (target[0] == '|')
-		to_go = 1;
-	else
-		to_go = 2;
-	while ((cmd->argv[i]) && (ft_strncmp(cmd->argv[i], target, 1) != 0))
-	{
-		if (i == cmd->argc - 1)
-			return ;
-		i++;
-	}
-	free (cmd->argv[i]);
-	if (target[0] != '<' && target[1] != '<')
-	{
-		if (to_go == 2)
-			free (cmd->argv[i + 1]);
-	}
-	while (cmd->argv[i + to_go] != NULL)
-	{
-		cmd->argv[i] = cmd->argv[i + to_go];
-		i++;
-	}
-	cmd->argv[i] = cmd->argv[i + to_go];
-	cmd->argc = cmd->argc - to_go;
-}
-
 // When we reach a quote, work out what the change is.
 // What takes priority and what is right behaviour?
 // Either way, we step past the character after processing it.
