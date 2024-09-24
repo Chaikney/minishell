@@ -48,6 +48,9 @@ int	clean_controls(char **arr)
 // - is the first token a > or |? BAD
 // NOTE input redirection (both types) at the start is GOOD
 // FIXED < test less is legit!!! so is < test rev
+// FIXED segfault in the call to is_control_char
+// ...when given an odd mix of space-type chars
+// ...protected by ensuring that we never call arr[-1]
 int	no_extreme_controls(char **arr)
 {
 	int	is_bad;
@@ -55,6 +58,8 @@ int	no_extreme_controls(char **arr)
 
 	is_bad = 0;
 	len = count_tokens(arr);
+	if (len == 0)
+		return (is_bad);
 	if (is_control_char(arr[len - 1][0]) == 1)
 		return (-1);
 	if ((arr[0][0] == '|') || (arr[0][0] == '>'))
