@@ -13,6 +13,7 @@
 #include "minishell.h"
 
 // Functions to protect against bad combinations of tokens.
+// FIXME Too many functions in file
 
 // Any redirection token is followed by a file
 // bad returns -1
@@ -111,6 +112,34 @@ int	then_text(char **arr)
 	return (is_bad);
 }
 
+// Ensure that there are a plausible number of tokens between pipes.
+// Generally this means at least one.
+// BUT redirection tokens (and the token after them) do *not* count.
+// This is because they are removed before command execution.
+int	pipe_count(char **arr)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (arr[i])
+	{
+		j = 0;
+		while ((arr[i]) && (ft_strncmp(arr[i], "|", 1) != 0))
+		{
+			if ((ft_strncmp(arr[i], ">", 1) == 0) || (ft_strncmp(arr[i], ">", 1) == 0))
+				i++;
+			else
+				j++;
+			i++;
+		}
+		if (j < 1)
+			return (-1);
+		i++;
+	}
+	return (0);
+}
+
 // Return a -1 if there are illegal combinations of tokens
 // e.g. multiple attempts at redirection for either I or O
 // Implement sanity checks on token set:
@@ -130,5 +159,7 @@ int	check_tokens(char **arr)
 		is_bad = has_target(arr);
 	if (is_bad == 0)
 		is_bad = then_text(arr);
+	if (is_bad == 0)
+		is_bad = pipe_count(arr);
 	return (is_bad);
 }
