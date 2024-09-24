@@ -81,11 +81,7 @@ void	remove_cmd_parts(t_command *cmd, char *target)
 		i++;
 	}
 	free (cmd->argv[i]);
-	// HACK introduced in 0x16f4087, prevents crash(?) but also makes command format inconsistent!
-	if (target[0] != '<' && target[1] != '<')	// TODO Why do we prevent removal in heredoc case??
-	{
-		free (cmd->argv[i + 1]);
-	}
+	free (cmd->argv[i + 1]);
 	while (cmd->argv[i + to_go] != NULL)
 	{
 		cmd->argv[i] = cmd->argv[i + to_go];
