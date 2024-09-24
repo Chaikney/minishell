@@ -45,7 +45,7 @@ t_command	*build_command(char **tokens)
 	while ((i < num_tokens) && (tokens[i])
 		&& (ft_strncmp(tokens[i], "|", 1) != 0))
 	{
-		new_cmd->argv[j++] = ft_strdup(tokens[i++]);	// FIXME memleak if < test | rev i.e. an empty cmd
+		new_cmd->argv[j++] = ft_strdup(tokens[i++]);	// FIXME memleak with pipes
 		new_cmd->argc++;
 	}
 	new_cmd->argv[new_cmd->argc] = NULL;

@@ -127,7 +127,7 @@ int	pipe_count(char **arr)
 		j = 0;
 		while ((arr[i]) && (ft_strncmp(arr[i], "|", 1) != 0))
 		{
-			if ((ft_strncmp(arr[i], ">", 1) == 0) || (ft_strncmp(arr[i], ">", 1) == 0))
+			if ((ft_strncmp(arr[i], ">", 1) == 0) || (ft_strncmp(arr[i], "<", 1) == 0))
 				i++;
 			else
 				j++;
