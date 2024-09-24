@@ -89,7 +89,7 @@ void		remove_cmd_parts(t_command *cmd, char *target);
 
 // builtins.c
 int			ms_pwd(void);
-t_builtin	parse_builtin(t_command *cmd, int posn);
+t_builtin	parse_builtin(t_command *cmd);
 void		ms_echo(t_command *cmd);
 int			echon(t_command *cmd, int i);
 int			needs_to_fork(t_command *cmd);
