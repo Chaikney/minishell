@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/24 12:16:53 by chaikney          #+#    #+#             */
-/*   Updated: 2024/09/02 14:55:15 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/09/24 14:55:28 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,10 +115,7 @@ t_command	*parse_input(char *cmdline, t_env *envt)
 		perror("malformed input. Try bash or tee. Or stop messing about");
 		return (NULL);
 	}
-	cmd_head = build_command_list(tokens);
-	wipe_tokens(tokens);
-	if (cmd_head->argv[0] == NULL)
-		return (NULL);
+	cmd_head = parse_input2(tokens);
 	return (cmd_head);
 }
 
@@ -129,27 +126,14 @@ int	closed_quotes(char *ptr)
 	int	j;
 	int	counter1;
 	int	counter2;
+	int	true_or_false;
 
 	counter1 = 0;
 	counter2 = 0;
 	j = 0;
-	while (ptr[j] != '\0')
-	{
-		if (ptr[j] == '\"')
-		{
-			counter1++;
-			if (ptr[j - 1] == '\\')
-				counter1--;
-		}
-		if (ptr[j] == '\'')
-		{
-			counter2++;
-			if (ptr[j - 1] == '\\')
-				counter2--;
-		}
-		j++;
-	}
-	if (counter1 % 2 != 0 || counter2 % 2 != 0)
+	true_or_false = 0;
+	true_or_false = closed_quotes2(j, counter1, counter2, ptr);
+	if (true_or_false == 0)
 		return (0);
 	return (1);
 }
