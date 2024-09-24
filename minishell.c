@@ -37,7 +37,7 @@ void	eval(char *cmdline, t_env *envt)
 		free (cmdline);
 		return ;
 	}
-	trimmed = ft_strtrim(cmdline, " ");
+	trimmed = ft_strtrim(cmdline, "\t\n\r\f\v\b ");
 	if ((trimmed == NULL) || (ft_strlen(trimmed) > MAXPARAM))
 	{
 		printf("Input too long (or short) for **MINI**shell to process...\n");
