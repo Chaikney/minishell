@@ -81,21 +81,23 @@ t_env	*parse_env(char **envp)
 }
 
 // Print a message explaining what the shell can and cannot do.
-// TODO Update start message to match what has been added in
 void	startup_message(void)
 {
 	printf("\n********************************************\n");
 	printf("\n\tWelcome to Minishell!\nby chaikney and emedina- for 42U\n");
 	printf("\n********************************************\n");
 	printf("This interactive-only shell supports:\n\t- multiple pipes\n\t");
-	printf("- input and output redirection and\n\t");
+	printf("- input redirection (start only) and\n\t");
+	printf("- output redirection (throughout pipelines) and\n\t");
 	printf("- variable substitution (in normal input only).\n");
 	printf("Note that this is *not* a clone of bash and all its quirks.\n");
 	printf("Other shells like fish have been considered in its design.\n");
 	printf("This shell does *not* support:");
-	printf("\n\t- Multiple or mid-pipe redirection");
+	printf("\n\t- Multiple redirection");
+	printf("\n\t- Variable substitution in heredoc input");
 	printf("\n\t- Running a copy of itself.\n\t- Running in a pipe,");
 	printf("\n\t- Pasted or multiline input");
+	printf("\n\t- Other control structures like && or ; ");
 	printf("\n\t- Wildcards / globbing, or\n\t- Script execution.\n");
 	printf("\n********************************************\n");
 }
