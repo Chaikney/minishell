@@ -58,10 +58,11 @@ t_command	*build_command(char **tokens)
 }
 
 // Splits the token list into a list of commands.
-// FIXME < test | rev segfaults in parse_builtin - protect here?
-// Need to protect against "empty" commands like this being made
-// ...if you have redirection you must have at least 3 tokens to put into the cmd
-// ...increase that to 5 if both redir types are present.
+// FIXED < test | rev segfaults in parse_builtin - protected in checks.c
+// Need to protect against "empty" commands being made
+// ...if you have redirection you must have
+// at least 3 tokens to put into the cmd,
+// 5 if both redir types are present.
 t_command	*build_command_list(char **tokens)
 {
 	int			num_pipes;
