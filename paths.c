@@ -20,11 +20,10 @@
 // - if the final command is a builtin, execute it directly.
 // - otherwise pass it to be run in a fork
 // NOTE i_redir is passed as pointer to change for the next step in pipe.
-// DONE Test whether the i_redir -1 does *anything* or should be removed
 // NOTE i_redir == -1 is triggered if we couldn't open the input file path.
 // NOTE We need use last_status to not run a final_cmd if penultimate fails.
 // ...cant use g-proc because it leaves us in an unrecoverable state.
-// TODO Can we change the last_status check to something with SIGPIPE?
+// DONE Changed the last_status check to something with SIGPIPE
 // TODO Is input from any point in the pipe sensible?
 // If so need more determine input calls......
 void	direct_complex_command(t_command *cmd, t_env *envt)

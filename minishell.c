@@ -21,8 +21,6 @@ int	g_procstatus;
 // as some builtins don't work in pipes!
 // - EXIT has to be an exit from the shell.
 // - EXPORT has to change values in the process above.
-// FIXED Too many lines in eval function
-// DONE Restore length check
 void	eval(char *cmdline, t_env *envt)
 {
 	t_command	*cmd;
@@ -124,20 +122,18 @@ int	startup_checks(int argc)
 	return (0);
 }
 
-// FIXME Not clear what cmdline == NULL attempts, i can't trigger it.
+// NOTE Not clear what cmdline == NULL attempts, i can't trigger it.
 // ...readline man page says this what it returns on EOF on an empty line.
 // NOTE Exit called by user does not need to free prompt
 // ....as we destory it before eval
-// FIXED segfault with <>
 // NOTE cat << a - in bash this relies on multiline input.
 // Here we are not required to handle that ("no unclosed quotes") therefore
 // use CTRL-D to end the input.
 // NOTE cat << a << b << c << d - whatever it does in bash,
-// 		we do *not* handle multiple redirection.
-// FIXME echo "thing" > out | less	what then?
+// 		we do *not* handle multiple input redirection.
+// echo "thing" > out | less	what then, complains that no file.
 // Problem was it did not recognise the redir.
 // bash & fish - out contains "thing", less is blank
-// TODO Test echo thing > out -- would expect redirection.
 int	main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;
