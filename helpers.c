@@ -32,6 +32,10 @@ int	is_control_char(char c)
 void	goto_stop_char(const char *cmdline, int *posn)
 {
 	while ((cmdline[*posn] != '\0') && (((cmdline[*posn] == ' '))
+			|| (cmdline[*posn] == '\n')
+			|| (cmdline[*posn] == '\f')
+			|| (cmdline[*posn] == '\v')
+			|| (cmdline[*posn] == '\r')
 			|| (cmdline[*posn] == '\t')))
 		(*posn)++;
 }
