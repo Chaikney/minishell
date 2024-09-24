@@ -13,32 +13,6 @@
 #include "minishell.h"
 
 // Functions to protect against bad combinations of tokens.
-// FIXME Too many functions in file
-
-// Any redirection token is followed by a file
-// bad returns -1
-// TODO Not fully implemented yet.
-// Find a control structure then check:
-// i + 1 is a file
-// ...and is accessible, or could be created
-// TODO Could check validity of target
-int	has_target(char **arr)
-{
-	int	i;
-
-	i = 0;
-	while (arr[i + 1] != NULL)
-	{
-		if ((ft_strncmp(arr[i], "<", 1) == 0)
-			|| (ft_strncmp(arr[i], ">", 1) == 0))
-		{
-			if (is_control_char(arr[i + 1][0]) == 1)
-				return (-1);
-		}
-		i++;
-	}
-	return (0);
-}
 
 // returns 0 if all the control tokens in the file are well-formed.
 // That means the right length, with no other pieces
@@ -127,7 +101,8 @@ int	pipe_count(char **arr)
 		j = 0;
 		while ((arr[i]) && (ft_strncmp(arr[i], "|", 1) != 0))
 		{
-			if ((ft_strncmp(arr[i], ">", 1) == 0) || (ft_strncmp(arr[i], "<", 1) == 0))
+			if ((ft_strncmp(arr[i], ">", 1) == 0)
+				|| (ft_strncmp(arr[i], "<", 1) == 0))
 				i++;
 			else
 				j++;
@@ -155,8 +130,6 @@ int	check_tokens(char **arr)
 	is_bad = clean_controls(arr);
 	if (is_bad == 0)
 		is_bad = no_extreme_controls(arr);
-	if (is_bad == 0)
-		is_bad = has_target(arr);
 	if (is_bad == 0)
 		is_bad = then_text(arr);
 	if (is_bad == 0)
