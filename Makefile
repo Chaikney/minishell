@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: chaikney <marvin@42.fr>                    +#+  +:+       +#+         #
+#    By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/20 11:36:56 by chaikney          #+#    #+#              #
-#    Updated: 2023/05/17 15:40:23 by chaikney         ###   ########.fr        #
+#    Updated: 2024/09/24 14:57:53 by emedina-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME	= minishell
 
 SRC		= minishell.c paths.c parse.c builtins.c substitute.c tokens.c \
 		helpers.c pipes.c input.c ms_echo.c signals.c exit.c env.c cd.c \
-		prompt.c execute.c ms_export.c sort.c env_vars.c \
+		prompt.c execute.c ms_export.c sort.c env_vars.c parse2.c\
 		checks.c ms_unset.c output.c
 
 OBJ		= $(SRC:.c=.o)

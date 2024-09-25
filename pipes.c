@@ -29,9 +29,11 @@ t_command	*init_new_command(void)
 // When it reaches a pipe character it stops.
 // Outside the function must handle ->next
 // Return NULL when we finish.
-// This retains the I/O redir but removes the pipes.
+// This retains the I/O redirection info but removes the pipes.
 // (The pipes are replaced with the ->next)
-// NOTE We copy the values to make it easier to can wipe all tokens.
+// NOTE We copy the values to make it easier to wipe all tokens.
+// NOTE Possible memleak with pipes at the ft_strdup
+// ...but I have not managed to reproduce recently...
 t_command	*build_command(char **tokens)
 {
 	static int	i;
@@ -53,14 +55,16 @@ t_command	*build_command(char **tokens)
 		i = 0;
 	else
 		i++;
-	if ((new_cmd->argv[0]) && (is_control_char(new_cmd->argv[0][0]) == 1
-		&& is_control_char(new_cmd->argv[0][1]) != 1))
-		new_cmd->builtin = parse_builtin(new_cmd, 2);
-	else
-		new_cmd->builtin = parse_builtin(new_cmd, 0);
+	new_cmd->builtin = parse_builtin(new_cmd);
 	return (new_cmd);
 }
 
+// Splits the token list into a list of commands.
+// FIXED < test | rev segfaults in parse_builtin - protected in checks.c
+// Need to protect against "empty" commands being made
+// ...if you have redirection you must have
+// at least 3 tokens to put into the cmd,
+// 5 if both redir types are present.
 t_command	*build_command_list(char **tokens)
 {
 	int			num_pipes;

@@ -2,3 +2,4 @@
 /minishell
 *.a
 .vscode/settings.json
+*Zone.identifier

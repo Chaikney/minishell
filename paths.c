@@ -20,12 +20,10 @@
 // - if the final command is a builtin, execute it directly.
 // - otherwise pass it to be run in a fork
 // NOTE i_redir is passed as pointer to change for the next step in pipe.
-// DONE Test whether the i_redir -1 does *anything* or should be removed
 // NOTE i_redir == -1 is triggered if we couldn't open the input file path.
 // NOTE We need use last_status to not run a final_cmd if penultimate fails.
 // ...cant use g-proc because it leaves us in an unrecoverable state.
-// TODO Can we change the last_status check to something with SIGPIPE?
-// FIXED Too many lines in function direct_complex_command
+// DONE Changed the last_status check to something with SIGPIPE
 // TODO Is input from any point in the pipe sensible?
 // If so need more determine input calls......
 void	direct_complex_command(t_command *cmd, t_env *envt)
@@ -59,12 +57,12 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 
 // Wrap and run the necessary for a command running in a pipe
 // The pipe has been sucessfully set up before calling this.
-// TODO Test to see whether close(tube[1]) should be fully removed.
+// NOTE unsure whether close(tube[1]) should been fully removed.
 // ...what was the use case it failed on?
+//	close(tube[1]);
 void	launch_child_cmd(int tube[2], t_command *cmd, int *i_file, t_env *envt)
 {
 	close(tube[0]);
-//	close(tube[1]);
 	dup2(*i_file, STDIN_FILENO);
 	close(*i_file);
 	run_command(cmd, envt);

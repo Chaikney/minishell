@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-// Some shell builtin functions, may split later.
+// Some functions for parsing shell builtins.
 
 // The more complicated / slower parsing that we need to do to identify
 // a builtin.
@@ -40,36 +40,37 @@ static t_builtin	detailed_parse_builtin(t_command *cmd, int posn)
 
 // Read the given command argument and if it matches a builtin, set the flag.
 // (posn will be 0 except when there is input redirection)
-// First a sanity check on argument annd position,
+// First a sanity check on argument and position, (not good enough!)
 // then we check whether the first letter matches one of the builtin names.
 // then the shorter names.
 // If more complicated parsing is needed, we call detailed_parse_builtin
 // NOTE We no longer check if the command has extra arguments
 // - the builtin can just ignore them
-// FIXED Segfaults here given ><
-// It splits to 2 tokens but one command - should not happen?
-// but how to guard against?
-// FIXED Still a problem if >© is given.
-t_builtin	parse_builtin(t_command *cmd, int posn)
+// NOTE < test | rev segfaults in parse_builtin - checks.c prevents that.
+t_builtin	parse_builtin(t_command *cmd)
 {
 	t_builtin	retvalue;
 	int			len;
+	int			i;
 
-	if ((cmd->argc == 0) || (cmd->argc < posn))
+	i = 0;
+	while ((cmd->argv[i]) && (is_control_char(cmd->argv[i][0]) == 1))
+		i = i + 2;
+	if ((i >= cmd->argc) || (cmd->argc == 0))
 		retvalue = (NONE);
 	else
 	{
-		len = ft_strlen(cmd->argv[posn]);
-		if (ft_strchr("cepu", cmd->argv[posn][0]) == NULL)
+		len = ft_strlen(cmd->argv[i]);
+		if (ft_strchr("cepu", cmd->argv[i][0]) == NULL)
 			retvalue = (NONE);
-		else if ((ft_strncmp(cmd->argv[posn], "cd", 2) == 0) && (len == 2))
+		else if ((ft_strncmp(cmd->argv[i], "cd", 2) == 0) && (len == 2))
 			retvalue = (CD);
-		else if ((ft_strncmp(cmd->argv[posn], "pwd", 3) == 0) && (len == 3))
+		else if ((ft_strncmp(cmd->argv[i], "pwd", 3) == 0) && (len == 3))
 			retvalue = PWD;
-		else if ((ft_strncmp(cmd->argv[posn], "env", 3) == 0) && (len == 3))
+		else if ((ft_strncmp(cmd->argv[i], "env", 3) == 0) && (len == 3))
 			retvalue = ENV;
 		else
-			retvalue = detailed_parse_builtin(cmd, posn);
+			retvalue = detailed_parse_builtin(cmd, i);
 	}
 	return (retvalue);
 }

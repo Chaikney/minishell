@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: alberrod <alberrod@student.42urduliz.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 12:37:50 by chaikney          #+#    #+#             */
-/*   Updated: 2024/08/20 12:32:14 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/09/25 14:51:12 by alberrod         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,9 @@ char	*test_path_candidate(char *prog, char *loc)
 // -- does path + cmd = an executable?
 // -- if YES we have our command: keep that and discard the rest.
 // NOTE The return value of getenv("PATH") does not need to be freed
-// TODO is the here_doc check needed? we check before calling the function.
+// NOTE is the here_doc check needed? we check before calling the function.
 // And what happens if this is a heredoc thing? Would we find the command?!
+// ...the redirection symbols will have been removed.
 char	*search_in_path(char *cmd, t_env *envt)
 {
 	char	**pathparts;
@@ -80,8 +81,7 @@ char	*search_in_path(char *cmd, t_env *envt)
 
 	i = 0;
 	goodpath = NULL;
-	if (cmd[0] != '<' && cmd[1] != '<')
-	{
+	
 		pathparts = ft_split(get_value_of_env("PATH", envt), ':');
 		while ((pathparts[i] != NULL) && (!goodpath))
 		{
@@ -89,10 +89,10 @@ char	*search_in_path(char *cmd, t_env *envt)
 			i++;
 		}
 		i = -1;
-		while (pathparts[++i] != NULL)
+		while ((pathparts) && (pathparts[++i] != NULL))
 			free(pathparts[i]);
+		
 		free(pathparts);
-	}
 	return (goodpath);
 }
 
@@ -107,29 +107,30 @@ char	*search_in_path(char *cmd, t_env *envt)
 // - i.e. they are valid and null-terminated.
 // - Any fork-ing needed has been handled before calling this.
 // NOTE The lines at the end are only reached if execve fails
+// FIXED Segfaults if it gets a NULL cmd->argv[0]
 void	run_command(t_command *cmd, t_env *envt)
 {
 	char	*prog;
 
 	prog = NULL;
-	if (cmd->builtin != NONE)
+	if ((cmd->argv[0]))
 	{
-		execute_builtin(cmd, envt);
-		exit_successful_pipe(cmd);
-	}
-	if (cmd->argv[0][0] != '<' && cmd->argv[0][1] != '<')
-	{
+		if (cmd->builtin != NONE)
+		{
+			execute_builtin(cmd, envt);
+			exit_successful_pipe(cmd);
+		}
 		if (access(cmd->argv[0], X_OK) == 0)
 			prog = ft_strdup(cmd->argv[0]);
 		else if (is_in_envt("PATH", envt) == 1)
 			prog = search_in_path(cmd->argv[0], envt);
-	}
-	if (check_prog (prog) == 0)
-	{
-		if (execve(prog, cmd->argv, serialise_env(envt)) == -1)
+		if (check_prog (prog) == 0)
 		{
-			g_procstatus = errno;
-			perror("Failed to execute program");
+			if (execve(prog, cmd->argv, serialise_env(envt)) == -1)
+			{
+				g_procstatus = errno;
+				perror("Failed to execute program");
+			}
 		}
 	}
 	free (prog);

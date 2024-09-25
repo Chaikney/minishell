@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: alberrod <alberrod@student.42urduliz.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 13:48:26 by chaikney          #+#    #+#             */
-/*   Updated: 2024/09/02 14:29:42 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/09/25 15:43:54 by alberrod         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void		remove_cmd_parts(t_command *cmd, char *target);
 
 // builtins.c
 int			ms_pwd(void);
-t_builtin	parse_builtin(t_command *cmd, int posn);
+t_builtin	parse_builtin(t_command *cmd);
 void		ms_echo(t_command *cmd);
 int			echon(t_command *cmd, int i);
 int			needs_to_fork(t_command *cmd);
@@ -108,6 +108,10 @@ char		**quote_aware_split(const char *cmdline, t_env *envt);
 int			count_tokens(char **arr);
 void		wipe_tokens(char **arr);
 int			closed_quotes(char *ptr);
+
+//parse2.c
+t_command	*parse_input2(char **tokens);
+int			closed_quotes2(int j, int counter1, int counter2, char *ptr);
 
 // checks.c - sanity checks on token order
 int			check_tokens(char **arr);

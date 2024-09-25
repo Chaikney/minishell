@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: alberrod <alberrod@student.42urduliz.co    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 13:47:55 by chaikney          #+#    #+#             */
-/*   Updated: 2024/09/02 13:10:00 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/09/25 15:35:44 by alberrod         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,20 +21,13 @@ int	g_procstatus;
 // as some builtins don't work in pipes!
 // - EXIT has to be an exit from the shell.
 // - EXPORT has to change values in the process above.
-// FIXME Too many lines in eval function
-// TODO Restore length check
 void	eval(char *cmdline, t_env *envt)
 {
 	t_command	*cmd;
 	char		*trimmed;
 	int			len;
 
-	len = 0;	// FIXME This makes a nonsense of the following check!
-	if (len > MAXPARAM)
-	{
-		printf("Input too long for **MINI**shell to process...\n");
-		return ;
-	}
+	len = 0;
 	while (cmdline[len] == ' ')
 		len ++;
 	if (cmdline[len] == '\0')
@@ -42,9 +35,13 @@ void	eval(char *cmdline, t_env *envt)
 		free (cmdline);
 		return ;
 	}
-	trimmed = ft_strtrim(cmdline, " ");
-	if (trimmed == NULL)
-		perror("command line is NULL\n");
+	trimmed = ft_strtrim(cmdline, "\t\n\r\f\v\b ");
+	if ((trimmed == NULL) || (ft_strlen(trimmed) > MAXPARAM))
+	{
+		printf("Input too long (or short) for **MINI**shell to process...\n");
+		free (trimmed);
+		return ;
+	}
 	cmd = parse_input(trimmed, envt);
 	if (cmd)
 	{
@@ -82,21 +79,23 @@ t_env	*parse_env(char **envp)
 }
 
 // Print a message explaining what the shell can and cannot do.
-// TODO Update start message to match what has been added in
 void	startup_message(void)
 {
 	printf("\n********************************************\n");
 	printf("\n\tWelcome to Minishell!\nby chaikney and emedina- for 42U\n");
 	printf("\n********************************************\n");
 	printf("This interactive-only shell supports:\n\t- multiple pipes\n\t");
-	printf("- input and output redirection and\n\t");
+	printf("- input redirection (start only) and\n\t");
+	printf("- output redirection (throughout pipelines) and\n\t");
 	printf("- variable substitution (in normal input only).\n");
 	printf("Note that this is *not* a clone of bash and all its quirks.\n");
 	printf("Other shells like fish have been considered in its design.\n");
 	printf("This shell does *not* support:");
-	printf("\n\t- Multiple or mid-pipe redirection");
+	printf("\n\t- Multiple redirection");
+	printf("\n\t- Variable substitution in heredoc input");
 	printf("\n\t- Running a copy of itself.\n\t- Running in a pipe,");
 	printf("\n\t- Pasted or multiline input");
+	printf("\n\t- Other control structures like && or ; ");
 	printf("\n\t- Wildcards / globbing, or\n\t- Script execution.\n");
 	printf("\n********************************************\n");
 }
@@ -123,20 +122,18 @@ int	startup_checks(int argc)
 	return (0);
 }
 
-// FIXME Not clear what cmdline == NULL attempts, i can't trigger it.
+// NOTE Not clear what cmdline == NULL attempts, i can't trigger it.
 // ...readline man page says this what it returns on EOF on an empty line.
 // NOTE Exit called by user does not need to free prompt
 // ....as we destory it before eval
-// FIXED segfault with <>
 // NOTE cat << a - in bash this relies on multiline input.
 // Here we are not required to handle that ("no unclosed quotes") therefore
 // use CTRL-D to end the input.
 // NOTE cat << a << b << c << d - whatever it does in bash,
-// 		we do *not* handle multiple redirection.
-// FIXME echo "thing" > out | less	what then?
+// 		we do *not* handle multiple input redirection.
+// echo "thing" > out | less	what then, complains that no file.
 // Problem was it did not recognise the redir.
 // bash & fish - out contains "thing", less is blank
-// TODO Test echo thing > out -- would expect redirection.
 int	main(int argc, char **argv, char **envp)
 {
 	char	*cmdline;
@@ -160,6 +157,7 @@ int	main(int argc, char **argv, char **envp)
 			add_history((const char *) cmdline);
 			eval(cmdline, enviro);
 		}
+		free(cmdline);
 	}
 	return (0);
 }
