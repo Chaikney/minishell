@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+// Wrapper to call the command list builder
+// and clear the array of parsed tokens.
 t_command	*parse_input2(char **tokens)
 {
 	t_command	*cmd_head;
@@ -23,6 +25,10 @@ t_command	*parse_input2(char **tokens)
 	return (cmd_head);
 }
 
+// Checks to ensure that any quotations in the input are closed.
+// This part of the function is core of the analysis
+// 0 - quotes are NOT closed
+// 1 - quotes are closed
 int	closed_quotes2(int j, int counter1, int counter2, char *ptr)
 {
 	while (ptr[j] != '\0')

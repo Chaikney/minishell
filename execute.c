@@ -70,8 +70,9 @@ char	*test_path_candidate(char *prog, char *loc)
 // -- does path + cmd = an executable?
 // -- if YES we have our command: keep that and discard the rest.
 // NOTE The return value of getenv("PATH") does not need to be freed
-// TODO is the here_doc check needed? we check before calling the function.
+// NOTE is the here_doc check needed? we check before calling the function.
 // And what happens if this is a heredoc thing? Would we find the command?!
+// ...the redirection symbols will have been removed.
 char	*search_in_path(char *cmd, t_env *envt)
 {
 	char	**pathparts;
@@ -107,7 +108,7 @@ char	*search_in_path(char *cmd, t_env *envt)
 // - i.e. they are valid and null-terminated.
 // - Any fork-ing needed has been handled before calling this.
 // NOTE The lines at the end are only reached if execve fails
-// FIXME Segfaults if it gets a NULL cmd->argv[0]
+// FIXED Segfaults if it gets a NULL cmd->argv[0]
 void	run_command(t_command *cmd, t_env *envt)
 {
 	char	*prog;

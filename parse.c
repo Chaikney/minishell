@@ -91,7 +91,6 @@ int	count_tokens(char **arr)
 // - cmdline:  set by readline in main
 // - tokens:	list of strings mallocd to a set size
 // - cmd_trim:	copy of cmdline without leading / trailing spaces; freed here
-// FIXME Too many lines
 t_command	*parse_input(char *cmdline, t_env *envt)
 {
 	char		**tokens;
@@ -119,8 +118,9 @@ t_command	*parse_input(char *cmdline, t_env *envt)
 	return (cmd_head);
 }
 
-// FIXME No description of function
-// FIXME Function has too many lines
+// Checks to ensure that any quotations in the input are closed.
+// 0 - quotes are NOT closed
+// 1 - quotes are closed
 int	closed_quotes(char *ptr)
 {
 	int	j;
