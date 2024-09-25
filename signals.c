@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alberrod <alberrod@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 12:38:21 by chaikney          #+#    #+#             */
-/*   Updated: 2024/09/25 15:51:22 by alberrod         ###   ########.fr       */
+/*   Updated: 2024/09/25 19:14:19 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	handle_sigint(int sig)
 {
 	if (sig)
 	{
-		//printf("\n");
+		printf("\n");
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();

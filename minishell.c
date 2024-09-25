@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alberrod <alberrod@student.42urduliz.co    +#+  +:+       +#+        */
+/*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 13:47:55 by chaikney          #+#    #+#             */
-/*   Updated: 2024/09/25 15:35:44 by alberrod         ###   ########.fr       */
+/*   Updated: 2024/09/25 20:08:41 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,6 +158,7 @@ int	main(int argc, char **argv, char **envp)
 			eval(cmdline, enviro);
 		}
 		free(cmdline);
+		
 	}
 	return (0);
 }
