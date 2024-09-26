@@ -109,7 +109,7 @@ int			count_tokens(char **arr);
 void		wipe_tokens(char **arr);
 
 //parse2.c
-t_command	*parse_input2(char **tokens);
+t_command	*tokens_to_list(char **tokens);
 int			closed_quotes(char *ptr);
 
 // checks.c - sanity checks on token order

@@ -14,7 +14,7 @@
 
 // Wrapper to call the command list builder
 // and clear the array of parsed tokens.
-t_command	*parse_input2(char **tokens)
+t_command	*tokens_to_list(char **tokens)
 {
 	t_command	*cmd_head;
 

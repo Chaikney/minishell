@@ -42,6 +42,7 @@ static int	word_match(char *stop, char *line)
 // -- waits for reader to finish
 // - returns the read end of the parent's pipe
 // NOTE read end of pipe is not needed by GNL
+// TODO Careful with how this behaves after a CTRL-C SIGINT -
 int	stopword_input(t_command *cmd, int fd[2], int posn)
 {
 	int		reader;

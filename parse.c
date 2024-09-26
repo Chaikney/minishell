@@ -89,8 +89,7 @@ int	count_tokens(char **arr)
 // Returns the first cmd in a list of them.
 // NOTE malloc'd variables used in this function:
 // - cmdline:  set by readline in main
-// - tokens:	list of strings mallocd to a set size
-// - cmd_trim:	copy of cmdline without leading / trailing spaces; freed here
+// - tokens:	list of strings mallocd to a set size (freed in parse_input2)
 t_command	*parse_input(char *cmdline, t_env *envt)
 {
 	char		**tokens;
@@ -114,6 +113,6 @@ t_command	*parse_input(char *cmdline, t_env *envt)
 		perror("malformed input. Try bash or tee. Or stop messing about");
 		return (NULL);
 	}
-	cmd_head = parse_input2(tokens);
+	cmd_head = tokens_to_list(tokens);
 	return (cmd_head);
 }

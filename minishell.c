@@ -21,6 +21,9 @@ int	g_procstatus;
 // as some builtins don't work in pipes!
 // - EXIT has to be an exit from the shell.
 // - EXPORT has to change values in the process above.
+// malloc'd variables here:
+// trimmed:	copy of cmdline without leading / trailing spaces;
+// - freed here in case of failure, or in parse_input()
 void	eval(char *cmdline, t_env *envt)
 {
 	t_command	*cmd;
