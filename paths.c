@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 16:03:41 by chaikney          #+#    #+#             */
-/*   Updated: 2024/09/25 19:14:31 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/09/26 18:15:06 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 // DONE Changed the last_status check to something with SIGPIPE
 // TODO Is input from any point in the pipe sensible?
 // If so need more determine input calls......
-void	direct_complex_command(t_command *cmd, t_env *envt)
+int	direct_complex_command(t_command *cmd, t_env *envt)
 {
 	int	o_redir;
 	int	i_redir;
@@ -43,7 +43,7 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 		else
 		{
 			printf("broken pipe\n;");
-			return ;
+			return (0);
 		}
 	}
 	if ((last_status != EPIPE) && (i_redir != -1))
@@ -53,6 +53,7 @@ void	direct_complex_command(t_command *cmd, t_env *envt)
 			execute_builtin(cmd, envt);
 		run_final_cmd(cmd, i_redir, o_redir, envt);
 	}
+	return(0);
 }
 
 // Wrap and run the necessary for a command running in a pipe
@@ -109,6 +110,7 @@ int	run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt)
 	{
 		wire_up_output(o_file, tube);
 		launch_child_cmd(tube, cmd, i_file, envt);
+		return(1);
 	}
 	else
 	{
@@ -119,7 +121,7 @@ int	run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt)
 		else
 			*i_file = STDIN_FILENO;
 	}
-	return (g_procstatus);
+	return (0);
 }
 
 // Simplest command runner.
@@ -136,7 +138,7 @@ int	run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt)
 // - wait for the child, collect exit code for g_procstatus
 // - close output reference IF it is not STDOUT
 // - close input reference IF it is not STDIn
-void	run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt)
+int	run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt)
 {
 	pid_t		child;
 
@@ -150,6 +152,7 @@ void	run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt)
 		run_command(cmd, envt);
 		if (i_file >= 0)
 			close(i_file);
+		return(1);
 	}
 	else
 	{
@@ -159,4 +162,5 @@ void	run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt)
 		if ((i_file >= 0) && (i_file != STDIN_FILENO))
 			close(i_file);
 	}
+	return(0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prompt.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 12:38:32 by chaikney          #+#    #+#             */
-/*   Updated: 2024/09/25 19:59:01 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/07/29 12:38:34 by chaikney         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ char	*get_prompt(t_env *envt)
 	char	*tmp_part;
 	char	*cwd;
 	char	*tmp2;
-		
+
 	tmp_part = ft_strjoin(getenv("USER"), " in ");
 	cwd = get_shrt_wd(envt);
 	tmp2 = ft_strjoin(tmp_part, cwd);
@@ -80,11 +80,10 @@ char	*get_prompt(t_env *envt)
 	if (g_procstatus != 0)
 	{
 		status = get_status_for_prompt();
-		if(g_procstatus == 2)
-			return(NULL);
 		prompt = ft_strjoin(tmp2, status);
 		free (status);
 	}
+	else
 		prompt = ft_strjoin(tmp2, " > ");
 	free (tmp2);
 	return (prompt);

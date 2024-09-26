@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 13:47:55 by chaikney          #+#    #+#             */
-/*   Updated: 2024/09/25 20:08:41 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/09/26 18:20:53 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,33 +21,36 @@ int	g_procstatus;
 // as some builtins don't work in pipes!
 // - EXIT has to be an exit from the shell.
 // - EXPORT has to change values in the process above.
-void	eval(char *cmdline, t_env *envt)
+int	eval(char *cmdline, t_env *envt)
 {
 	t_command	*cmd;
 	char		*trimmed;
 	int			len;
+	int			is_child;
 
+	is_child = 0;
 	len = 0;
 	while (cmdline[len] == ' ')
 		len ++;
 	if (cmdline[len] == '\0')
 	{
 		free (cmdline);
-		return ;
+		return (0);
 	}
 	trimmed = ft_strtrim(cmdline, "\t\n\r\f\v\b ");
 	if ((trimmed == NULL) || (ft_strlen(trimmed) > MAXPARAM))
 	{
 		printf("Input too long (or short) for **MINI**shell to process...\n");
 		free (trimmed);
-		return ;
+		return (0);
 	}
 	cmd = parse_input(trimmed, envt);
 	if (cmd)
 	{
-		direct_complex_command(cmd, envt);
+		is_child = direct_complex_command(cmd, envt);
 		clear_t_command(cmd);
 	}
+	return(is_child);
 }
 
 // read the Starting environment into a variable to access.
@@ -117,7 +120,6 @@ int	startup_checks(int argc)
 		printf("no args needed to minishell\n");
 		exit (EXIT_FAILURE);
 	}
-	setup_signals();
 	startup_message();
 	return (0);
 }
@@ -139,7 +141,9 @@ int	main(int argc, char **argv, char **envp)
 	char	*cmdline;
 	char	*prompt;
 	t_env	*enviro;
-
+	int is_child;
+	
+	is_child = 0;
 	(void) argv;
 	startup_checks(argc);
 	cmdline = NULL;
@@ -147,6 +151,7 @@ int	main(int argc, char **argv, char **envp)
 	sort_env(enviro);
 	while (1)
 	{
+		setup_signals(is_child);
 		prompt = get_prompt(enviro);
 		cmdline = readline(prompt);
 		free (prompt);
@@ -155,10 +160,9 @@ int	main(int argc, char **argv, char **envp)
 		if ((cmdline[0] != '\0'))
 		{
 			add_history((const char *) cmdline);
-			eval(cmdline, enviro);
+			is_child = eval(cmdline, enviro);
 		}
 		free(cmdline);
-		
 	}
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 13:48:26 by chaikney          #+#    #+#             */
-/*   Updated: 2024/09/25 19:14:24 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/09/26 18:20:03 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ typedef struct s_env
 }	t_env;
 
 // Early stage functions
-void		eval(char *cmdline, t_env *envt);
+int			eval(char *cmdline, t_env *envt);
 t_env		*parse_env(char **envp);
 
 // substitute.c - variable substitution
@@ -127,8 +127,8 @@ int			setup_input(t_command *cmd, int i_lvl, int posn);
 int			determine_input(t_command *cmd);
 
 // paths.c - find and direct programs in PATH
-void		run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt);
-void		direct_complex_command(t_command *cmd, t_env *envt);
+int		run_final_cmd(t_command *cmd, int i_file, int o_file, t_env *envt);
+int		direct_complex_command(t_command *cmd, t_env *envt);
 int			run_in_pipe(t_command *cmd, int *i_file, int o_file, t_env *envt);
 void		launch_child_cmd(int fd[2], t_command *cmd, int *i_f, t_env *envt);
 
@@ -148,7 +148,7 @@ int			count_pipes(char **arr);
 // signals.c - catch and manage signals like CTRL-C
 void		handle_sigint(int sig);
 void		handle_sigquit(int sig);
-int			setup_signals(void);
+int			setup_signals(int is_child);
 
 // exit.c - freeing memory and exiting cleanly
 void		clear_t_command(t_command *cmd);
