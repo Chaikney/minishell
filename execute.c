@@ -81,19 +81,16 @@ char	*search_in_path(char *cmd, t_env *envt)
 
 	i = 0;
 	goodpath = NULL;
-	if (cmd[0] != '<' && cmd[1] != '<')
+	pathparts = ft_split(get_value_of_env("PATH", envt), ':');
+	while ((pathparts[i] != NULL) && (!goodpath))
 	{
-		pathparts = ft_split(get_value_of_env("PATH", envt), ':');
-		while ((pathparts[i] != NULL) && (!goodpath))
-		{
-			goodpath = test_path_candidate(cmd, pathparts[i]);
-			i++;
-		}
-		i = -1;
-		while (pathparts[++i] != NULL)
-			free(pathparts[i]);
-		free(pathparts);
+		goodpath = test_path_candidate(cmd, pathparts[i]);
+		i++;
 	}
+	i = -1;
+	while ((pathparts) && (pathparts[++i] != NULL))
+		free(pathparts[i]);
+	free(pathparts);
 	return (goodpath);
 }
 
