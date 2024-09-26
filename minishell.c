@@ -158,7 +158,6 @@ int	main(int argc, char **argv, char **envp)
 			eval(cmdline, enviro);
 		}
 		free(cmdline);
-		
 	}
 	return (0);
 }

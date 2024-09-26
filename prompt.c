@@ -56,14 +56,11 @@ char	*get_status_for_prompt(void)
 	return (prompt);
 }
 
-// DONE Add (a part of) the wd to prompt
-// DONE Shorten the wd.
-// FIXED Too many variables.
-// DONE Add username to prompt
-// TODO Check that the terminal is colour-capable before using control codes
-// This returns a text string to be dsiplayed by readline
+// This returns a text string to be displayed by readline
 // when waiting for user input
 // NOTE Once a variable has been used in strjoin it can (should) be freed.
+// IDEA Check that the terminal is colour-capable before using control codes
+// TODO Confirm the purpose of the g_procstatus == 2 check.
 char	*get_prompt(t_env *envt)
 {
 	char	*prompt;
@@ -71,7 +68,7 @@ char	*get_prompt(t_env *envt)
 	char	*tmp_part;
 	char	*cwd;
 	char	*tmp2;
-		
+
 	tmp_part = ft_strjoin(getenv("USER"), " in ");
 	cwd = get_shrt_wd(envt);
 	tmp2 = ft_strjoin(tmp_part, cwd);
@@ -80,12 +77,12 @@ char	*get_prompt(t_env *envt)
 	if (g_procstatus != 0)
 	{
 		status = get_status_for_prompt();
-		if(g_procstatus == 2)
-			return(NULL);
+		if (g_procstatus == 2)
+			return (NULL);
 		prompt = ft_strjoin(tmp2, status);
 		free (status);
 	}
-		prompt = ft_strjoin(tmp2, " > ");
+	prompt = ft_strjoin(tmp2, " > ");
 	free (tmp2);
 	return (prompt);
 }

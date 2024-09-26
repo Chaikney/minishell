@@ -12,9 +12,6 @@
 
 #include "minishell.h"
 
-// this is to disable CRTL-BACKSLASH
-// "Ctrl-\ does nothing"
-
 // catch CTRL-c / SIGINT
 // FIXED This should return to the normal prompt / readline call
 // ...I think this leads to duplicated prompt message.
@@ -42,6 +39,5 @@ int	setup_signals(void)
 {
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, SIG_IGN);
-	
 	return (0);
 }
