@@ -60,7 +60,6 @@ char	*get_status_for_prompt(void)
 // when waiting for user input
 // NOTE Once a variable has been used in strjoin it can (should) be freed.
 // IDEA Check that the terminal is colour-capable before using control codes
-// TODO Confirm the purpose of the g_procstatus == 2 check.
 char	*get_prompt(t_env *envt)
 {
 	char	*prompt;
@@ -77,8 +76,6 @@ char	*get_prompt(t_env *envt)
 	if (g_procstatus != 0)
 	{
 		status = get_status_for_prompt();
-		if (g_procstatus == 2)
-			return (NULL);
 		prompt = ft_strjoin(tmp2, status);
 		free (status);
 	}
