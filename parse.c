@@ -117,23 +117,3 @@ t_command	*parse_input(char *cmdline, t_env *envt)
 	cmd_head = parse_input2(tokens);
 	return (cmd_head);
 }
-
-// Checks to ensure that any quotations in the input are closed.
-// 0 - quotes are NOT closed
-// 1 - quotes are closed
-int	closed_quotes(char *ptr)
-{
-	int	j;
-	int	counter1;
-	int	counter2;
-	int	true_or_false;
-
-	counter1 = 0;
-	counter2 = 0;
-	j = 0;
-	true_or_false = 0;
-	true_or_false = closed_quotes2(j, counter1, counter2, ptr);
-	if (true_or_false == 0)
-		return (0);
-	return (1);
-}

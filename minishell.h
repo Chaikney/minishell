@@ -107,11 +107,10 @@ t_command	*parse_input(char *cmdline, t_env *envt);
 char		**quote_aware_split(const char *cmdline, t_env *envt);
 int			count_tokens(char **arr);
 void		wipe_tokens(char **arr);
-int			closed_quotes(char *ptr);
 
 //parse2.c
 t_command	*parse_input2(char **tokens);
-int			closed_quotes2(int j, int counter1, int counter2, char *ptr);
+int			closed_quotes(char *ptr);
 
 // checks.c - sanity checks on token order
 int			check_tokens(char **arr);
