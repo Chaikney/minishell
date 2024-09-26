@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaikney <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 12:38:21 by chaikney          #+#    #+#             */
-/*   Updated: 2024/07/29 12:38:24 by chaikney         ###   ########.fr       */
+/*   Updated: 2024/09/25 19:14:19 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,6 @@
 
 // this is to disable CRTL-BACKSLASH
 // "Ctrl-\ does nothing"
-void	handle_sigquit(int sig)
-{
-	(void) sig;
-	return ;
-}
 
 // catch CTRL-c / SIGINT
 // FIXED This should return to the normal prompt / readline call
@@ -46,6 +41,7 @@ void	handle_sigint(int sig)
 int	setup_signals(void)
 {
 	signal(SIGINT, handle_sigint);
-	signal(SIGQUIT, handle_sigquit);
+	signal(SIGQUIT, SIG_IGN);
+	
 	return (0);
 }

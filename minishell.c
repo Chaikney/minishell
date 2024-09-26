@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 13:47:55 by chaikney          #+#    #+#             */
-/*   Updated: 2024/09/02 13:10:00 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/09/25 20:08:41 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,6 +157,8 @@ int	main(int argc, char **argv, char **envp)
 			add_history((const char *) cmdline);
 			eval(cmdline, enviro);
 		}
+		free(cmdline);
+		
 	}
 	return (0);
 }
