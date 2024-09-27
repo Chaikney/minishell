@@ -147,6 +147,7 @@ int			count_pipes(char **arr);
 // signals.c - catch and manage signals like CTRL-C
 void		handle_sigint(int sig);
 void		handle_sigquit(int sig);
+void		handle_sigint_in_hd();
 int			setup_signals(void);
 
 // exit.c - freeing memory and exiting cleanly

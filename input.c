@@ -42,7 +42,9 @@ static int	word_match(char *stop, char *line)
 // -- waits for reader to finish
 // - returns the read end of the parent's pipe
 // NOTE read end of pipe is not needed by GNL
-// TODO Careful with how this behaves after a CTRL-C SIGINT -
+// FIXME behaves badly after a CTRL-C SIGINT - very confusing, appears to be normal but still in hd mode
+// If interupted, the child/reader returns to the same place, i.e. still within the while(1) loop
+// - can we change the loop to something else? "while not interupted?"
 int	stopword_input(t_command *cmd, int fd[2], int posn)
 {
 	int		reader;
@@ -51,6 +53,7 @@ int	stopword_input(t_command *cmd, int fd[2], int posn)
 	reader = fork();
 	if (reader == 0)
 	{
+		signal(SIGINT, handle_sigint_in_hd);
 		close(fd[0]);
 		while (1)
 		{
@@ -63,11 +66,16 @@ int	stopword_input(t_command *cmd, int fd[2], int posn)
 			write(fd[1], line, ft_strlen(line));
 			free (line);
 		}
+		exit_failed_pipe(cmd, -1, fd[1], NULL);	// HACK here is unlikely to be called ever
 	}
 	else
 	{
 		close(fd[1]);
-		waitpid(reader, 0, 0);
+		waitpid(reader, 0, 0);	// NOTE Could we here catch that the reader was interupted? And do what?
+		// What would "failed heredoc" look like?
+		// - throw away the input (reset STDIN and OUT)
+		// - make sure the reader process is killed not just interupted
+		// -- could this be via a "die if reader==0 call?"
 	}
 	return (fd[0]);
 }

@@ -20,15 +20,25 @@
 // - Move to a new line
 // - regenerate prompt
 // - clear previous text
+// FIXME Should not use printf in signal handlers.
+// It modifes the program's global state or something.
 void	handle_sigint(int sig)
 {
 	if (sig)
 	{
-		printf("\n");
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
+//		printf("\n");	// does the blank line
+		rl_on_new_line();	// Withhout this, the cursor just goes to the start of theline,.
+ 		rl_replace_line("", 0);	// without thiss, the ^C stays there
+		rl_redisplay();// Withhout this, the cursor just goes to the start of theline,.
 	}
+}
+
+// When running a long process in a pipe (basically only heredocs for us),
+// this handler takes over from the normal one.
+// TODO Define necessary clearup
+void	handle_sigint_in_hd()
+{
+	exit(EXIT_SUCCESS);
 }
 
 // Setup the functions to handle each signal we have to manage.

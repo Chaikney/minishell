@@ -60,6 +60,7 @@ char	*get_status_for_prompt(void)
 // when waiting for user input
 // NOTE Once a variable has been used in strjoin it can (should) be freed.
 // IDEA Check that the terminal is colour-capable before using control codes
+// FIXME Occasional (post heredoc?) memleak in the prompt = strjoin call
 char	*get_prompt(t_env *envt)
 {
 	char	*prompt;
