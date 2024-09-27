@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 12:38:32 by chaikney          #+#    #+#             */
-/*   Updated: 2024/09/25 19:59:01 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/09/27 17:59:54 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,10 +81,10 @@ char	*get_prompt(t_env *envt)
 	if (g_procstatus != 0)
 	{
 		status = get_status_for_prompt();
-		prompt = ft_strjoin(tmp2, status);
+		printf("%s\n",status);
 		free (status);
 	}
-	prompt = ft_strjoin(tmp2, " > ");
+	prompt = ft_strjoin(tmp2, " ");
 	free (tmp2);
 	return (prompt);
 }
