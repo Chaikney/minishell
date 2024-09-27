@@ -29,53 +29,55 @@ static int	word_match(char *stop, char *line)
 	return (0);
 }
 
-// Implmentation of << "here_doc" or stop word based input
-// - open a pipe
-// - open a child process
+// Child process of the heredoc reader.
 // - use the child process to get input into STDOUT
 // -- calls GNL and writes that output to the pipe
 // -- until it gets NULL back
 // -- then the process EXITs
+// NOTE that the failed_pipe exit is not expecyted to ever be reached!
+// Either ends successfuly or with SIGINT
+static void	heredoc_reader(t_command *cmd, int fd[2], int posn)
+{
+	char	*line;
+
+	signal(SIGINT, handle_sigint_in_hd);
+	close(fd[0]);
+	while (1)
+	{
+		line = get_next_line(STDIN_FILENO);
+		if (word_match(cmd->argv[posn + 1], line) == 1)
+		{
+			free (line);
+			exit_successful_pipe(cmd);
+		}
+		write(fd[1], line, ft_strlen(line));
+		free (line);
+	}
+	exit_failed_pipe(cmd, fd[0], fd[1], NULL);
+}
+
+// Implementation of << "here_doc" or stop word based input
+// - open a pipe
+// - open a child process to fill STDOUT
 // - parent process reads from the other end of the
 // -- close the write end as uneeded
 // -- dups stdin to the read end of the pipe
 // -- waits for reader to finish
 // - returns the read end of the parent's pipe
 // NOTE read end of pipe is not needed by GNL
-// FIXME behaves badly after a CTRL-C SIGINT - very confusing, appears to be normal but still in hd mode
-// If interupted, the child/reader returns to the same place, i.e. still within the while(1) loop
-// - can we change the loop to something else? "while not interupted?"
 int	stopword_input(t_command *cmd, int fd[2], int posn)
 {
 	int		reader;
-	char	*line;
 
 	reader = fork();
 	if (reader == 0)
 	{
-		signal(SIGINT, handle_sigint_in_hd);
-		close(fd[0]);
-		while (1)
-		{
-			line = get_next_line(STDIN_FILENO);
-			if (word_match(cmd->argv[posn + 1], line) == 1)
-			{
-				free (line);
-				exit_successful_pipe(cmd);
-			}
-			write(fd[1], line, ft_strlen(line));
-			free (line);
-		}
-		exit_failed_pipe(cmd, -1, fd[1], NULL);	// HACK here is unlikely to be called ever
+		heredoc_reader(cmd, fd, posn);
 	}
 	else
 	{
 		close(fd[1]);
-		waitpid(reader, 0, 0);	// NOTE Could we here catch that the reader was interupted? And do what?
-		// What would "failed heredoc" look like?
-		// - throw away the input (reset STDIN and OUT)
-		// - make sure the reader process is killed not just interupted
-		// -- could this be via a "die if reader==0 call?"
+		waitpid(reader, 0, 0);
 	}
 	return (fd[0]);
 }
