@@ -81,7 +81,7 @@ char	*get_prompt(t_env *envt)
 	if (g_procstatus != 0)
 	{
 		status = get_status_for_prompt();
-		printf("%s\n",status);
+		printf ("%s\n", status);
 		free (status);
 	}
 	prompt = ft_strjoin(tmp2, " ");
