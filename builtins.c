@@ -94,6 +94,16 @@ int	ms_pwd(void)
 
 // return 1 if the command needs to fork before running
 // Mostly important for builtins that should allow their output to redirect.
+// to fork:
+// - env
+// - export no args
+// - echo echo -n
+// - pwd
+// Builtins that do *not* fork (act directly on shell)
+// - cd
+// - exit
+// - export WITH ARGUMENTS
+// - unset
 int	needs_to_fork(t_command *cmd)
 {
 	int	to_fork;
