@@ -61,6 +61,10 @@ char	*get_status_for_prompt(void)
 // NOTE Once a variable has been used in strjoin it can (should) be freed.
 // IDEA Check that the terminal is colour-capable before using control codes
 // FIXME Occasional (post heredoc?) memleak in the prompt = strjoin call
+// NOTE Also seen in builtins (echo)
+// It might be because g_procstatus is not being reset to zero
+// TODO Easiest fix is to get rid of the feature, but...
+// ...the variable is also wrong this way..
 char	*get_prompt(t_env *envt)
 {
 	char	*prompt;
