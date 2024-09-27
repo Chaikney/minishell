@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 13:47:55 by chaikney          #+#    #+#             */
-/*   Updated: 2024/09/27 16:43:16 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/09/27 18:28:13 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ void	eval(char *cmdline, t_env *envt)
 		len ++;
 	if (cmdline[len] == '\0')
 	{
-		free (cmdline);
 		return ;
 	}
 	trimmed = ft_strtrim(cmdline, "\t\n\r\f\v\b ");
@@ -160,7 +159,7 @@ int	main(int argc, char **argv, char **envp)
 			add_history((const char *) cmdline);
 			eval(cmdline, enviro);
 		}
-		free(cmdline);
+		free (cmdline);
 	}
 	return (0);
 }
