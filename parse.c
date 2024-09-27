@@ -85,8 +85,13 @@ int	count_tokens(char **arr)
 	return (i);
 }
 
-// Parse input from cmdline into a command struct
-// Returns the first cmd in a list of them.
+// Takes cmdline string (previously trimmed).
+// Checks that all quotes are closed.
+// Splits cmdline into list of tokens.
+// Those tokens undergo some logic / structure checks
+// If they pass, the tokens are parsed into a list of command structs.
+// Returns a pointer to the first t_command in the set.
+// Or NULL if there is a failure at any point.
 // NOTE malloc'd variables used in this function:
 // - cmdline:  set by readline in main
 // - tokens:	list of strings mallocd to a set size (freed in parse_input2)
