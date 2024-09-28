@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 13:47:55 by chaikney          #+#    #+#             */
-/*   Updated: 2024/09/28 18:04:48 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/09/28 18:16:48 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	eval(char *cmdline, t_env *envt)
 		|| cmdline[len] == '\r' || cmdline[len] == '\f'
 		|| cmdline[len] == '\v' || cmdline[len] == '\b')
 		len ++;
-	if (cmdline[len] == '\0')
+	if (cmdline[len] == '\0' || cmdline[len] == '\n')
 		return ;
 	trimmed = ft_strtrim(cmdline, "\t\n\r\f\v\b ");
 	if ((trimmed == NULL) || (ft_strlen(trimmed) > MAXPARAM))
