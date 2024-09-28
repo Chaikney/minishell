@@ -6,7 +6,7 @@
 /*   By: emedina- <emedina-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/06 13:47:55 by chaikney          #+#    #+#             */
-/*   Updated: 2024/09/28 17:58:34 by emedina-         ###   ########.fr       */
+/*   Updated: 2024/09/28 18:04:48 by emedina-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,9 @@ void	eval(char *cmdline, t_env *envt)
 	int			len;
 
 	len = 0;
-	while (cmdline[len] == ' ' || cmdline[len] == '\t' ||cmdline[len] == '\n' || cmdline[len] == '\r' || cmdline[len] == '\f' || cmdline[len] == '\v' || cmdline[len] == '\b')
+	while (cmdline[len] == ' ' || cmdline[len] == '\t' || cmdline[len] == '\n'
+		|| cmdline[len] == '\r' || cmdline[len] == '\f'
+		|| cmdline[len] == '\v' || cmdline[len] == '\b')
 		len ++;
 	if (cmdline[len] == '\0')
 		return ;
