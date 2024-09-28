@@ -28,14 +28,14 @@ char	*get_shrt_wd(t_env *envt)
 	i = 0;
 	full_wd = get_value_of_env("PWD", envt);
 	cut_wd = malloc (sizeof(char) * linesize + 1);
-	if (!full_wd)
+	if ((!full_wd) || (!cut_wd))
 		return (NULL);
 	ptr = ft_strrchr(full_wd, '/');
 	if (!ptr)
 		return (NULL);
-	while (*ptr != '\0')
+	while ((i < linesize) && (*ptr != '\0'))
 		cut_wd[i++] = *ptr++;
-	while (i < linesize)
+	while (i <= linesize)
 		cut_wd[i++] = '\0';
 	return (cut_wd);
 }
