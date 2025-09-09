@@ -23,7 +23,9 @@ Technical things learned and demonstrated in this project include:
 - GNU ***readline** library
 - Memory safety debugging with **valgrind**
 - Input Parsing.
+
   Hardening it against malevolent and accidental damage. The ways in which decisions (e.g. order of handling quotation types) have effects downstream (e.g. in the availability of variables to substitute at different times.)
+
 - Input substitution behaviour known in bash as "here_doc"
   I still agree with Fish people that it is a weird quirk, but also some people find it very useful and not easily replaceable. We implemented it, while aavoiding the "bug-for-bug compatibility" trap.
 
@@ -32,20 +34,19 @@ So-called "soft skills"[#]_ demonstrated in this project.
 - Project management.
 
   Keeping things within scope, prioritising tasks, etc
+
 - Division of labour in a complex software project
 - Use of **git** features (branches, merges, rebases) to resolve conflicts and work effectively in a team.
 - The necessity for and limits of partitioning work packages in a complex software project.
 
   Specifically this project began with a strict split between execution and parsing modules. Later we found that the interface and data sharing between those two parts were tightly coupled. That required redesigns and iteration on ideas to find the best approach available to us.
 
-.. [#] Soft skills are hard!
 
 Remaining limitations
 ---------------------
 
 This is not a full-powered shell! Some hard problems were designed out by placing limitations and refusing to act in certain cases. For example, if an input line is too long, we simply refused to handle it. [#]_
 
-.. [#] It is called *mini*shell, after all!
 
 Some features of larger shells were deemed out of scope, including: multiple redirection of output or input; variable substitution outside of normal input; more esoteric control structures such as ";" and "&&" ; wildcard "globbing" and script execution. I'd like to think that the code as structured could be extended to support the addition of these features without too much work.
 
@@ -59,3 +60,6 @@ Conclusion
 During my work so far at `42 Urduliz <https://www.42urduliz.com/>`_ this may be the most challenging (yet rewarding) project I have tackled; that's why I am taking the time to document it here.
 
 It shows that I can take my knowledge of C programming and apply it to a realistic software development project ending in a finished, usable product. One which has reasonably clear and well-documented code without traps or footguns and which does not leak memory or crash.
+
+.. [#] Soft skills are hard!
+.. [#] It is called *mini*shell, after all!
