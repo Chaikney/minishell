@@ -19,15 +19,18 @@ Technical things learned and demonstrated in this project include:
 - leak-free memory handling in processes and subprocesses
 - environment variables: parsing, modifying and passing them to subprocesses.
 - Design of shells
+
   For example the tradeoffs implicit in simple-seeming code decisions like the order of parsing variables and substitutions.
-- GNU ***readline** library
+
+- **GNU readline** library
 - Memory safety debugging with **valgrind**
 - Input Parsing.
 
   Hardening it against malevolent and accidental damage. The ways in which decisions (e.g. order of handling quotation types) have effects downstream (e.g. in the availability of variables to substitute at different times.)
 
 - Input substitution behaviour known in bash as "here_doc"
-  I still agree with Fish people that it is a weird quirk, but also some people find it very useful and not easily replaceable. We implemented it, while aavoiding the "bug-for-bug compatibility" trap.
+
+  I still agree with Fish people that it is a weird quirk, but also some people find it very useful and not easily replaceable. We implemented it, while avoiding the "bug-for-bug compatibility" trap.
 
 So-called "soft skills"[#]_ demonstrated in this project.
 
@@ -62,4 +65,4 @@ During my work so far at `42 Urduliz <https://www.42urduliz.com/>`_ this may be 
 It shows that I can take my knowledge of C programming and apply it to a realistic software development project ending in a finished, usable product. One which has reasonably clear and well-documented code without traps or footguns and which does not leak memory or crash.
 
 .. [#] Soft skills are hard!
-.. [#] It is called *mini*shell, after all!
+.. [#] It is called *mini* shell, after all!
