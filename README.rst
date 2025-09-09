@@ -6,7 +6,7 @@ A simple Unix (i.e. only tested on Linux) shell written in C. Features input and
 
 Developed collaboratively in an educational context within a limited time. It takes ideas from lesser-used shells like `Fish <https://fishshell.com/>`_, and strives to do the most sensible thing rather than the aiming for quirk-for-quirk compatibility with bash.
 
-..WARNING:: This is an education project. It would be reckless to use it for serious work, though I am pretty sure it can't do a *lot* of harm.
+.. WARNING:: This is an education project. It would be reckless to use it for serious work, though I am pretty sure it can't do a *lot* of harm.
 
 What I learned in this project
 ------------------------------
