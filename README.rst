@@ -14,7 +14,7 @@ What I learned in this project
 Technical things learned and demonstrated in this project include:
 
 - UNIX **pipes**
-- Input / output ***redirection**
+- Input / output **redirection**
 - the **"fork and exec"** model of process handling.
 - leak-free memory handling in processes and subprocesses
 - environment variables: parsing, modifying and passing them to subprocesses.
