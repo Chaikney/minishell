@@ -28,11 +28,14 @@ Technical things learned and demonstrated in this project include:
   I still agree with Fish people that it is a weird quirk, but also some people find it very useful and not easily replaceable. We implemented it, while aavoiding the "bug-for-bug compatibility" trap.
 
 So-called "soft skills"[#]_ demonstrated in this project.
+
 - Project management.
+
   Keeping things within scope, prioritising tasks, etc
 - Division of labour in a complex software project
 - Use of **git** features (branches, merges, rebases) to resolve conflicts and work effectively in a team.
 - The necessity for and limits of partitioning work packages in a complex software project.
+
   Specifically this project began with a strict split between execution and parsing modules. Later we found that the interface and data sharing between those two parts were tightly coupled. That required redesigns and iteration on ideas to find the best approach available to us.
 
 .. [#] Soft skills are hard!
@@ -40,7 +43,7 @@ So-called "soft skills"[#]_ demonstrated in this project.
 Remaining limitations
 ---------------------
 
-This is not a full-powered shell! Some hard problems were designed out by placing limitations and refusing to act in certain cases. For example, if an input line is too long, we simply refused to handle it.[#]_
+This is not a full-powered shell! Some hard problems were designed out by placing limitations and refusing to act in certain cases. For example, if an input line is too long, we simply refused to handle it. [#]_
 
 .. [#] It is called *mini*shell, after all!
 
@@ -53,6 +56,6 @@ The above also applies to the comment blocks. As part of collaborative working I
 Conclusion
 ----------
 
-During my work so far at `42 Urduliz<https://www.42urduliz.com>`_ this may be the most challenging (yet rewarding) project I have tackled; that's why I am taking the time to document it here.
+During my work so far at `42 Urduliz <https://www.42urduliz.com/>`_ this may be the most challenging (yet rewarding) project I have tackled; that's why I am taking the time to document it here.
 
 It shows that I can take my knowledge of C programming and apply it to a realistic software development project ending in a finished, usable product. One which has reasonably clear and well-documented code without traps or footguns and which does not leak memory or crash.
