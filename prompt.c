@@ -21,7 +21,7 @@ char	*get_shrt_wd(t_env *envt)
 	char	*cut_wd;
 	char	*ptr;
 	int		i;
-	int		linesize;
+	size_t	linesize;
 	char	*full_wd;
 
 	linesize = 15;

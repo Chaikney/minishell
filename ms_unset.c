@@ -24,7 +24,7 @@
 void	int_unset(char *unset_var, t_env *enviro)
 {
 	t_env	*to_unset;
-	int		len;
+	size_t	len;
 
 	if (is_in_envt(unset_var, enviro) == 1)
 	{

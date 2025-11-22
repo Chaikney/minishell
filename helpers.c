@@ -74,8 +74,8 @@ int	is_legal_name(char *str)
 // - len:		Number of chars we have to copy from value.
 char	*get_export_value(char *str)
 {
-	int		midpoint;
-	int		len;
+	uint	midpoint;
+	size_t	len;
 	char	*value;
 
 	if (ft_strchr(str, '=') == NULL)
@@ -100,7 +100,7 @@ char	*get_export_value(char *str)
 // Copy backwards to zero
 char	*get_export_name(char *str)
 {
-	int		len;
+	size_t	len;
 	char	*name;
 
 	len = 0;

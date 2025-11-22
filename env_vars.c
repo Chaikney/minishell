@@ -19,7 +19,7 @@
 int	is_in_envt(char *name, t_env *envt)
 {
 	t_env	*ptr;
-	int		len;
+	size_t	len;
 
 	len = ft_strlen(name);
 	ptr = envt;
@@ -39,7 +39,7 @@ int	is_in_envt(char *name, t_env *envt)
 void	t_replace_env_var(char *name, char *value, t_env **envt)
 {
 	t_env	*ptr;
-	int		len;
+	size_t	len;
 
 	ptr = *envt;
 	len = ft_strlen(name);
@@ -78,7 +78,7 @@ void	t_add_new_env_var(char *name, char *value, t_env *env)
 char	*get_value_of_env(char *name, t_env *envt)
 {
 	t_env	*ptr;
-	int		len;
+	size_t	len;
 
 	len = ft_strlen(name);
 	if ((len != 0) && (ft_strncmp(name, "?", len) == 0))

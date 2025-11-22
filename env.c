@@ -22,7 +22,7 @@ char	**serialise_env(t_env *env)
 {
 	char	**env_list;
 	t_env	*ptr;
-	int		len;
+	size_t	len;
 	int		i;
 
 	len = 0;

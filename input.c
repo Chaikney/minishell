@@ -16,8 +16,8 @@
 // NOTE s_len +1 because it includes the newline character
 static int	word_match(char *stop, char *line)
 {
-	int	l_len;
-	int	s_len;
+	size_t	l_len;
+	size_t	s_len;
 
 	if (!line)
 		return (1);
@@ -50,7 +50,8 @@ static void	heredoc_reader(t_command *cmd, int fd[2], int posn)
 			free (line);
 			exit_successful_pipe(cmd);
 		}
-		write(fd[1], line, ft_strlen(line));
+		if (write(fd[1], line, ft_strlen(line)) == -1)
+			printf("Problem!\n");	// HACK to compile, not a real solution to failed write
 		free (line);
 	}
 	exit_failed_pipe(cmd, fd[0], fd[1], NULL);
@@ -97,10 +98,12 @@ int	setup_input(t_command *cmd, int i_lvl, int posn)
 	int		i_file;
 	int		fd[2];
 
+	i_file = -1;
 	if (i_lvl == 2)
 	{
-		pipe(fd);
-		i_file = stopword_input(cmd, fd, posn);
+		// HACK Should handle a failed pipe call properly, this is to silence a compile warning
+		if (pipe(fd) != -1)
+			i_file = stopword_input(cmd, fd, posn);
 	}
 	else if (i_lvl == 1)
 	{
