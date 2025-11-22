@@ -26,7 +26,22 @@ LIBFT	= $(FTDIR)/libft.a
 
 LIBS	= $(FTLIB) -lreadline
 
-CFLAGS = -Werror -Wall -Wextra -ggdb
+#CFLAGS = -Werror -Wall -Wextra -ggdb
+CFLAGS	=	-O2 -Wall -Wformat -Wformat=2 -Wconversion -Wimplicit-fallthrough \
+-Werror=format-security \
+-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=3 \
+-D_GLIBCXX_ASSERTIONS \
+-fstrict-flex-arrays=3 \
+-fstack-clash-protection -fstack-protector-strong \
+-Wl,-z,nodlopen -Wl,-z,noexecstack \
+-Wl,-z,relro -Wl,-z,now \
+-Wl,--as-needed -Wl,--no-copy-dt-needed-entries \
+-Wtrampolines \
+-Wbidi-chars=any \
+-fPIE -pie \
+-Werror
+
+
 CC		= cc
 
 HEADERS	= -I $(FTDIR)
