@@ -79,8 +79,8 @@ t_env		*parse_env(char **envp);
 // substitute.c - variable substitution
 char		*ms_strsub(char *str, char *remove, char *replace);
 char		*get_var_name(const char *str);
-int			add_value_to_par(char **par, int *pos, const char *cmd, t_env *env);
-int			examine_var(char **par, int *r_pos, const char *cmd, t_env *envt);
+size_t		add_value_to_par(char **par, int *pos, const char *cmd, t_env *env);
+size_t		examine_var(char **par, int *r_pos, const char *cmd, t_env *envt);
 
 // tokens.c - break up line according to "quote" 'styles'
 char		*grab_control_seq(const char *cmd, int *posn);

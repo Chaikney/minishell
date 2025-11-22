@@ -16,10 +16,10 @@
 // a $ on its own or followed by another = print direct.
 // a variable that does not exist = pass over the variable, print nothing.
 // FIXED If is_legal_name in add_value fails, we don't move on and endless loop
-int	examine_var(char **par, int *r_pos, const char *cmd, t_env *envt)
+size_t	examine_var(char **par, int *r_pos, const char *cmd, t_env *envt)
 {
 	char	*ptr;
-	int		val_len;
+	size_t	val_len;
 
 	ptr = *par;
 	val_len = 0;
@@ -44,12 +44,12 @@ int	examine_var(char **par, int *r_pos, const char *cmd, t_env *envt)
 // NOTE Special treatment needed for freeing the $? variable
 // as it is discarded after printing.
 // NOTE A $ alone  or followed by a space should be printed as-is
-int	add_value_to_par(char **par, int *r_pos, const char *cmd, t_env *envt)
+size_t	add_value_to_par(char **par, int *r_pos, const char *cmd, t_env *envt)
 {
 	char	*vname;
 	char	*vvalue;
 	char	*ptr;
-	int		name_len;
+	size_t		name_len;
 
 	vname = get_var_name(&cmd[*r_pos]);
 	name_len = ft_strlen(vname);
@@ -83,7 +83,7 @@ int	add_value_to_par(char **par, int *r_pos, const char *cmd, t_env *envt)
 // FIXED This should refuse " and ' as potential var names
 char	*get_var_name(const char *str)
 {
-	int		name_len;
+	size_t		name_len;
 	char	*ptr;
 	char	*var_name;
 
@@ -120,7 +120,7 @@ char	*get_var_name(const char *str)
 // NOTE We do not free the string passed; that is for the caller
 char	*ms_strsub(char *str, char *old_sub, char *new_sub)
 {
-	int		len;
+	size_t		len;
 	char	*new_str;
 	char	*cptr;
 

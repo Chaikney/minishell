@@ -18,7 +18,7 @@
 // a builtin.
 static t_builtin	detailed_parse_builtin(t_command *cmd, int posn)
 {
-	int	len;
+	size_t	len;
 
 	len = ft_strlen(cmd->argv[posn]);
 	if ((ft_strncmp(cmd->argv[posn], "exit", 4) == 0) && (len == 4))
@@ -50,7 +50,7 @@ static t_builtin	detailed_parse_builtin(t_command *cmd, int posn)
 t_builtin	parse_builtin(t_command *cmd)
 {
 	t_builtin	retvalue;
-	int			len;
+	size_t			len;
 	int			i;
 
 	i = 0;
